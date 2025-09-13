@@ -1,0 +1,2 @@
+El camino más corto de Aurelio a Jesús es: Aurelio -> Martín -> Jesús
+Número de conexiones: 2

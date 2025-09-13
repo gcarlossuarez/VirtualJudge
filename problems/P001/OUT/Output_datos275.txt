@@ -1,0 +1,2 @@
+El camino más corto de Martín a Natalia es: Martín -> Natalia
+Número de conexiones: 1

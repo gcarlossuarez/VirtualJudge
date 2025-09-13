@@ -1,0 +1,2 @@
+El camino más corto de Cristina a Elena es: Cristina -> Elena
+Número de conexiones: 1

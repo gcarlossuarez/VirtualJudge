@@ -1,0 +1,2 @@
+El camino más corto de Iván a Julio es: Iván -> Julio
+Número de conexiones: 1

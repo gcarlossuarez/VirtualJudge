@@ -1,0 +1,2 @@
+El camino más corto de Enrique a Sergio es: Enrique -> Gabriela -> Sergio
+Número de conexiones: 2

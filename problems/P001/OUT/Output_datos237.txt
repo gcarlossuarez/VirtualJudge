@@ -1,0 +1,2 @@
+El camino más corto de Silvia a Héctor es: Silvia -> Héctor
+Número de conexiones: 1

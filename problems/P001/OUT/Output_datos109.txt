@@ -1,0 +1,2 @@
+El camino más corto de Martín a Susana es: Martín -> Nuria -> Susana
+Número de conexiones: 2

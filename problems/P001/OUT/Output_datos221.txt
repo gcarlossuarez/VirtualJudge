@@ -1,0 +1,2 @@
+El camino más corto de Hugo a Sandra es: Hugo -> Sergio -> Sandra
+Número de conexiones: 2

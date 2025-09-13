@@ -1,0 +1,2 @@
+El camino más corto de Carlos a Mariana es: Carlos -> Víctor -> Mariana
+Número de conexiones: 2

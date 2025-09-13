@@ -1,0 +1,2 @@
+El camino más corto de Lidia a Mario es: Lidia -> Mario
+Número de conexiones: 1

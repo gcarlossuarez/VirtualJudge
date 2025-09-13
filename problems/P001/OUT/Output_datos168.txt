@@ -1,0 +1,2 @@
+El camino más corto de Ricardo a Virginia es: Ricardo -> Julia -> Virginia
+Número de conexiones: 2

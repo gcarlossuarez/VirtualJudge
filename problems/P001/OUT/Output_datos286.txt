@@ -1,0 +1,2 @@
+El camino más corto de Enrique a Carolina es: Enrique -> Carolina
+Número de conexiones: 1

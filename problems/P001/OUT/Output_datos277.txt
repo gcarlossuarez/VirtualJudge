@@ -1,0 +1,2 @@
+El camino más corto de Virginia a Beatriz es: Virginia -> Beatriz
+Número de conexiones: 1

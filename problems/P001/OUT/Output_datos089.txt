@@ -1,0 +1,2 @@
+El camino más corto de Alicia a Guillermo es: Alicia -> Guillermo
+Número de conexiones: 1

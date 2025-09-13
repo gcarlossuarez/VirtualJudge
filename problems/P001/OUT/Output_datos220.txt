@@ -1,0 +1,2 @@
+El camino más corto de Rubén a José es: Rubén -> Pedro -> José
+Número de conexiones: 2

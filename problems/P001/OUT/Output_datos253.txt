@@ -1,0 +1,2 @@
+El camino más corto de Rubí a Ernesto es: Rubí -> Raquel -> Ernesto
+Número de conexiones: 2

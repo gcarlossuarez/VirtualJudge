@@ -1,0 +1,2 @@
+El camino más corto de Nuria a Felipe es: Nuria -> Julia -> Felipe
+Número de conexiones: 2

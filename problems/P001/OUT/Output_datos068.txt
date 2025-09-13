@@ -1,0 +1,2 @@
+El camino más corto de Leonardo a Emilio es: Leonardo -> Emilio
+Número de conexiones: 1

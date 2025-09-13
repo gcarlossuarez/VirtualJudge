@@ -1,0 +1,2 @@
+El camino más corto de Mauricio a Lucía es: Mauricio -> Manuel -> Lucía
+Número de conexiones: 2

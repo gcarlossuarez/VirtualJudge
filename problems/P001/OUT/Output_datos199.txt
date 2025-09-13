@@ -1,0 +1,2 @@
+El camino más corto de Pedro a Lucía es: Pedro -> Susana -> Lucía
+Número de conexiones: 2

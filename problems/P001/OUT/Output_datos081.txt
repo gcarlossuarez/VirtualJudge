@@ -1,0 +1,2 @@
+El camino más corto de Juan a Yolanda es: Juan -> Gabriel -> Yolanda
+Número de conexiones: 2

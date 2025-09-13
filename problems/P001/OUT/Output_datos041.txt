@@ -1,0 +1,2 @@
+El camino más corto de Santiago a Adrián es: Santiago -> Leonardo -> Adrián
+Número de conexiones: 2

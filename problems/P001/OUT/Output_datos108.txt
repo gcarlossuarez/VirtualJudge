@@ -1,0 +1,2 @@
+El camino más corto de Sara a Susana es: Sara -> Susana
+Número de conexiones: 1

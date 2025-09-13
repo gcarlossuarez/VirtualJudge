@@ -1,0 +1,2 @@
+El camino más corto de Lorena a Rosa es: Lorena -> Enrique -> Rosa
+Número de conexiones: 2

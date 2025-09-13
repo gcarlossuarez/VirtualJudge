@@ -1,0 +1,2 @@
+El camino más corto de Juan a Valentín es: Juan -> Mónica -> Valentín
+Número de conexiones: 2

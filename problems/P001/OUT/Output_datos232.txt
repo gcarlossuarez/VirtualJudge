@@ -1,0 +1,2 @@
+El camino más corto de Elena a Santiago es: Elena -> Rafael -> Santiago
+Número de conexiones: 2

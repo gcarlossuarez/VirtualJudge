@@ -1,0 +1,2 @@
+El camino más corto de Pablo a Leonardo es: Pablo -> Raquel -> Leonardo
+Número de conexiones: 2

@@ -1,0 +1,2 @@
+El camino más corto de Álvaro a Martín es: Álvaro -> Martín
+Número de conexiones: 1

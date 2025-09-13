@@ -1,0 +1,2 @@
+El camino más corto de Carlos a Carolina es: Carlos -> Andrés -> Carolina
+Número de conexiones: 2

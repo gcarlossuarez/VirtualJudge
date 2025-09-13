@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juez Online</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .tab { display: inline-block; padding: 10px 20px; margin-right: 5px; border: 1px solid #ccc; border-bottom: none; cursor: pointer; background: #eee; }
+    .tab.active { background: #fff; font-weight: bold; }
+    .editor-container { border: 1px solid #ccc; padding: 10px; }
+    .CodeMirror { border: 1px solid #ccc; height: 300px; font-size: 14px; }
+    #monaco-container { width: 100%; height: 300px; border: 1px solid #ccc; display: none; }
+    .result { margin-top: 20px; padding: 10px; border-radius: 5px; white-space: pre-wrap; }
+    .ok { background: #e0ffe0; border: 1px solid #0c0; }
+    .warn { background: #fff5cc; border: 1px solid #cc0; }
+    .err { background: #ffe0e0; border: 1px solid #c00; }
+  </style>
+
+  <!-- CodeMirror -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+
+  <!-- Monaco -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+</head>
+<body>
+  <h1>Juez Online</h1>
+
+  <div>
+    <div id="tab-cm" class="tab active" onclick="switchEditor('cm')">Editor rápido (CodeMirror)</div>
+    <div id="tab-monaco" class="tab" onclick="switchEditor('monaco')">Editor avanzado (Monaco)</div>
+  </div>
+
+  <p id="monaco-warning" style="color:red; display:none;">
+    ⚠️ El editor Monaco es más pesado, puede tardar unos segundos en cargar.
+  </p>
+
+  <label id="lblProblemId">Id del Problema:</label>
+  <input type="text" id="txtProblemId" style="width: 40px;" required minlength="1"><br><br>
+  <label id="lblStudentId">Id del Estudiante:</label>
+  <input type="text" id="txtStudentId" style="width: 40px;" required minlength="1"><br><br>
+  <div class="editor-container">
+    <textarea id="code-cm">using System;
+class Program {
+  static void Main() {
+    Console.WriteLine("Hola CodeMirror!");
+  }
+}</textarea>
+    <div id="monaco-container"></div>
+  </div>
+
+  <br>
+  <label for="stdin">Entrada (stdin):</label><br>
+  <textarea id="stdin" rows="5" cols="30" style="width: 200px;">7 35</textarea><br><br>
+
+  <button type="button" onclick="runJudge0()">Ejecutar (Prueba)</button>
+  <button type="button" onclick="runOfficial()">Enviar (Oficial)</button>
+
+  <div id="output" class="result"></div>
+
+  <script>
+    const JUDGE0_URL = "https://ce.judge0.com/submissions?base64_encoded=false&wait=true";
+
+    // === Inicializar CodeMirror ===
+    const cmEditor = CodeMirror.fromTextArea(document.getElementById("code-cm"), {
+      lineNumbers: true,
+      mode: "text/x-csharp",
+      theme: "default"
+    });
+
+    // === Inicializar Monaco ===
+    let monacoEditor = null;
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+    require(["vs/editor/editor.main"], function () {
+      monacoEditor = monaco.editor.create(document.getElementById('monaco-container'), {
+        value: `using System;\nclass Program {\n  static void Main() {\n    Console.WriteLine("Hola Monaco!");\n  }\n}`,
+        language: "csharp",
+        theme: "vs-light",
+        automaticLayout: true
+      });
+    });
+
+    // === Cambiar editor ===
+    function switchEditor(type) {
+      document.getElementById("tab-cm").classList.remove("active");
+      document.getElementById("tab-monaco").classList.remove("active");
+      if (type === "cm") {
+        document.getElementById("tab-cm").classList.add("active");
+        document.getElementById("monaco-container").style.display = "none";
+        document.getElementById("monaco-warning").style.display = "none";
+        cmEditor.getWrapperElement().style.display = "block";
+      } else {
+        document.getElementById("tab-monaco").classList.add("active");
+        document.getElementById("monaco-container").style.display = "block";
+        document.getElementById("monaco-warning").style.display = "block";
+        cmEditor.getWrapperElement().style.display = "none";
+      }
+    }
+
+    function getCurrentCode() {
+      if (document.getElementById("tab-cm").classList.contains("active")) {
+        return cmEditor.getValue();
+      } else {
+        return monacoEditor ? monacoEditor.getValue() : "";
+      }
+    }
+
+    async function runJudge0() {
+      const code = getCurrentCode();
+      const stdin = document.getElementById('stdin').value;
+
+      showMessage("⏳ Ejecutando en Judge0...", "warn");
+
+      try {
+        const response = await fetch(JUDGE0_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            source_code: code,
+            language_id: 51, // C# .NET Core
+            stdin: stdin
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.stderr || result.compile_output) {
+          showMessage("❌ Error:\n" + (result.stderr || result.compile_output), "err");
+        } else {
+          showMessage("✅ Salida:\n" + (result.stdout || "") + "\n\nEstado: " + result.status.description, "ok");
+        }
+      } catch (err) {
+        showMessage("⚠️ Error al conectar con Judge0:\n" + err, "err");
+      }
+    }
+
+    async function runOfficial() {
+      const problemId = document.getElementById('txtProblemId').value;
+      if (problemId.trim() === '') {
+          alert('Por favor, introduce el identificador de la pregunta.');
+          campo.focus();
+          return ;
+      }
+      
+      const studentId = document.getElementById('txtStudentId').value;
+      if (studentId.trim() === '') {
+          alert('Por favor, introduce el identificador del estudiante.');
+          campo.focus();
+          return ;
+      }
+      
+      const code = getCurrentCode();
+      const stdin = document.getElementById('stdin').value;
+
+      showMessage("⏳ Enviando a servidor oficial...", "warn");
+
+      try {
+        const formData = new FormData();
+        const blob = new Blob([code], { type: "text/plain" });
+        formData.append("code", blob, "solucion.cs");
+        formData.append("stdin", stdin);
+        formData.append("problemId", problemId); // 🔥 agregado el identificador de pregunta o problema
+        formData.append("studentId", studentId); // 🔥 agregado el identificador del estudiante 
+
+        
+        const response = await fetch("http://localhost:5000/compile-run", {
+          method: "POST",
+          body: formData
+        });
+
+        const result = await response.json();
+
+        // === Manejo de compilación ===
+        if (result.build !== "build:ok") {
+          showMessage(
+            "❌ Errores de compilación:\n" + (result.buildLog || "Sin detalles"),
+            "err"
+          );
+          return;
+        }
+
+        // === Manejo de ejecución ===
+        if (result.run !== "run:ok") {
+          showMessage(
+            "❌ Error en ejecución:\n" +
+            (result.runLog || "Sin detalles") +
+            (result.stderrRaw ? "\nSTDERR:\n" + result.stderrRaw : ""),
+            "err"
+          );
+          return;
+        }
+
+        // === Ejecución exitosa ===
+        showMessage(
+          "✅ Ejecución exitosa\n\nSalida:\n" + (result.runLog || "") +
+          "\n\n⏱ Tiempo: " + (result.time || "-") +
+          "\n💾 Memoria: " + (result.memKb || "-") + " KB",
+          "ok"
+        );
+
+      } catch (err) {
+        showMessage("⚠️ No se pudo conectar al servidor oficial:\n" + err, "err");
+      }
+    }
+
+
+    function showMessage(msg, type) {
+      const out = document.getElementById("output");
+      out.className = "result " + type;
+      out.textContent = msg;
+    }
+  </script>
+</body>
+</html>
+

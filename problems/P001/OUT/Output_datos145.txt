@@ -1,0 +1,2 @@
+El camino más corto de Marta a Andrés es: Marta -> Cristian -> Andrés
+Número de conexiones: 2

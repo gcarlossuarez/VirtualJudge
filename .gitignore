@@ -1,0 +1,23 @@
+# C#
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# SQLite
+*.sqlite
+#*.db
+
+# Logs / temporales
+*.log
+*.tmp
+
+# Otros
+.vscode/
+.idea/

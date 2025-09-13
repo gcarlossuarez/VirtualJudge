@@ -1,0 +1,2 @@
+El camino más corto de Jesús a Teresa es: Jesús -> Sandra -> Teresa
+Número de conexiones: 2

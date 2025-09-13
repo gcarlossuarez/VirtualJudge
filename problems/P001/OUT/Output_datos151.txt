@@ -1,0 +1,2 @@
+El camino más corto de Sergio a Natalia es: Sergio -> Natalia
+Número de conexiones: 1

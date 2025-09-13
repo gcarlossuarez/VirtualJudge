@@ -1,0 +1,2 @@
+El camino más corto de Silvia a Carlos es: Silvia -> Carlos
+Número de conexiones: 1

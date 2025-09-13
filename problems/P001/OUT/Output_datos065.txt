@@ -1,0 +1,2 @@
+El camino más corto de Teresa a Enrique es: Teresa -> Enrique
+Número de conexiones: 1

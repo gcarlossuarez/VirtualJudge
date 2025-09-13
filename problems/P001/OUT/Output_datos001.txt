@@ -1,0 +1,2 @@
+El camino más corto de Antonio a Alicia es: Antonio -> Alicia
+Número de conexiones: 1

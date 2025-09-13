@@ -1,0 +1,2 @@
+El camino más corto de Ernesto a Iván es: Ernesto -> Iván
+Número de conexiones: 1

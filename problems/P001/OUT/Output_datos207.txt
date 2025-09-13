@@ -1,0 +1,2 @@
+El camino más corto de Enrique a Jesús es: Enrique -> Antonio -> Jesús
+Número de conexiones: 2

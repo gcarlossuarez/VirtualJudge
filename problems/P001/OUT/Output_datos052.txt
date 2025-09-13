@@ -1,0 +1,2 @@
+El camino más corto de Clara a Ricardo es: Clara -> Ricardo
+Número de conexiones: 1

@@ -1,0 +1,2 @@
+El camino más corto de Ángel a Fernando es: Ángel -> Andrés -> Fernando
+Número de conexiones: 2

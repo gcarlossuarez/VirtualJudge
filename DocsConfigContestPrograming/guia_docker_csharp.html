@@ -1,0 +1,216 @@
+<h1
+id="guía-configuración-de-docker-y-ejecución-de-programas-c-en-un-contenedor-seguro-tipo-icpc">Guía:
+Configuración de Docker y Ejecución de Programas C# en un Contenedor
+Seguro (tipo ICPC)</h1>
+<p>Este documento describe paso a paso cómo preparar un entorno
+<strong>Linux + Docker</strong> para compilar y ejecutar programas
+<strong>C#</strong> en un contenedor aislado, ideal para exámenes tipo
+ICPC.</p>
+<p>Incluye <strong>comentarios adicionales</strong> sobre las
+instrucciones <code>bash</code> para quienes no están familiarizados con
+shell scripting.</p>
+<hr />
+<h2 id="instalación-de-docker-en-linux">1. Instalación de Docker en
+Linux</h2>
+<p>En Ubuntu/Debian:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt upgrade <span class="at">-y</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> docker.io</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable docker</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl start docker</span></code></pre></div>
+<p>Verificación:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run hello-world</span></code></pre></div>
+<p>Si aparece <code>permission denied</code>:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> usermod <span class="at">-aG</span> docker <span class="va">$USER</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">newgrp</span> docker</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run hello-world</span></code></pre></div>
+<hr />
+<h2 id="directorio-del-runner">2. Directorio del Runner</h2>
+<p>Crear un directorio <code>cs-single-runner/</code> con dos archivos:
+<code>Dockerfile</code> y <code>run_single.sh</code>.</p>
+<h3 id="dockerfile"><code>Dockerfile</code></h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> mcr.microsoft.com/dotnet/sdk:8.0</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Variables de entorno para evitar mensajes molestos de .NET</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1 <span class="op">\</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    DOTNET_CLI_TELEMETRY_OPTOUT=1 <span class="op">\</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    DOTNET_NOLOGO=1 <span class="op">\</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    DOTNET_CLI_WORKLOAD_UPDATE_ADVERTISING_DISABLED=1</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear usuario sandbox (no root)</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">useradd</span> <span class="at">-ms</span> /bin/bash sandbox</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="kw">WORKDIR</span> /home/sandbox</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalar comando &#39;time&#39; (para medir tiempo/memoria)</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">apt-get</span> update <span class="kw">&amp;&amp;</span> <span class="ex">apt-get</span> install <span class="at">-y</span> <span class="at">--no-install-recommends</span> time <span class="dt">\</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a> <span class="kw">&amp;&amp;</span> <span class="fu">rm</span> <span class="at">-rf</span> /var/lib/apt/lists/<span class="pp">*</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear plantilla de consola y restaurar durante la build</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">dotnet</span> new console <span class="at">-n</span> App <span class="at">-o</span> /home/sandbox/template/App <span class="at">--force</span> <span class="dt">\</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a> <span class="kw">&amp;&amp;</span> <span class="ex">dotnet</span> restore /home/sandbox/template/App</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Copiar el script runner</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> run_single.sh /home/sandbox/run_single.sh</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="fu">chown</span> <span class="at">-R</span> sandbox:sandbox /home/sandbox <span class="dt">\</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a> <span class="kw">&amp;&amp;</span> <span class="fu">chmod</span> 755 /home/sandbox/run_single.sh</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="kw">USER</span> sandbox</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="kw">ENTRYPOINT</span> [<span class="st">&quot;/home/sandbox/run_single.sh&quot;</span>]</span></code></pre></div>
+<h3 id="run_single.sh-con-comentarios"><code>run_single.sh</code> (con
+comentarios)</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env bash</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-euo</span> pipefail</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># -e : salir si algún comando falla</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># -u : error si se usa una variable no definida</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># -o pipefail : errores en pipelines hacen fallar el script</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="va">SRC_DIR</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${1</span><span class="op">:-</span>/home/sandbox/in<span class="va">}</span><span class="st">&quot;</span>   <span class="co"># Primer argumento: directorio de entrada, o valor por defecto</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="va">TIME_LIMIT</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${2</span><span class="op">:-</span>6<span class="va">}</span><span class="st">&quot;</span>               <span class="co"># Segundo argumento: tiempo límite en segundos, por defecto 6</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">!</span> <span class="ot">-d</span> <span class="st">&quot;</span><span class="va">$SRC_DIR</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;ERROR: No existe el directorio fuente: </span><span class="va">$SRC_DIR</span><span class="st">&quot;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="bu">exit</span> 2</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /home/sandbox</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Limitar CPU y procesos dentro del contenedor</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="bu">ulimit</span> <span class="at">-t</span> <span class="st">&quot;</span><span class="va">$TIME_LIMIT</span><span class="st">&quot;</span>   <span class="co"># Tiempo máximo de CPU</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="bu">ulimit</span> <span class="at">-u</span> 256             <span class="co"># Número máximo de procesos/hilos</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Copiar la plantilla restaurada</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> proj</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> /home/sandbox/template/App proj</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Buscar archivos .cs del alumno</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="bu">shopt</span> <span class="at">-s</span> nullglob   <span class="co"># evita que &#39;*.cs&#39; quede como string literal si no hay coincidencias</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="va">CS_FILES</span><span class="op">=</span><span class="va">(</span><span class="st">&quot;</span><span class="va">$SRC_DIR</span><span class="st">&quot;</span>/<span class="pp">*</span>.cs<span class="va">)</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="va">${</span><span class="op">#</span><span class="va">CS_FILES</span><span class="op">[@]</span><span class="va">}</span> <span class="ot">-eq</span> 0 <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;ERROR: No se encontró ningún .cs en </span><span class="va">$SRC_DIR</span><span class="st">&quot;</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  <span class="bu">exit</span> 3</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Reemplazar Program.cs por el archivo del alumno</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-f</span> proj/Program.cs</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="va">${</span><span class="op">#</span><span class="va">CS_FILES</span><span class="op">[@]</span><span class="va">}</span> <span class="ot">-eq</span> 1 <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cp</span> <span class="st">&quot;</span><span class="va">${CS_FILES</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span><span class="va">}</span><span class="st">&quot;</span> proj/Program.cs</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cp</span> <span class="st">&quot;</span><span class="va">${CS_FILES</span><span class="op">[@]</span><span class="va">}</span><span class="st">&quot;</span> proj/</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="va">BUILD_LOG</span><span class="op">=</span>build.log</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="va">RUN_LOG</span><span class="op">=</span>run.log</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Compilar sin restore (offline)</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> +e</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span> <span class="bu">cd</span> proj <span class="kw">&amp;&amp;</span> <span class="ex">dotnet</span> build <span class="at">-c</span> Release <span class="at">--nologo</span> <span class="at">--no-restore</span> <span class="kw">)</span> <span class="op">&gt;</span><span class="st">&quot;</span><span class="va">$BUILD_LOG</span><span class="st">&quot;</span> <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="va">BUILD_RC</span><span class="op">=</span><span class="va">$?</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-e</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Determinar estado de compilación</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="va">STATUS_BUILD</span><span class="op">=</span><span class="st">&quot;error&quot;</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="fu">grep</span> <span class="at">-q</span> <span class="st">&quot;Build succeeded.&quot;</span> <span class="st">&quot;</span><span class="va">$BUILD_LOG</span><span class="st">&quot;</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>  <span class="va">STATUS_BUILD</span><span class="op">=</span><span class="st">&quot;ok&quot;</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="st">&quot;</span><span class="va">$BUILD_RC</span><span class="st">&quot;</span> <span class="ot">-eq</span> 0 <span class="bu">]</span> <span class="kw">&amp;&amp;</span> <span class="bu">[</span> <span class="st">&quot;</span><span class="va">$STATUS_BUILD</span><span class="st">&quot;</span> <span class="ot">!=</span> <span class="st">&quot;ok&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># &#39;!=&#39; significa &quot;no es igual a&quot;</span></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Aquí: si STATUS_BUILD no es &quot;ok&quot; pero el código de retorno fue 0, lo forzamos a &quot;ok&quot;</span></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>  <span class="va">STATUS_BUILD</span><span class="op">=</span><span class="st">&quot;ok&quot;</span></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="va">OUTDIR</span><span class="op">=</span><span class="st">&quot;proj/bin/Release&quot;</span></span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a><span class="va">DLL</span><span class="op">=</span><span class="va">$(</span><span class="fu">find</span> <span class="st">&quot;</span><span class="va">$OUTDIR</span><span class="st">&quot;</span> <span class="at">-type</span> f <span class="at">-name</span> <span class="st">&quot;*.dll&quot;</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n1</span> <span class="kw">||</span> <span class="fu">true</span><span class="va">)</span></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Condición: si STATUS_BUILD NO es &quot;ok&quot;  ||  si DLL está vacío</span></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="st">&quot;</span><span class="va">$STATUS_BUILD</span><span class="st">&quot;</span> <span class="ot">!=</span> <span class="st">&quot;ok&quot;</span> <span class="bu">]</span> <span class="kw">||</span> <span class="bu">[</span> <span class="ot">-z</span> <span class="st">&quot;</span><span class="va">${DLL</span><span class="op">:-</span><span class="va">}</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>  <span class="co"># -z STRING : cierto si STRING está vacío</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;===BUILD===&quot;</span><span class="kw">;</span> <span class="fu">cat</span> <span class="st">&quot;</span><span class="va">$BUILD_LOG</span><span class="st">&quot;</span> <span class="kw">||</span> <span class="fu">true</span></span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;===RUN===&quot;</span><span class="kw">;</span> <span class="bu">echo</span> <span class="st">&quot;No se generó salida (.dll)&quot;</span> <span class="op">&gt;</span><span class="st">&quot;</span><span class="va">$RUN_LOG</span><span class="st">&quot;</span><span class="kw">;</span> <span class="fu">cat</span> <span class="st">&quot;</span><span class="va">$RUN_LOG</span><span class="st">&quot;</span></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;===SUMMARY===&quot;</span><span class="kw">;</span> <span class="bu">echo</span> <span class="st">&quot;build:error&quot;</span><span class="kw">;</span> <span class="bu">echo</span> <span class="st">&quot;run:error&quot;</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>  <span class="bu">exit</span> 0</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejecutar el programa con timeout y medir recursos</span></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a><span class="va">TIME_BIN</span><span class="op">=</span><span class="st">&quot;/usr/bin/time&quot;</span></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-f</span> <span class="st">&quot;</span><span class="va">$SRC_DIR</span><span class="st">/input.txt&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>  <span class="kw">{</span> <span class="st">&quot;</span><span class="va">$TIME_BIN</span><span class="st">&quot;</span> <span class="at">-f</span> <span class="st">&quot;TIME=%E\nMEM=%MKB&quot;</span> timeout <span class="st">&quot;</span><span class="va">${TIME_LIMIT}</span><span class="st">s&quot;</span> dotnet <span class="st">&quot;</span><span class="va">$DLL</span><span class="st">&quot;</span> <span class="op">&lt;</span> <span class="st">&quot;</span><span class="va">$SRC_DIR</span><span class="st">/input.txt&quot;</span><span class="kw">;</span> <span class="kw">}</span> <span class="op">&gt;</span><span class="st">&quot;</span><span class="va">$RUN_LOG</span><span class="st">&quot;</span> <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span> <span class="kw">||</span> <span class="fu">true</span></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>  <span class="kw">{</span> <span class="st">&quot;</span><span class="va">$TIME_BIN</span><span class="st">&quot;</span> <span class="at">-f</span> <span class="st">&quot;TIME=%E\nMEM=%MKB&quot;</span> timeout <span class="st">&quot;</span><span class="va">${TIME_LIMIT}</span><span class="st">s&quot;</span> dotnet <span class="st">&quot;</span><span class="va">$DLL</span><span class="st">&quot;</span><span class="kw">;</span> <span class="kw">}</span> <span class="op">&gt;</span><span class="st">&quot;</span><span class="va">$RUN_LOG</span><span class="st">&quot;</span> <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span> <span class="kw">||</span> <span class="fu">true</span></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a><span class="va">STATUS_RUN</span><span class="op">=</span><span class="st">&quot;ok&quot;</span></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="co"># grep -qiE : busca patrones de error en la salida para marcar como fallo</span></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-qiE</span> <span class="st">&quot;timed out|timeout|Killed|Unhandled|Exception&quot;</span> <span class="st">&quot;</span><span class="va">$RUN_LOG</span><span class="st">&quot;</span> <span class="kw">&amp;&amp;</span> <span class="va">STATUS_RUN</span><span class="op">=</span><span class="st">&quot;error&quot;</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar resultados</span></span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;===BUILD===&quot;</span><span class="kw">;</span> <span class="fu">cat</span> <span class="st">&quot;</span><span class="va">$BUILD_LOG</span><span class="st">&quot;</span> <span class="kw">||</span> <span class="fu">true</span></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;===RUN===&quot;</span><span class="kw">;</span> <span class="fu">cat</span> <span class="st">&quot;</span><span class="va">$RUN_LOG</span><span class="st">&quot;</span> <span class="kw">||</span> <span class="fu">true</span></span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;===SUMMARY===&quot;</span><span class="kw">;</span> <span class="bu">echo</span> <span class="st">&quot;build:</span><span class="va">$STATUS_BUILD</span><span class="st">&quot;</span><span class="kw">;</span> <span class="bu">echo</span> <span class="st">&quot;run:</span><span class="va">$STATUS_RUN</span><span class="st">&quot;</span></span></code></pre></div>
+<hr />
+<h2 id="construir-la-imagen">3. Construir la Imagen</h2>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> cs-single-runner</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> cs-single-runner:1 .</span></code></pre></div>
+<hr />
+<h2 id="probar-un-programa-simple">4. Probar un Programa Simple</h2>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/icpc_test</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&gt;</span> ~/icpc_test/solucion.cs <span class="op">&lt;&lt;&#39;CS&#39;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="st">using System;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="st">class A { static void Main() { Console.WriteLine(&quot;Hola ICPC!&quot;); } }</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">CS</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span>   <span class="at">--network</span><span class="op">=</span>none   <span class="at">--cpus</span><span class="op">=</span>1   <span class="at">--memory</span><span class="op">=</span>1536m   <span class="at">--pids-limit</span><span class="op">=</span>256   <span class="at">-v</span> ~/icpc_test:/home/sandbox/in:ro   cs-single-runner:1 /home/sandbox/in 6</span></code></pre></div>
+<p>Salida esperada:</p>
+<pre><code>===BUILD===
+Build succeeded.
+...
+===RUN===
+Hola ICPC!
+TIME=0:00.01
+MEM=35000KB
+===SUMMARY===
+build:ok
+run:ok</code></pre>
+<hr />
+<h2 id="probar-con-entrada-estándar">5. Probar con Entrada Estándar</h2>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> System<span class="op">;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A <span class="op">{</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> p <span class="op">=</span> Console<span class="op">.</span><span class="fu">ReadLine</span><span class="op">()?.</span><span class="fu">Split</span><span class="op">(</span><span class="ch">&#39; &#39;</span><span class="op">,</span> StringSplitOptions<span class="op">.</span><span class="fu">RemoveEmptyEntries</span><span class="op">);</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        Console<span class="op">.</span><span class="fu">WriteLine</span><span class="op">(</span><span class="dt">int</span><span class="op">.</span><span class="fu">Parse</span><span class="op">(</span>p<span class="op">[</span><span class="dv">0</span><span class="op">])</span> <span class="op">+</span> <span class="dt">int</span><span class="op">.</span><span class="fu">Parse</span><span class="op">(</span>p<span class="op">[</span><span class="dv">1</span><span class="op">]));</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Ejecución:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">printf</span> <span class="st">&quot;7 35\n&quot;</span> <span class="kw">|</span> <span class="ex">docker</span> run <span class="at">--rm</span>   <span class="at">--network</span><span class="op">=</span>none   <span class="at">--cpus</span><span class="op">=</span>1   <span class="at">--memory</span><span class="op">=</span>1536m   <span class="at">--pids-limit</span><span class="op">=</span>256   <span class="at">-i</span>   <span class="at">-v</span> ~/icpc_test:/home/sandbox/in:ro   cs-single-runner:1 /home/sandbox/in 6</span></code></pre></div>
+<p>Salida esperada:</p>
+<pre><code>===BUILD===
+Build succeeded.
+...
+===RUN===
+42
+TIME=0:00.01
+MEM=36000KB
+===SUMMARY===
+build:ok
+run:ok</code></pre>
+<hr />
+<h2 id="conclusiones">6. Conclusiones</h2>
+<ul>
+<li><code>!= "ok"</code> significa “distinto de ‘ok’”.<br />
+</li>
+<li><code>-z "${DLL:-}"</code> significa “la variable está vacía”.<br />
+</li>
+<li>Se usó <code>||</code> (OR lógico) para verificar condiciones
+alternativas.<br />
+</li>
+<li>Los bloques <code>if ... fi</code> en <code>bash</code> permiten
+ejecutar secciones condicionales.</li>
+</ul>

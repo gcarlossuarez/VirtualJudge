@@ -1,0 +1,2 @@
+El camino más corto de Diego a Mario es: Diego -> Mariana -> Mario
+Número de conexiones: 2

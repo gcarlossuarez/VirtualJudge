@@ -1,0 +1,2 @@
+El camino más corto de Óscar a Clara es: Óscar -> Clara
+Número de conexiones: 1

@@ -1,0 +1,2 @@
+1;Contabilidad
+2;Recursos Humanos

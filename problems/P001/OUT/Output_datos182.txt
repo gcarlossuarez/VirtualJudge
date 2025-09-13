@@ -1,0 +1,2 @@
+El camino más corto de Joaquín a Andrés es: Joaquín -> Andrés
+Número de conexiones: 1

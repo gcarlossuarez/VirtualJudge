@@ -1,0 +1,2 @@
+El camino más corto de Yolanda a Gabriel es: Yolanda -> Iván -> Gabriel
+Número de conexiones: 2

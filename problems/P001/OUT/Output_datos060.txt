@@ -1,0 +1,2 @@
+El camino más corto de Catalina a Bárbara es: Catalina -> Eva -> Bárbara
+Número de conexiones: 2

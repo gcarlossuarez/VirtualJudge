@@ -1,0 +1,2 @@
+El camino más corto de Ricardo a Mario es: Ricardo -> Mario
+Número de conexiones: 1

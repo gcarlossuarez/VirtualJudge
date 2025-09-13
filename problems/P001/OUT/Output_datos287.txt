@@ -1,0 +1,2 @@
+El camino más corto de Andrea a Rubén es: Andrea -> Rubén
+Número de conexiones: 1

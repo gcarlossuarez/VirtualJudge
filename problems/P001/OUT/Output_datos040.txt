@@ -1,0 +1,2 @@
+El camino más corto de Isabel a Elena es: Isabel -> Raquel -> Elena
+Número de conexiones: 2

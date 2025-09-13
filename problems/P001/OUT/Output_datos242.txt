@@ -1,0 +1,2 @@
+El camino más corto de Carlos a Sandra es: Carlos -> Sandra
+Número de conexiones: 1

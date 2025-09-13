@@ -1,0 +1,2 @@
+El camino más corto de Julia a Elena es: Julia -> Clara -> Elena
+Número de conexiones: 2

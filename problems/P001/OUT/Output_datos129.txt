@@ -1,0 +1,2 @@
+El camino más corto de Rubí a Mariana es: Rubí -> Mariana
+Número de conexiones: 1

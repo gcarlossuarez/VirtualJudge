@@ -1,0 +1,2 @@
+El camino más corto de Bárbara a Luis es: Bárbara -> Vanessa -> Luis
+Número de conexiones: 2

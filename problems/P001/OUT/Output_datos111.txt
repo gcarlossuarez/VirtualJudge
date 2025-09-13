@@ -1,0 +1,2 @@
+El camino más corto de Juan a Noelia es: Juan -> Rodrigo -> Noelia
+Número de conexiones: 2

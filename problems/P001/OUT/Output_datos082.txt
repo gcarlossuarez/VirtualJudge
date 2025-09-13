@@ -1,0 +1,2 @@
+El camino más corto de Noelia a Inés es: Noelia -> Nuria -> Inés
+Número de conexiones: 2

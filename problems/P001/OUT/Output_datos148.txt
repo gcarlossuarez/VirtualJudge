@@ -1,0 +1,2 @@
+El camino más corto de Cristina a Mariana es: Cristina -> Lidia -> Mariana
+Número de conexiones: 2

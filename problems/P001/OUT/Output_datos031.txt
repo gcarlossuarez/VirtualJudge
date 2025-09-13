@@ -1,0 +1,2 @@
+El camino más corto de Valentín a Víctor es: Valentín -> Jorge -> Víctor
+Número de conexiones: 2

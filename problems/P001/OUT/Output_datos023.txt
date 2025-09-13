@@ -1,0 +1,2 @@
+El camino más corto de Aurelio a Tomás es: Aurelio -> Tomás
+Número de conexiones: 1

@@ -1,0 +1,2 @@
+El camino más corto de Fernando a Sergio es: Fernando -> Claudia -> Sergio
+Número de conexiones: 2

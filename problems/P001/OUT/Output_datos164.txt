@@ -1,0 +1,2 @@
+El camino más corto de Natalia a Mauricio es: Natalia -> Mauricio
+Número de conexiones: 1

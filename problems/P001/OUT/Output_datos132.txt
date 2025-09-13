@@ -1,0 +1,2 @@
+El camino más corto de Clara a Andrés es: Clara -> Andrés
+Número de conexiones: 1

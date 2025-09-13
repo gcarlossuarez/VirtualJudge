@@ -1,0 +1,2 @@
+El camino más corto de Mario a Camila es: Mario -> Camila
+Número de conexiones: 1

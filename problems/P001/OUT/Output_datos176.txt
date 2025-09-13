@@ -1,0 +1,2 @@
+El camino más corto de Isabel a Sara es: Isabel -> Sara
+Número de conexiones: 1

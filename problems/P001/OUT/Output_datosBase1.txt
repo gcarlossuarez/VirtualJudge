@@ -1,0 +1,2 @@
+El camino más corto de Ana a Felipe es: Ana -> Beto -> David -> Felipe
+Número de conexiones: 3

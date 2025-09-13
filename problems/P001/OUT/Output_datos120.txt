@@ -1,0 +1,2 @@
+El camino más corto de Carlos a Gabriel es: Carlos -> Gabriel
+Número de conexiones: 1

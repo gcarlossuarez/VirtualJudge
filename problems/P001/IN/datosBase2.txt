@@ -1,0 +1,9 @@
+David;Jorge
+Ana;Beto;Carla
+Beto;Ana;Carla;David
+Carla;Ana;Beto;Elena
+David;Beto;Felipe
+Elena;Carla
+Felipe;David
+Mario;Jorge;Saúl
+Saúl;Lorena

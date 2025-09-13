@@ -1,0 +1,2 @@
+El camino más corto de Rosa a Rafael es: Rosa -> Rafael
+Número de conexiones: 1

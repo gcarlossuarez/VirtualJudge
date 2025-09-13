@@ -1,0 +1,2 @@
+El camino más corto de Bruno a Rubí es: Bruno -> Pablo -> Rubí
+Número de conexiones: 2

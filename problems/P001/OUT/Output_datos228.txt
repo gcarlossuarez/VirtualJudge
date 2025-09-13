@@ -1,0 +1,2 @@
+El camino más corto de Camila a Marta es: Camila -> Gabriela -> Marta
+Número de conexiones: 2

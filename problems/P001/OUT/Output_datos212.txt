@@ -1,0 +1,2 @@
+El camino más corto de Laura a Fernando es: Laura -> Fernando
+Número de conexiones: 1

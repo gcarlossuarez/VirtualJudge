@@ -1,0 +1,2 @@
+El camino más corto de Bruno a Catalina es: Bruno -> Catalina
+Número de conexiones: 1

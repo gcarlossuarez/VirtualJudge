@@ -1,0 +1,2 @@
+El camino más corto de Pablo a Bárbara es: Pablo -> Guillermo -> Bárbara
+Número de conexiones: 2

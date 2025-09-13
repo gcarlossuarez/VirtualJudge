@@ -1,0 +1,2 @@
+El camino más corto de Diego a Elena es: Diego -> Aurelio -> Elena
+Número de conexiones: 2

@@ -1,0 +1,2 @@
+El camino más corto de Jorge a Virginia es: Jorge -> Verónica -> Virginia
+Número de conexiones: 2

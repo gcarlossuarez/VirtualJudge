@@ -1,0 +1,2 @@
+El camino más corto de Joaquín a Julia es: Joaquín -> Julia
+Número de conexiones: 1

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juez Online</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .tab { display: inline-block; padding: 10px 20px; margin-right: 5px; border: 1px solid #ccc; border-bottom: none; cursor: pointer; background: #eee; }
+    .tab.active { background: #fff; font-weight: bold; }
+    .editor-container { border: 1px solid #ccc; padding: 10px; }
+    .CodeMirror { border: 1px solid #ccc; height: 300px; font-size: 14px; }
+    #monaco-container { width: 100%; height: 300px; border: 1px solid #ccc; display: none; }
+    .result { margin-top: 20px; padding: 10px; border-radius: 5px; white-space: pre-wrap; }
+    .ok { background: #e0ffe0; border: 1px solid #0c0; }
+    .warn { background: #fff5cc; border: 1px solid #cc0; }
+    .err { background: #ffe0e0; border: 1px solid #c00; }
+    
+    
+    #stdin {
+      resize: both;         /* permite agrandar con el mouse */
+      min-height: 150px;    /* alto mínimo */
+      min-width: 300px;     /* ancho mínimo */
+      width: 100%;          /* por defecto ocupa todo el ancho */
+    }
+    
+    #utils-panel {
+      float: left;
+      width: 25%;
+      height: 400px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 5px;
+      font-family: monospace;
+      background: #f9f9f9;
+    }
+
+    #utils-viewer {
+      margin-left: 26%;
+      height: 400px;
+    }
+
+    #utils-content {
+      width: 100%;
+      height: 100%;
+      font-family: monospace;
+      white-space: pre;
+    }
+    .folder { cursor: pointer; font-weight: bold; }
+    .file { cursor: pointer; margin-left: 15px; }
+
+    #copy-btn {
+      margin-bottom: 5px;
+      padding: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    #copy-btn:hover {
+      background: #45a049;
+    }
+
+    /* Toast container */
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    /* Toast message */
+    .toast {
+      background: #333;
+      color: white;
+      padding: 10px 20px;
+      margin-top: 5px;
+      border-radius: 5px;
+      font-size: 14px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s, transform 0.5s;
+    }
+
+    /* Visible state */
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Cambia el color de fondo de las textarea de solo lectura */ 
+    textarea[readonly] {
+      background-color: #f4f4f4; /* gris claro */
+      color: #333;              /* texto más oscuro */
+      border: 1px solid #ccc;
+    }
+
+    /* Cambia el color de fondo de los text de solo lectura */ 
+    input[readonly] {
+       background-color: #fff8dc; /* palido, tipo bloc de notas */
+    }
+
+  </style>
+  
+  
+  <!DOCTYPE html>
+  <html lang="es">
+  <head>
+  <meta charset="UTF-8">
+  <title>Juez Virtual</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0; }
+
+    /* Botón flotante */
+    .floating-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #0056b3;
+      color: white;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 16px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      z-index: 10000;
+    }
+    .floating-btn:hover { background-color: #004494; }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+    }
+    .modal-content {
+      background: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-height: 80%;
+      overflow-y: auto;
+    }
+    .close {
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    pre {
+      background: #eee;
+      padding: 10px;
+      border-radius: 5px;
+      position: relative;
+      overflow-x: auto;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 5px; right: 5px;
+      background: #444;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    .copy-btn:hover { background: #222; }
+  </style>
+  </head>
+  <body>
+
+  <!-- Botón flotante -->
+  <button class="floating-btn" onclick="openModal()">📘 Reglas</button>
+
+  <!-- Modal -->
+  <div id="reglasModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div id="markdown-content"></div>
+    </div>
+  </div>
+
+  <script>
+  function openModal() {
+    document.getElementById("reglasModal").style.display = "block";
+    fetch("Juez_Virtual_Instructivo.markdown")
+      .then(res => res.text())
+      .then(text => {
+        const html = marked.parse(text);
+        document.getElementById("markdown-content").innerHTML = html;
+        addCopyButtons();
+      });
+  }
+
+  function closeModal() {
+    document.getElementById("reglasModal").style.display = "none";
+  }
+
+  function addCopyButtons() {
+    document.querySelectorAll("pre code").forEach(block => {
+      // Evitar duplicados
+      if (block.parentNode.querySelector(".copy-btn")) return;
+      const button = document.createElement("button");
+      button.innerText = "📋 Copiar";
+      button.className = "copy-btn";
+      button.onclick = () => {
+        navigator.clipboard.writeText(block.innerText);
+        button.innerText = "✅ Copiado!";
+        setTimeout(() => button.innerText = "📋 Copiar", 2000);
+      };
+      block.parentNode.style.position = "relative";
+      block.parentNode.appendChild(button);
+    });
+  }
+  </script>
+
+  </body>
+  </html>
+
+  
+
+  <!-- CodeMirror -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+
+  <!-- Monaco -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+</head>
+<body>
+  <h1>Juez Online</h1>
+
+  <div>
+    <div id="tab-cm" class="tab active" onclick="switchEditor('cm')">Editor rápido (CodeMirror)</div>
+    <div id="tab-monaco" class="tab" onclick="switchEditor('monaco')">Editor avanzado (Monaco)</div>
+  </div>
+
+  <p id="monaco-warning" style="color:red; display:none;">
+    ⚠️ El editor Monaco es más pesado, puede tardar unos segundos en cargar.
+  </p>
+
+  <label id="lblProblemId">Id del Problema:</label>
+  <input type="text" id="txtProblemId" style="width: 40px;" required minlength="1" readonly>
+  <span>
+    <label for="selectProblem">Seleccione el problema:</label>
+    <select id="selectProblem">
+      <option value="">-- Seleccione --</option>
+    </select>
+  </span>
+  <br><br>
+
+  <label id="lblStudentId">Id del Estudiante:</label>
+  <input type="text" id="txtStudentId" style="width: 100px;" required minlength="1" readonly>
+  <span>
+    <label for="selectStudent">O selecciona tu nombre:</label>
+    <select id="selectStudent">
+      <option value="">-- Selecciona tu nombre --</option>
+    </select>
+  </span>
+  <br><br>
+  
+  <label for="txtProblemDesc">Descripción del problema:</label><br>
+  <textarea id="txtProblemDesc" rows="10" cols="100" readonly></textarea>
+  <span>
+  <label for="selectInput">Seleccione dataset:</label>
+  <select id="selectInput">
+    <option value="">-- Seleccione un dataset --</option>
+  </select>
+  </span>
+  
+  <div id="utils-panel">
+    <h3>📂 <strong><i>UTILITARIOS PARA REFERENCIA DE SINTAXIS E INSTRUCCIONES EN C#</i></strong></h3>
+    <div id="utils-tree"></div>
+  </div>
+
+  <div id="utils-viewer">
+    <h3>📄 Contenido del archivo en <strong>Utilitarios</strong></h3>
+    <button id="copy-btn">📋 Copiar al portapapeles</button>
+    <textarea id="utils-content" readonly></textarea>
+  </div>
+
+  <div class="editor-container">
+    <textarea id="code-cm">using System;
+using System.Linq; // Para utilizar poder Linq
+using System.Collections.Generic; // Para poder trabajar con listas, diccionarios, etc.
+
+// Ejemplo para ser probado en CodeMirror (con entrada desde teclado).
+class Program
+{
+    static void Main()
+    {
+        string val;
+        while (!string.IsNullOrEmpty(val = Console.ReadLine()))
+        {
+            Console.WriteLine($"valor enviado={val}");
+        }
+        Console.WriteLine("Hola CodeMirror!");
+    }
+}
+</textarea>
+    <div id="monaco-container"></div>
+  </div>
+
+  <br>
+  <label for="stdin">Entrada (stdin):</label><br>
+  <textarea id="stdin" rows="15" cols="80" style="width: 100%;"></textarea>
+
+  <button type="button" onclick="runJudge0()">Ejecutar (En Juez de<br>Prueba, no acepta caracteres<br>especiales)</button>
+  <button type="button" onclick="runOfficial()">Enviar (En Juez Oficial,<br>acepta caracteres especiales y<br><strong>es el que vale para el contest</strong>)</button>
+
+  <div id="output" class="result"></div>
+
+  <script>
+    const JUDGE0_URL = "https://ce.judge0.com/submissions?base64_encoded=false&wait=true";
+
+    // === Inicializar CodeMirror ===
+    const cmEditor = CodeMirror.fromTextArea(document.getElementById("code-cm"), {
+      lineNumbers: true,
+      mode: "text/x-csharp",
+      theme: "default"
+    });
+
+    // === Inicializar Monaco ===
+    let monacoEditor = null;
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+    require(["vs/editor/editor.main"], function () {
+      monacoEditor = monaco.editor.create(document.getElementById('monaco-container'), {
+        value: `using System;\nusing System.Linq; // Para utilizar poder Linq\nusing System.Collections.Generic; // Para poder trabajar con listas, diccionarios, etc.\n\n// Ejemplo para ser probado en Monaco (con entrada desde teclado).\nclass Program\n{\n    static void Main()\n    {\n        string val;\n        while (!string.IsNullOrEmpty(val = Console.ReadLine()))\n        {\n            Console.WriteLine($"Valor enviado={val}");\n        }\n        Console.WriteLine("Hola Monaco!");\n    }\n}\n`,
+        language: "csharp",
+        theme: "vs-light",
+        automaticLayout: true
+      });
+    });
+    
+    
+    // ----------- Guardar lo que selecciono el alumno, si se recarga la pagina.
+    // ------------El trabajo del estudiante, siempre se recupera aunque algo falle 
+    function storageKey() {
+      const student = document.getElementById("txtStudentId").value || "anon";
+      const problem = document.getElementById("selectProblem").value || "noprob";
+      return `codigo_${student}_p${problem}`;
+    }
+
+    // Guardar
+    cmEditor.on("change", () => {
+      if (document.getElementById("tab-cm").classList.contains("active")) {
+        localStorage.setItem(storageKey(), cmEditor.getValue());
+      }
+    });
+    if (monacoEditor) {
+      monacoEditor.onDidChangeModelContent(() => {
+        if (document.getElementById("tab-monaco").classList.contains("active")) {
+          localStorage.setItem(storageKey(), monacoEditor.getValue());
+        }
+      });
+    }
+
+    // Restaurar
+    window.addEventListener("load", () => {
+      const saved = localStorage.getItem(storageKey());
+      if (saved) {
+        cmEditor.setValue(saved);
+        if (monacoEditor) monacoEditor.setValue(saved);
+      }
+    });
+
+    // === Cambiar editor ===
+    function switchEditor(type) {
+      document.getElementById("tab-cm").classList.remove("active");
+      document.getElementById("tab-monaco").classList.remove("active");
+      if (type === "cm") {
+        document.getElementById("tab-cm").classList.add("active");
+        document.getElementById("monaco-container").style.display = "none";
+        document.getElementById("monaco-warning").style.display = "none";
+        cmEditor.getWrapperElement().style.display = "block";
+      } else {
+        document.getElementById("tab-monaco").classList.add("active");
+        document.getElementById("monaco-container").style.display = "block";
+        document.getElementById("monaco-warning").style.display = "block";
+        cmEditor.getWrapperElement().style.display = "none";
+      }
+    }
+
+    function getCurrentCode() {
+      if (document.getElementById("tab-cm").classList.contains("active")) {
+        return cmEditor.getValue();
+      } else {
+        return monacoEditor ? monacoEditor.getValue() : "";
+      }
+    }
+
+    async function runJudge0() {
+      const code = getCurrentCode();
+      let stdin = document.getElementById('stdin').value;
+
+      // 🔹 Normalizar la entrada
+      stdin = stdin.replace(/^\uFEFF/, "");  // quitar BOM
+      stdin = stdin.replace(/\r\n/g, "\n");  // CRLF → LF
+      stdin = stdin.replace(/\r/g, "\n");    // CR sueltos → LF
+
+      if (!code.trim()) {
+        showMessage("⚠️ El código está vacío, no se puede enviar a Judge0.", "err");
+        return;
+      }
+
+      showMessage("⏳ Ejecutando en Judge0...", "warn");
+
+      function toBase64(str) {
+        return btoa(unescape(encodeURIComponent(str)));
+      }
+
+      function fromBase64(b64) {
+        try {
+          // Decodificar base64 → bytes
+          const binary = atob(b64);
+          const bytes = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+          }
+          // Interpretar como UTF-8
+          return new TextDecoder("utf-8").decode(bytes);
+        } catch (e) {
+          console.error("Error decodificando base64:", e, "input:", b64);
+          return b64; // fallback: mostrar crudo
+        }
+      }
+
+      try {
+        const response = await fetch(JUDGE0_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            source_code: code,
+            language_id: 51, // ⚡ revisa si tu instancia usa este ID para C#
+            stdin: stdin
+          })
+        });
+
+        // 👇 Verificar primero si Judge0 respondió bien
+        if (!response.ok) {
+          const errText = await response.text();
+          showMessage("❌ Judge0 devolvió " + response.status + ":\n" + errText, "err");
+          return;
+        }
+
+        const result = await response.json();
+        console.log("Respuesta Judge0:", result);
+
+        // 🔹 Decodificar stdout / stderr / compile_output si existen
+        const stdout = result.stdout ? result.stdout : "";
+        const stderr = result.stderr ? result.stderr : "";
+        const compile_output = result.compile_output ? result.compile_output : "";
+
+        if (stderr || compile_output) {
+          showMessage("❌ Error:\n" + (stderr || compile_output), "err");
+        } else {
+          showMessage("✅ Salida:\n" + stdout +
+                      "\n\nEstado: " + (result.status?.description || "??"), "ok");
+        }
+      } catch (err) {
+        showMessage("⚠️ Error al conectar con Judge0:\n" + err, "err");
+      }
+    }
+
+    async function runOfficial() {
+      const problemId = document.getElementById('txtProblemId').value;
+      if (problemId.trim() === '') {
+          alert('Por favor, introduce el identificador de la pregunta.');
+          campo.focus();
+          return ;
+      }
+      
+      const studentId = document.getElementById('txtStudentId').value;
+      if (studentId.trim() === '') {
+          alert('Por favor, introduce el identificador del estudiante.');
+          campo.focus();
+          return ;
+      }
+      
+      const code = getCurrentCode();
+      const stdin = document.getElementById('stdin').value;
+
+      showMessage("⏳ Enviando a servidor oficial...", "warn");
+
+      try {
+        const formData = new FormData();
+        const blob = new Blob([code], { type: "text/plain" });
+        formData.append("code", blob, "solucion.cs");
+        formData.append("stdin", stdin);
+        formData.append("problemId", problemId); // 🔥 agregado el identificador de pregunta o problema
+        formData.append("studentId", studentId); // 🔥 agregado el identificador del estudiante 
+
+        
+        
+        //const response = await fetch("https://130edefab1ce.ngrok-free.app/compile-run", {
+        const response = await fetch("/compile-run", {
+          method: "POST",
+          body: formData
+        });
+
+        let result;
+        if (!response.ok) {
+           // 💥 Caso error → leer como texto plano
+           const errorText = await response.text();
+           showMessage("❌ Error del servidor:\n" + errorText, "err");
+           return;
+        } else {
+           // ✅ Caso OK → leer como JSON
+           result = await response.json();
+        }
+        
+        // === Manejo de compilación ===
+        if (result.build !== "build:ok") {
+          showMessage(
+            "❌ Errores de compilación:\n" + (result.buildLog || "Sin detalles"),
+            "err"
+          );
+          return;
+        }
+
+        // === Manejo de ejecución ===
+        if (result.run !== "run:ok") {
+          showMessage(
+            "❌ Error en ejecución:\n" +
+            (result.runLog || "Sin detalles") +
+            (result.stderrRaw ? "\nSTDERR:\n" + result.stderrRaw : "") + 
+            "\n📝 Summary: " + (result.summary),
+            "err"
+          );
+          return;
+        }
+
+        // === Ejecución exitosa ===
+        showMessage(
+          "✅ Ejecución exitosa\n\nSalida:\n" + (result.runLog || "") +
+          "\n\n⏱ Tiempo: " + (result.time || "-") +
+          "\n💾 Memoria: " + (result.memKb || "-") + " KB" +
+          "\n📝 Summary: " + (result.summary),
+          "ok"
+        );
+
+      } catch (err) {
+        showMessage("⚠️ No se pudo conectar al servidor oficial:\n" + err, "err");
+      }
+    }
+
+
+    function showMessage(msg, type) {
+      const out = document.getElementById("output");
+      out.className = "result " + type;
+      out.textContent = msg;
+    }
+  </script>
+  
+  <script>
+    async function loadStudents() {
+      try {
+        const response = await fetch("/students");
+        const estudiantes = await response.json();
+
+        const select = document.getElementById("selectStudent");
+        estudiantes.forEach(est => {
+          const opt = document.createElement("option");
+          opt.value = est.studentId;     // número de registro
+          opt.textContent = est.name;    // nombre visible
+          select.appendChild(opt);
+        });
+
+        // 🔥 Cuando cambie el select → copiar el valor al input
+        select.addEventListener("change", () => {
+          const selectedValue = select.value;
+          if (selectedValue) {
+            document.getElementById("txtStudentId").value = selectedValue;
+          }
+        });
+
+      } catch (err) {
+        console.error("Error cargando estudiantes:", err);
+      }
+    }
+
+
+    // Cargar al inicio
+    loadStudents();
+  </script>
+  
+  <script>
+    async function loadProblems() {
+      try {
+        const response = await fetch("/contest/questions");
+        const problemas = await response.json();
+
+        const select = document.getElementById("selectProblem");
+        problemas.forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = p.titulo;
+          select.appendChild(opt);
+        });
+
+        // Cuando selecciona un problema, obtener enunciado
+        select.addEventListener("change", async () => {
+            const id = select.value;
+            if (!id) {
+              document.getElementById("txtProblemDesc").value = "";
+              return;
+            }
+
+            try {
+              //const response = await fetch(`/questions/${id}/desc`);
+              //const data = await response.json();
+              //document.getElementById("txtProblemDesc").value = data.text;
+              const response = await fetch(`/questions/${id}/desc`);
+              const data = await response.json();
+
+              // 1) 👇 Aquí se usa, directamente, el objeto que devuelve el backend
+              document.getElementById("txtProblemId").value = data.id;  // Con este nombre  ("id"), se definio en el backend
+              document.getElementById("txtProblemDesc").value = data.text;  // Con este nombre  ("id"), se definio en el backend
+              
+              // 2) 👇 Aquí se cargan datasets (inputs) de ese problema
+              await loadInputs(id);
+                      
+            } catch (err) {
+              console.error("Error cargando enunciado:", err);
+            }
+          });
+        } catch (err) {
+          console.error("Error cargando problemas:", err);
+      }
+    }
+
+    // Cargar al inicio
+    loadProblems();
+  </script>
+
+  <script>
+    async function loadInputs(problemId) {
+      const select = document.getElementById("selectInput");
+      select.innerHTML = "<option value=''>-- Seleccione un dataset --</option>";
+
+      try {
+        const response = await fetch(`/problems/${problemId}/inputs`);
+        if (!response.ok) {
+          console.error("Error cargando inputs:", await response.text());
+          return;
+        }
+        const archivos = await response.json();
+        archivos.forEach(a => {
+          const opt = document.createElement("option");
+          opt.value = a;
+          opt.textContent = a;
+          select.appendChild(opt);
+        });
+
+        // evento: cuando selecciona un dataset
+        select.addEventListener("change", async () => {
+          const archivo = select.value;
+          if (!archivo) return;
+
+          try {
+            const r = await fetch(`/problems/${problemId}/input/${archivo}`);
+            const contenido = await r.text();
+            document.getElementById("stdin").value = contenido;
+          } catch (err) {
+            console.error("Error cargando contenido:", err);
+          }
+        });
+
+      } catch (err) {
+        console.error("Error:", err);
+      }
+    }
+    </script>
+    
+    <script>
+      /*
+      Al abrir index.html: se descarga /utils/tree (solo la primera vez).
+      1. - El alumno ve un explorador de carpetas.
+      2. - Puede expandir/cerrar carpetas.
+      3. - Al hacer clic en un archivo → se abre el código en el textarea, listo para copiar/pegar.
+  `   4. - Todo queda cacheado en IndexedDB → si se abre de nuevo, no hace otra request al servidor.
+      */
+      // --- IndexedDB Helper ---
+      const DB_NAME = "UtilsDB";
+      const DB_STORE = "files";
+      function openDB() {
+        return new Promise((resolve, reject) => {
+          const req = indexedDB.open(DB_NAME, 1);
+          req.onupgradeneeded = () => req.result.createObjectStore(DB_STORE);
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      }
+      async function cachePut(key, value) {
+        const db = await openDB();
+        const tx = db.transaction(DB_STORE, "readwrite");
+        tx.objectStore(DB_STORE).put(value, key);
+      }
+      async function cacheGet(key) {
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(DB_STORE, "readonly");
+          const req = tx.objectStore(DB_STORE).get(key);
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      }
+
+      // --- Render tree ---
+      function renderTree(node, container, isRoot = false) {
+        if (node.type === "dir") {
+          const div = document.createElement("div");
+          div.className = "folder";
+          div.textContent = "📂 " + node.name;
+          container.appendChild(div);
+
+          const children = document.createElement("div");
+          children.style.marginLeft = "15px";
+          // 👇 Si es el directorio raíz → expandido, si no → oculto
+          children.style.display = isRoot ? "block" : "none";
+          container.appendChild(children);
+
+          div.onclick = () => {
+            children.style.display = children.style.display === "none" ? "block" : "none";
+          };
+
+          node.children.forEach(child => renderTree(child, children));
+        } else if (node.type === "file") {
+          const div = document.createElement("div");
+          div.className = "file";
+          div.textContent = "📄 " + node.name;
+          div.onclick = () => loadFile(node.path);
+          container.appendChild(div);
+        }
+      }
+
+
+      // --- Load file (with cache) ---
+      async function loadFile(path) {
+        let content = await cacheGet(path);
+        if (!content) {
+          const res = await fetch(`/utils/file/${path}`);
+          if (!res.ok) {
+            alert("No se pudo cargar " + path);
+            return;
+          }
+          content = await res.text();
+          await cachePut(path, content);
+        }
+        document.getElementById("utils-content").value = content;
+      }
+
+      // --- Init ---
+      async function initUtils() {
+        try {
+          let tree = await cacheGet("tree");
+          if (!tree) {
+            const res = await fetch("/utils/tree");
+            tree = await res.json();
+            await cachePut("tree", tree);
+          }
+          
+          const container = document.getElementById("utils-tree");
+          container.innerHTML = "";
+          renderTree(tree, container, true); // 👈 el raíz expandido
+
+        } catch (err) {
+          console.error("Error cargando utilitarios:", err);
+        }
+      }
+      initUtils();
+      </script>
+
+      <script>
+        /*
+        - Al copiar código → aparece un toast verde ✅ confirmando.
+        - Si no hay contenido → un toast naranja ⚠️.
+        - Si ocurre un error → un toast rojo ❌.
+        - Todos se desvanecen solos después de 3 segundos.
+        */
+        // Mostrar toast
+        function showToast(message, type = "info") {
+          const container = document.getElementById("toast-container");
+          const toast = document.createElement("div");
+          toast.className = "toast";
+          toast.textContent = message;
+
+          // Color según tipo
+          if (type === "success") toast.style.background = "#4caf50";
+          if (type === "error") toast.style.background = "#f44336";
+          if (type === "warn") toast.style.background = "#ff9800";
+
+          container.appendChild(toast);
+
+          // Mostrar
+          setTimeout(() => toast.classList.add("show"), 50);
+
+          // Ocultar y eliminar
+          setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => toast.remove(), 500);
+          }, 3000);
+        }
+
+        // Copiar al portapapeles con toast
+        document.getElementById("copy-btn").addEventListener("click", async () => {
+          const textarea = document.getElementById("utils-content");
+          if (!textarea.value.trim()) {
+            showToast("⚠️ No hay contenido para copiar.", "warn");
+            return;
+          }
+          try {
+            await navigator.clipboard.writeText(textarea.value);
+            showToast("✅ Código copiado al portapapeles.", "success");
+          } catch (err) {
+            console.error("Error al copiar:", err);
+            showToast("❌ No se pudo copiar el contenido.", "error");
+          }
+        });
+        </script>
+
+      <div id="toast-container"></div>
+</body>
+</html>
+

@@ -1,0 +1,2 @@
+El camino más corto de Rodrigo a Sandra es: Rodrigo -> Lorena -> Sandra
+Número de conexiones: 2

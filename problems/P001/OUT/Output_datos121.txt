@@ -1,0 +1,2 @@
+El camino más corto de Ricardo a Yolanda es: Ricardo -> Alicia -> Yolanda
+Número de conexiones: 2

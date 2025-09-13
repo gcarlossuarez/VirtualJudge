@@ -1,0 +1,2 @@
+El camino más corto de Ricardo a Aurelio es: Ricardo -> Inés -> Aurelio
+Número de conexiones: 2

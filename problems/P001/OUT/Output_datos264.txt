@@ -1,0 +1,2 @@
+El camino más corto de Daniel a Daniela es: Daniel -> Daniela
+Número de conexiones: 1

@@ -1,0 +1,2 @@
+El camino más corto de Lorena a Mario es: Lorena -> Pedro -> Mario
+Número de conexiones: 2

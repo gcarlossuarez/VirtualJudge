@@ -1,0 +1,2 @@
+El camino más corto de Ricardo a Alicia es: Ricardo -> Enrique -> Alicia
+Número de conexiones: 2

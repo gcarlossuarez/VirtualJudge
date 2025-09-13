@@ -1,0 +1,2 @@
+El camino más corto de Rafael a Aurelio es: Rafael -> Aurelio
+Número de conexiones: 1

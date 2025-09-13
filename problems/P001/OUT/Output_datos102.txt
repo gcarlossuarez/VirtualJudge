@@ -1,0 +1,2 @@
+El camino más corto de Valentín a Carmen es: Valentín -> Víctor -> Carmen
+Número de conexiones: 2

@@ -1,0 +1,2 @@
+El camino más corto de Joaquín a Marcos es: Joaquín -> Javier -> Marcos
+Número de conexiones: 2

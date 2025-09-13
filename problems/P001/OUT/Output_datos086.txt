@@ -1,0 +1,2 @@
+El camino más corto de Pedro a Ángel es: Pedro -> Ángel
+Número de conexiones: 1

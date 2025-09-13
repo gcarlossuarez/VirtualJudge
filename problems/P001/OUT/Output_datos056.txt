@@ -1,0 +1,2 @@
+El camino más corto de Gonzalo a Camila es: Gonzalo -> Rubí -> Camila
+Número de conexiones: 2

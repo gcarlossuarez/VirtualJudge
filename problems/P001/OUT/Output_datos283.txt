@@ -1,0 +1,2 @@
+El camino más corto de Joaquín a Mauricio es: Joaquín -> Antonio -> Mauricio
+Número de conexiones: 2

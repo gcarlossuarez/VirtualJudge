@@ -1,0 +1,2 @@
+El camino más corto de Lidia a Valentín es: Lidia -> Valentín
+Número de conexiones: 1

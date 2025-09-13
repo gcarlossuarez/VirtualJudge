@@ -1,0 +1,2 @@
+El camino más corto de Vicente a Clara es: Vicente -> Clara
+Número de conexiones: 1

@@ -1,0 +1,2 @@
+El camino más corto de Joaquín a Gerardo es: Joaquín -> David -> Gerardo
+Número de conexiones: 2

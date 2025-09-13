@@ -1,0 +1,2 @@
+El camino más corto de Beatriz a Lucía es: Beatriz -> Roberto -> Lucía
+Número de conexiones: 2

@@ -1,0 +1,2 @@
+El camino más corto de Ángel a Pablo es: Ángel -> Andrés -> Pablo
+Número de conexiones: 2

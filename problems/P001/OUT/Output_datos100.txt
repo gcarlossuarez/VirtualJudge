@@ -1,0 +1,2 @@
+El camino más corto de Luis a Patricia es: Luis -> Sergio -> Patricia
+Número de conexiones: 2

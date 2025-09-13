@@ -1,0 +1,2 @@
+El camino más corto de Héctor a Inés es: Héctor -> Inés
+Número de conexiones: 1

@@ -1,0 +1,2 @@
+El camino más corto de Nicolás a Verónica es: Nicolás -> Verónica
+Número de conexiones: 1

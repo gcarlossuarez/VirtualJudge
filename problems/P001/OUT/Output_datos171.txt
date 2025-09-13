@@ -1,0 +1,2 @@
+El camino más corto de Elena a Andrea es: Elena -> Andrea
+Número de conexiones: 1

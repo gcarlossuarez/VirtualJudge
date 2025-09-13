@@ -1,0 +1,2 @@
+El camino más corto de Pablo a Clara es: Pablo -> Camila -> Clara
+Número de conexiones: 2

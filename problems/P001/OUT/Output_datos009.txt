@@ -1,0 +1,2 @@
+El camino más corto de Patricia a Jorge es: Patricia -> Mauricio -> Jorge
+Número de conexiones: 2

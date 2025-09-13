@@ -1,0 +1,2 @@
+El camino más corto de Hugo a Marcos es: Hugo -> Julio -> Marcos
+Número de conexiones: 2

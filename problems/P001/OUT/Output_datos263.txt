@@ -1,0 +1,2 @@
+El camino más corto de Óscar a Verónica es: Óscar -> Verónica
+Número de conexiones: 1

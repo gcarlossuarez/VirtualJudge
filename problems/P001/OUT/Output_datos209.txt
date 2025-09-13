@@ -1,0 +1,2 @@
+El camino más corto de Camila a Rodrigo es: Camila -> Rodrigo
+Número de conexiones: 1

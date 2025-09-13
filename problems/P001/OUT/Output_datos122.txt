@@ -1,0 +1,2 @@
+El camino más corto de Teresa a Vicente es: Teresa -> Bruno -> Vicente
+Número de conexiones: 2

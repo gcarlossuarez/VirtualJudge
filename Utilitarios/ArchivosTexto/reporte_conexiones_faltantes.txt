@@ -1,0 +1,3 @@
+Reporte de Conexiones Faltantes:
+La computadora 1 (Servidor Principal, Usuario: Juan) no está conectada con la computadora 4 (Escritorio 3, Usuario: José).
+La computadora 2 (Escritorio 1, Usuario: Ana) no está conectada con la computadora 4 (Escritorio 3, Usuario: José).

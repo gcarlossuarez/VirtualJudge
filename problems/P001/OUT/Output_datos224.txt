@@ -1,0 +1,2 @@
+El camino más corto de Vicente a Sara es: Vicente -> Sara
+Número de conexiones: 1

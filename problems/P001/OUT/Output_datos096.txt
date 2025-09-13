@@ -1,0 +1,2 @@
+El camino más corto de Mateo a Héctor es: Mateo -> Emilio -> Héctor
+Número de conexiones: 2

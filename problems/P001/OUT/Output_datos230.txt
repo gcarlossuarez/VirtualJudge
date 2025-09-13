@@ -1,0 +1,2 @@
+El camino más corto de Rafael a Camila es: Rafael -> Natalia -> Camila
+Número de conexiones: 2

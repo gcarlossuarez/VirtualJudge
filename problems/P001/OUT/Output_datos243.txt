@@ -1,0 +1,2 @@
+El camino más corto de Inés a Mateo es: Inés -> Leonardo -> Mateo
+Número de conexiones: 2

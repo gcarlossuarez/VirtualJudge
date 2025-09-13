@@ -1,0 +1,2 @@
+El camino más corto de Hugo a Nuria es: Hugo -> Nuria
+Número de conexiones: 1

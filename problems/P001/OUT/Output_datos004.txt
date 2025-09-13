@@ -1,0 +1,2 @@
+El camino más corto de Mateo a Rodrigo es: Mateo -> Rodrigo
+Número de conexiones: 1

@@ -1,0 +1,2 @@
+El camino más corto de Juan a Lidia es: Juan -> Lidia
+Número de conexiones: 1

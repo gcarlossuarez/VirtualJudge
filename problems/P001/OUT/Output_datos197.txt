@@ -1,0 +1,2 @@
+El camino más corto de Carolina a Francisco es: Carolina -> Francisco
+Número de conexiones: 1

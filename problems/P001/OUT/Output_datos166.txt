@@ -1,0 +1,2 @@
+El camino más corto de Mariana a Rodrigo es: Mariana -> Rodrigo
+Número de conexiones: 1

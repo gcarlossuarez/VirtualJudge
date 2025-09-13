@@ -1,0 +1,2 @@
+El camino más corto de Esteban a Mario es: Esteban -> Alejandro -> Mario
+Número de conexiones: 2

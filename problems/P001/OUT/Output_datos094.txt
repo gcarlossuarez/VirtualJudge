@@ -1,0 +1,2 @@
+El camino más corto de Martín a Gabriel es: Martín -> Alicia -> Gabriel
+Número de conexiones: 2

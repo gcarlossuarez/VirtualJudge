@@ -1,0 +1,2 @@
+El camino más corto de Francisco a Vicente es: Francisco -> Diego -> Vicente
+Número de conexiones: 2

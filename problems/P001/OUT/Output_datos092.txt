@@ -1,0 +1,2 @@
+El camino más corto de Claudia a Daniela es: Claudia -> José -> Daniela
+Número de conexiones: 2

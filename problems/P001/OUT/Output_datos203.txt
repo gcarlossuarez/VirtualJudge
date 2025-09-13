@@ -1,0 +1,2 @@
+El camino más corto de Daniel a Gerardo es: Daniel -> Gonzalo -> Gerardo
+Número de conexiones: 2

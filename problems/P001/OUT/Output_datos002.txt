@@ -1,0 +1,2 @@
+El camino más corto de Leonardo a Teresa es: Leonardo -> Andrés -> Teresa
+Número de conexiones: 2

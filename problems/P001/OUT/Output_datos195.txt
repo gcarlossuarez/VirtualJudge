@@ -1,0 +1,2 @@
+El camino más corto de Cristian a Vicente es: Cristian -> José -> Vicente
+Número de conexiones: 2

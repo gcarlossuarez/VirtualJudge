@@ -1,0 +1,2 @@
+El camino más corto de Lucía a Patricia es: Lucía -> Patricia
+Número de conexiones: 1

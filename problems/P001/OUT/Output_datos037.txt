@@ -1,0 +1,2 @@
+El camino más corto de Alejandro a Sara es: Alejandro -> Sara
+Número de conexiones: 1

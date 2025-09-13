@@ -1,0 +1,2 @@
+El camino más corto de José a Andrea es: José -> Pablo -> Andrea
+Número de conexiones: 2

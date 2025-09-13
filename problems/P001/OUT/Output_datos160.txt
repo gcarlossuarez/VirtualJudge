@@ -1,0 +1,2 @@
+El camino más corto de Óscar a Carmen es: Óscar -> Vicente -> Carmen
+Número de conexiones: 2

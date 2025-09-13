@@ -1,0 +1,2 @@
+El camino más corto de Vanessa a Rosa es: Vanessa -> Rosa
+Número de conexiones: 1

@@ -1,0 +1,2 @@
+El camino más corto de Valentín a Andrea es: Valentín -> José -> Andrea
+Número de conexiones: 2

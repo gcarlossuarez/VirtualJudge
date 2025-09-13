@@ -1,0 +1,2 @@
+El camino más corto de Rosa a Bruno es: Rosa -> Bruno
+Número de conexiones: 1

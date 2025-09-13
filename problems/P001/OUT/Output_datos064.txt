@@ -1,0 +1,2 @@
+El camino más corto de Sergio a Verónica es: Sergio -> Rosa -> Verónica
+Número de conexiones: 2

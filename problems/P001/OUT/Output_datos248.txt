@@ -1,0 +1,2 @@
+El camino más corto de Sofía a Rafael es: Sofía -> Rafael
+Número de conexiones: 1
