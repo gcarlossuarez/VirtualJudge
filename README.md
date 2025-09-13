@@ -118,7 +118,4 @@ Feel free to use it for educational or research purposes.
 ## 🌐 Author
 👤 **German Carlos Suarez**  
 🔗 [LinkedIn Profile](https://www.linkedin.com/in/...)
-=======
 
-
->>>>>>> 8177d54 (Update README)
