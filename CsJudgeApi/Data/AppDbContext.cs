@@ -36,6 +36,16 @@ public class AppDbContext : DbContext
             .HasOne(p => p.Contest)
             .WithMany(c => c.Questions)
             .HasForeignKey(p => p.ContestId);
+
+        // PK compuesta en ContestLanguage
+        modelBuilder.Entity<ContestLanguage>()
+        .HasKey(cl => new { cl.ContestId, cl.Language });
+
+        // Relación Contest <-> ContestLanguage
+        modelBuilder.Entity<ContestLanguage>()
+            .HasOne(cl => cl.Contest)
+            .WithMany(c => c.Languages)
+            .HasForeignKey(cl => cl.ContestId);
     }
 }
 

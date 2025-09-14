@@ -10,6 +10,8 @@ public class Question
     public string Path { get; set; } = string.Empty;
 
     public string FullPathValidatorSourceCode { get; set; } = string.Empty;
+
+    public int? TimeLimitSeconds { get; set; }
     
     public int ContestId { get; set; }
     public Contest Contest { get; set; } = null!;

@@ -8,6 +8,9 @@ public class Contest
     public int ContestId { get; set; }
     public DateTime Date { get; set; }
 
+    // Relaciona los contests con los lenguajes que soporta
+    public List<ContestLanguage> Languages { get; set; } = new();
+
     // Relación con estudiantes
     public ICollection<ContestStudent> Students { get; set; } = new List<ContestStudent>();
 

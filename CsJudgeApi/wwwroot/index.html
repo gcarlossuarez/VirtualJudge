@@ -238,6 +238,51 @@
 <body>
   <h1>Juez Online</h1>
 
+  <label for="selectLanguage">Lenguaje:</label>
+  <select id="selectLanguage">
+    <option value="csharp">C#</option>
+    <option value="cpp">C++</option>
+    <!-- futuro: <option value="python">Python</option> -->
+  </select>
+  <br><br>
+
+  <script>
+    // ⚡ Mapear lenguaje elegido → configuración de editores + Judge0
+      const LANG_CONFIG = {
+        csharp: {
+          codemirror: "text/x-csharp",
+          monaco: "csharp",
+          judge0: 51,   // ⚠️ C# (Mono / .NET Core) → revisa en tu instancia Judge0
+          filename: "solucion.cs"
+        },
+        cpp: {
+          codemirror: "text/x-c++src",
+          monaco: "cpp",
+          judge0: 54,   // ⚠️ C++ (GCC 9.2.0) → revisa ID en tu instancia Judge0
+          filename: "solucion.cpp"
+        }
+        // 🔥 después puedes agregar Python, Java, etc.
+      };
+
+      function getSelectedLang() {
+        const val = document.getElementById("selectLanguage").value;
+        return LANG_CONFIG[val] || LANG_CONFIG.csharp;
+      }
+
+      document.getElementById("selectLanguage").addEventListener("change", () => {
+      const cfg = getSelectedLang();
+
+      // Actualizar CodeMirror
+      cmEditor.setOption("mode", cfg.codemirror);
+
+      // Actualizar Monaco
+      if (monacoEditor) {
+        monaco.editor.setModelLanguage(monacoEditor.getModel(), cfg.monaco);
+      }
+    });
+
+  </script>
+
   <div>
     <div id="tab-cm" class="tab active" onclick="switchEditor('cm')">Editor rápido (CodeMirror)</div>
     <div id="tab-monaco" class="tab" onclick="switchEditor('monaco')">Editor avanzado (Monaco)</div>
@@ -439,7 +484,7 @@ class Program
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             source_code: code,
-            language_id: 51, // ⚡ revisa si tu instancia usa este ID para C#
+            language_id: getSelectedLang().judge0,
             stdin: stdin
           })
         });
@@ -493,7 +538,8 @@ class Program
       try {
         const formData = new FormData();
         const blob = new Blob([code], { type: "text/plain" });
-        formData.append("code", blob, "solucion.cs");
+        formData.append("code", blob, getSelectedLang().filename);
+        formData.append("language", document.getElementById("selectLanguage").value);
         formData.append("stdin", stdin);
         formData.append("problemId", problemId); // 🔥 agregado el identificador de pregunta o problema
         formData.append("studentId", studentId); // 🔥 agregado el identificador del estudiante 
