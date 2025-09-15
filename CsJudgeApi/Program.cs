@@ -443,7 +443,6 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
         proc.WaitForExit(120_000);
 
         // 🔹 Recoger salida generada en OUT
-        // 🔹 Recoger salida generada en OUT
         var runLogPath = Path.Combine(outDir, "run.log");
         string runLog = File.Exists(runLogPath) ? await File.ReadAllTextAsync(runLogPath) : "No se generó salida.";
 
