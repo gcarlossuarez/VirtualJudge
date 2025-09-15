@@ -20,8 +20,19 @@ ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1 \
 RUN useradd -ms /bin/bash sandbox
 WORKDIR /home/sandbox
 
-# Instalar /usr/bin/time (paquete 'time')
-RUN apt-get update && apt-get install -y --no-install-recommends time \
+# Instalar /usr/bin/time (paquete 'time') y todos los paquetes restantes
+# NOTA. - Por ejemplo, si no se tiene g++ instalado< la instalación de g++ se hace una sola vez al construir la imagen (docker build).
+# Cuando después se hae docker run ..., el contenedor ya tiene g++ disponible porque viene de la imagen.
+# No se reinstala cada vez que corrés el contenedor 🚀.
+# Ejemplo:
+# construye la imagen (una sola vez o cuando cambies el Dockerfile)
+# docker build -t cs-single-runner .
+# corre un contenedor nuevo basado en esa imagen
+# docker run --rm cs-single-runner ...
+RUN apt-get update && apt-get install -y --no-install-recommends time \ 
+      g++ \         
+      python3 \     
+      openjdk-17-jdk \ 
  && rm -rf /var/lib/apt/lists/*
 
 # Crear plantilla y restaurar durante la build (con red)

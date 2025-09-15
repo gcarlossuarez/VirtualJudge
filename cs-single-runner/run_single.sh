@@ -24,7 +24,11 @@ echo SRC_DIR=$SRC_DIR
 TIME_LIMIT="${2:-6}" # $2 = segundo argumento al script (un número de segundos máximo de ejecución). Si no se pasa, usa 6 como valor por defecto.
 
 # 🔹 VALIDATOR_SRC: ruta al código fuente del validador.
-VALIDATOR_SRC="${3:-}"
+LANGUAGE="${3:-}"
+echo "LANGUAGE=$LANGUAGE"
+
+# 🔹 VALIDATOR_SRC: ruta al código fuente del validador.
+VALIDATOR_SRC="${4:-}"
 echo "VALIDATOR_SRC=$VALIDATOR_SRC"
 
 
@@ -43,24 +47,57 @@ cd /home/sandbox
 ulimit -t "$TIME_LIMIT"   # CPU time (s)
 ulimit -u 256             # procesos/hilos
 
-# Copiar la plantilla (ya restaurada en la build) a una carpeta de trabajo
-rm -rf "$WORK_DIR/proj"
-cp -r /home/sandbox/template/App "$WORK_DIR/proj"
-
-
-# Copiar .cs de entrada
+# Para que funcione bien, si no hay archivos.
+# Ejemplo> si no hay .cs → FILES queda como un array vacío (()).
 shopt -s nullglob
-CS_FILES=("$SRC_DIR"/*.cs)
-if [ ${#CS_FILES[@]} -eq 0 ]; then
-  echo "ERROR: No se encontró ningún .cs en $SRC_DIR"
-  exit 3
-fi
-echo Copiado=$CS_FILES 
-rm -f "$WORK_DIR/proj/Program.cs"
-if [ ${#CS_FILES[@]} -eq 1 ]; then
-  cp "${CS_FILES[0]}" "$WORK_DIR/proj/Program.cs"
+# Evita que CS_FILES=("$SRC_DIR"/*.cs) se llene con un string literal "$SRC_DIR/*.cs" 
+# cuando no hay archivos.
+# En cambio, queda un array vacío y se puede chequear con if [ ${#CS_FILES[@]} -eq 0 ]; then ... fi.
+
+# === Copiar archivos fuente según lenguaje ===
+if [ "$LANGUAGE" = "dotnet" ]; then
+   # Copiar la plantilla (ya restaurada en la build) a una carpeta de trabajo
+   rm -rf "$WORK_DIR/proj"
+   cp -r /home/sandbox/template/App "$WORK_DIR/proj"
+
+   # Copiar .cs de entrada
+   CS_FILES=("$SRC_DIR"/*.cs)
+   if [ ${#CS_FILES[@]} -eq 0 ]; then
+      echo "ERROR: No se encontró ningún .cs en $SRC_DIR"
+      exit 3
+   fi
+   echo Copiado=$CS_FILES 
+
+   # Archivos C#
+   if [ ${#CS_FILES[@]} -eq 1 ]; then
+       cp "${CS_FILES[0]}" "$WORK_DIR/proj/Program.cs"
+   else
+       cp "${CS_FILES[@]}" "$WORK_DIR/proj/"
+   fi
+
+elif [ "$LANGUAGE" = "g++" ]; then
+    # Copiar .cpp de entrada
+    CPP_FILES=("$SRC_DIR"/*.cpp)
+    if [ ${#CPP_FILES[@]} -eq 0 ]; then
+      echo "ERROR: No se encontró ningún .cpp en $SRC_DIR"
+      exit 3
+    fi
+    echo Copiado=$CPP_FILES 
+
+    # Archivos C++
+    if [ ${#CPP_FILES[@]} -eq 1 ]; then
+        cp "${CPP_FILES[0]}" "$WORK_DIR/solucion.cpp"
+    else
+        cp "${CPP_FILES[@]}" "$WORK_DIR/"
+    fi
+
+# 🚩 Aquí se pueden ir sumando más lenguajes
+# elif [ "$LANGUAGE" = "python" ]; then
+#     cp "${PY_FILES[0]}" "$WORK_DIR/solucion.py"
+
 else
-  cp "${CS_FILES[@]}" "$WORK_DIR/proj/"
+    echo "❌ Lenguaje no soportado en copia: $LANGUAGE"
+    exit 1
 fi
 
 BUILD_LOG="$WORK_DIR/build.log"
@@ -68,27 +105,66 @@ RUN_LOG="$WORK_DIR/run.log"
 
 # Compilar SIN restore (offline). No abortar el script si falla la compilación.
 set +e # Para que no aborte en caso de timeout
-( cd "$WORK_DIR/proj" && dotnet build -c Release --nologo --no-restore ) >"$BUILD_LOG" 2>&1
-BUILD_RC=$?
+#( cd "$WORK_DIR/proj" && dotnet build -c Release --nologo --no-restore ) >"$BUILD_LOG" 2>&1
+#BUILD_RC=$?
+
+BUILD_RC=0
+if [ "$LANGUAGE" = "dotnet" ]; then
+    # === Compilar C# ===
+    ( cd "$WORK_DIR/proj" && dotnet build -c Release --nologo --no-restore ) >"$BUILD_LOG" 2>&1
+    BUILD_RC=$?
+
+elif [ "$LANGUAGE" = "g++" ]; then
+    # === Compilar C++ ===
+    ( g++ -O2 -std=c++17 "$WORK_DIR/solucion.cpp" -o "$WORK_DIR/solucion" ) >"$BUILD_LOG" 2>&1
+    BUILD_RC=$?
+
+# 🚩 futuros lenguajes
+# elif [ "$LANGUAGE" = "python" ]; then
+#     # Python no necesita build → marcar como éxito
+#     BUILD_RC=0
+
+else
+    echo "❌ Lenguaje no soportado en compilación: $LANGUAGE"
+    exit 1
+fi
+
 set -e
 
 # Determinar estado de build:
-# - Preferimos "Build succeeded." como indicador robusto.
-# - Evita falsos positivos por "0 Error(s)".
 STATUS_BUILD="error"
-if grep -q "Build succeeded." "$BUILD_LOG"; then
-  STATUS_BUILD="ok"
+if [ "$LANGUAGE" = "dotnet" ]; then
+  # - Preferimos "Build succeeded." como indicador robusto.
+  # - Evita falsos positivos por "0 Error(s)".
+  if grep -q "Build succeeded." "$BUILD_LOG"; then
+    STATUS_BUILD="ok"
+  fi
+elif [ "$LANGUAGE" = "g++" ]; then
+  if [ "$BUILD_RC" -eq 0 ]; then
+    STATUS_BUILD="ok"
+  fi
 fi
+
+
 # Si el retorno fue 0 y no encontramos "Build succeeded.", lo marcamos como ok igualmente.
 if [ "$BUILD_RC" -eq 0 ] && [ "$STATUS_BUILD" != "ok" ]; then
   STATUS_BUILD="ok"
 fi
 
 OUTDIR="$WORK_DIR/proj/bin/Release"
-DLL=$(find "$OUTDIR" -type f -name "*.dll" | head -n1 || true)
+if [ "$LANGUAGE" = "dotnet" ]; then
+    OUTDIR="$WORK_DIR/proj/bin/Release"
+    DLL=$(find "$OUTDIR" -type f -name "*.dll" | head -n1 || true)
+    # EXEC no es un string, es un array → Bash sabe separar el binario dotnet y su argumento (App.dll).
+    EXEC=(dotnet "$DLL")
+elif [ "$LANGUAGE" = "g++" ]; then
+    OUTDIR="$WORK_DIR"
+    EXEC=("$WORK_DIR/solucion")
+fi
 
 
-if [ "$STATUS_BUILD" != "ok" ] || [ -z "${DLL:-}" ]; then
+# Resultado final
+if [ "$STATUS_BUILD" != "ok" ] || [ -z "${EXEC:-}" ]; then
   echo "===BUILD==="; cat "$BUILD_LOG" || true
   echo "===RUN==="; echo "No se generó salida (.dll) - revisar errores de compilación." >"$RUN_LOG"; cat "$RUN_LOG"
   echo "===SUMMARY==="; echo "build:error"; echo "run:error"
@@ -99,12 +175,18 @@ fi
 IN_DIR="$SRC_DIR/IN"
 OUT_DIR="$SRC_DIR/OUT"
 GEN_DIR="$WORK_DIR/proj/gen"
-mkdir "$GEN_DIR"
+if [ "$LANGUAGE" = "dotnet" ]; then
+    GEN_DIR="$WORK_DIR/proj/gen"
+else
+    GEN_DIR="$WORK_DIR/gen"
+fi
+mkdir -p "$GEN_DIR"
 
 STATUS_RUN="ok"
 DETAILS=""
 
 # 🔹 Preparar validador (si existe)
+# NOTA. - El validadro, podria ser siempre en C#. como es nativo del que creo el DataSet, y el problema, no deberia ser un problema el lenguaje del validador
 VALIDATOR_DLL=""
 if [ -n "$VALIDATOR_SRC" ] && [ -f "$VALIDATOR_SRC" ]; then
   echo "Compilando validador desde: $VALIDATOR_SRC (archivo verificado)"
@@ -136,7 +218,12 @@ if [ -d "$IN_DIR" ]; then
 
     # Ejecutar programa del estudiante
     set +e
-    { /usr/bin/time -f "TIME=%E\nMEM=%MKB" timeout "${TIME_LIMIT}s" dotnet "$DLL" < "$infile"; } \
+    # En Bash, cuando se guarda un comando en un array, se lo ejecuta expandiéndolo con:
+    # EXEC=(dotnet /home/sandbox/proj/bin/Release/net8.0/App.dll)
+    # "${EXEC[@]}" arg1 arg2
+    # Esto se expande así:
+    # dotnet /home/sandbox/proj/bin/Release/net8.0/App.dll arg1 arg2
+    { /usr/bin/time -f "TIME=%E\nMEM=%MKB" timeout "${TIME_LIMIT}s" "${EXEC[@]}" < "$infile"; } \
       >"$actual" 2> "$GEN_DIR/metrics_${base}.log"
     RC=$?
     set -e

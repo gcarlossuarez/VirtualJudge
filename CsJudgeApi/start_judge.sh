@@ -7,7 +7,7 @@
 PUERTO=5000
 
 # Ruta absoluta de tu index.html
-INDEX_HTML="/home/vboxuser/CsJudgeApi/wwwroot/index.html"
+INDEX_HTML="/home/vboxuser/VirtualJudge/CsJudgeApi/wwwroot/index.html"
 
 echo "=== 🚀 Iniciando Juez Online en puerto $PUERTO ==="
 

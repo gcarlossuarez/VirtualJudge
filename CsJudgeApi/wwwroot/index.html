@@ -236,52 +236,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
 </head>
 <body>
+
   <h1>Juez Online</h1>
-
-  <label for="selectLanguage">Lenguaje:</label>
-  <select id="selectLanguage">
-    <option value="csharp">C#</option>
-    <option value="cpp">C++</option>
-    <!-- futuro: <option value="python">Python</option> -->
-  </select>
-  <br><br>
-
-  <script>
-    // ⚡ Mapear lenguaje elegido → configuración de editores + Judge0
-      const LANG_CONFIG = {
-        csharp: {
-          codemirror: "text/x-csharp",
-          monaco: "csharp",
-          judge0: 51,   // ⚠️ C# (Mono / .NET Core) → revisa en tu instancia Judge0
-          filename: "solucion.cs"
-        },
-        cpp: {
-          codemirror: "text/x-c++src",
-          monaco: "cpp",
-          judge0: 54,   // ⚠️ C++ (GCC 9.2.0) → revisa ID en tu instancia Judge0
-          filename: "solucion.cpp"
-        }
-        // 🔥 después puedes agregar Python, Java, etc.
-      };
-
-      function getSelectedLang() {
-        const val = document.getElementById("selectLanguage").value;
-        return LANG_CONFIG[val] || LANG_CONFIG.csharp;
-      }
-
-      document.getElementById("selectLanguage").addEventListener("change", () => {
-      const cfg = getSelectedLang();
-
-      // Actualizar CodeMirror
-      cmEditor.setOption("mode", cfg.codemirror);
-
-      // Actualizar Monaco
-      if (monacoEditor) {
-        monaco.editor.setModelLanguage(monacoEditor.getModel(), cfg.monaco);
-      }
-    });
-
-  </script>
 
   <div>
     <div id="tab-cm" class="tab active" onclick="switchEditor('cm')">Editor rápido (CodeMirror)</div>
@@ -300,6 +256,12 @@
       <option value="">-- Seleccione --</option>
     </select>
   </span>
+  <span>
+    <label for="selectInput">Seleccione dataset:</label>
+    <select id="selectInput">
+      <option value="">-- Seleccione un dataset --</option>
+    </select>
+  </span>
   <br><br>
 
   <label id="lblStudentId">Id del Estudiante:</label>
@@ -313,13 +275,7 @@
   <br><br>
   
   <label for="txtProblemDesc">Descripción del problema:</label><br>
-  <textarea id="txtProblemDesc" rows="10" cols="100" readonly></textarea>
-  <span>
-  <label for="selectInput">Seleccione dataset:</label>
-  <select id="selectInput">
-    <option value="">-- Seleccione un dataset --</option>
-  </select>
-  </span>
+  <textarea id="txtProblemDesc" rows="30" cols="200" readonly></textarea>
   
   <div id="utils-panel">
     <h3>📂 <strong><i>UTILITARIOS PARA REFERENCIA DE SINTAXIS E INSTRUCCIONES EN C#</i></strong></h3>
@@ -332,39 +288,64 @@
     <textarea id="utils-content" readonly></textarea>
   </div>
 
-  <div class="editor-container">
-    <textarea id="code-cm">using System;
-using System.Linq; // Para utilizar poder Linq
-using System.Collections.Generic; // Para poder trabajar con listas, diccionarios, etc.
+    <label for="selectLanguage">Lenguaje:</label>
+  <select id="selectLanguage">
+    <option value="csharp">C#</option>
+    <option value="cpp">C++</option>
+    <!-- futuro: <option value="python">Python</option> -->
+  </select>
+  <br><br>
 
-// Ejemplo para ser probado en CodeMirror (con entrada desde teclado).
+    <div class="editor-container">
+    <textarea id="code-cm"></textarea>
+    <div id="monaco-container"></div>
+
+    <script>
+    const LANG_CONFIG = {
+      csharp: {
+        codemirror: "text/x-csharp",
+        monaco: "csharp",
+        judge0: 51,
+        filename: "solucion.cs",
+        template: `using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+
 class Program
 {
-    static void Main()
-    {
+    static void Main() {
         string val;
-        while (!string.IsNullOrEmpty(val = Console.ReadLine()))
-        {
+        while (!string.IsNullOrEmpty(val = Console.ReadLine())) {
             Console.WriteLine($"valor enviado={val}");
         }
-        Console.WriteLine("Hola CodeMirror!");
+        Console.WriteLine("Hola C#!");
     }
-}
-</textarea>
-    <div id="monaco-container"></div>
-  </div>
+}`
+      },
+      cpp: {
+        codemirror: "text/x-c++src",
+        monaco: "cpp",
+        judge0: 54,
+        filename: "solucion.cpp",
+        template: `  #include <bits/stdc++.h>
+  using namespace std;
+  int main() {
+      string val;
+      while (getline(cin, val) && !val.empty()) {
+          cout << "valor enviado=" << val << endl;
+      }
+      cout << "Hola C++!" << endl;
+      return 0;
+  }`
+      }
+    };
 
-  <br>
-  <label for="stdin">Entrada (stdin):</label><br>
-  <textarea id="stdin" rows="15" cols="80" style="width: 100%;"></textarea>
-
-  <button type="button" onclick="runJudge0()">Ejecutar (En Juez de<br>Prueba, no acepta caracteres<br>especiales)</button>
-  <button type="button" onclick="runOfficial()">Enviar (En Juez Oficial,<br>acepta caracteres especiales y<br><strong>es el que vale para el contest</strong>)</button>
-
-  <div id="output" class="result"></div>
-
-  <script>
-    const JUDGE0_URL = "https://ce.judge0.com/submissions?base64_encoded=false&wait=true";
+    function getSelectedLang() {
+      const val = document.getElementById("selectLanguage").value;
+      return LANG_CONFIG[val] || LANG_CONFIG.csharp;
+    }
 
     // === Inicializar CodeMirror ===
     const cmEditor = CodeMirror.fromTextArea(document.getElementById("code-cm"), {
@@ -377,62 +358,70 @@ class Program
     let monacoEditor = null;
     require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
     require(["vs/editor/editor.main"], function () {
+      const cfg = getSelectedLang();
       monacoEditor = monaco.editor.create(document.getElementById('monaco-container'), {
-        value: `using System;\nusing System.Linq; // Para utilizar poder Linq\nusing System.Collections.Generic; // Para poder trabajar con listas, diccionarios, etc.\n\n// Ejemplo para ser probado en Monaco (con entrada desde teclado).\nclass Program\n{\n    static void Main()\n    {\n        string val;\n        while (!string.IsNullOrEmpty(val = Console.ReadLine()))\n        {\n            Console.WriteLine($"Valor enviado={val}");\n        }\n        Console.WriteLine("Hola Monaco!");\n    }\n}\n`,
-        language: "csharp",
+        value: cfg.template,
+        language: cfg.monaco,
         theme: "vs-light",
         automaticLayout: true
       });
     });
-    
-    
-    // ----------- Guardar lo que selecciono el alumno, si se recarga la pagina.
-    // ------------El trabajo del estudiante, siempre se recupera aunque algo falle 
-    function storageKey() {
-      const student = document.getElementById("txtStudentId").value || "anon";
-      const problem = document.getElementById("selectProblem").value || "noprob";
-      return `codigo_${student}_p${problem}`;
-    }
 
-    // Guardar
-    cmEditor.on("change", () => {
-      if (document.getElementById("tab-cm").classList.contains("active")) {
-        localStorage.setItem(storageKey(), cmEditor.getValue());
+    // === Cambiar lenguaje ===
+    document.getElementById("selectLanguage").addEventListener("change", () => {
+      const cfg = getSelectedLang();
+
+      // Actualizar CodeMirror
+      cmEditor.setOption("mode", cfg.codemirror);
+      cmEditor.setValue(cfg.template);
+
+      // Actualizar Monaco
+      if (monacoEditor) {
+        monaco.editor.setModelLanguage(monacoEditor.getModel(), cfg.monaco);
+        monacoEditor.setValue(cfg.template);
       }
     });
-    if (monacoEditor) {
-      monacoEditor.onDidChangeModelContent(() => {
-        if (document.getElementById("tab-monaco").classList.contains("active")) {
-          localStorage.setItem(storageKey(), monacoEditor.getValue());
+
+    // === Al cargar página, poner plantilla inicial ===
+    window.addEventListener("load", () => {
+      const cfg = getSelectedLang();
+      cmEditor.setValue(cfg.template);
+      if (monacoEditor) monacoEditor.setValue(cfg.template);
+    });
+    </script>
+
+  </div>
+
+  <script>
+      // ⚡ Mapear lenguaje elegido → configuración de editores + Judge0
+      document.getElementById("selectLanguage").addEventListener("change", () => {
+        const cfg = getSelectedLang();
+
+        // CodeMirror: cambiar resaltado y plantilla
+        cmEditor.setOption("mode", cfg.codemirror);
+        cmEditor.setValue(cfg.template);
+
+        // Monaco: cambiar lenguaje y plantilla
+        if (monacoEditor) {
+          monaco.editor.setModelLanguage(monacoEditor.getModel(), cfg.monaco);
+          monacoEditor.setValue(cfg.template);
         }
       });
-    }
 
-    // Restaurar
-    window.addEventListener("load", () => {
-      const saved = localStorage.getItem(storageKey());
-      if (saved) {
-        cmEditor.setValue(saved);
-        if (monacoEditor) monacoEditor.setValue(saved);
-      }
-    });
+      // Actualizar CodeMirror
+      cmEditor.setOption("mode", cfg.codemirror);
 
-    // === Cambiar editor ===
-    function switchEditor(type) {
-      document.getElementById("tab-cm").classList.remove("active");
-      document.getElementById("tab-monaco").classList.remove("active");
-      if (type === "cm") {
-        document.getElementById("tab-cm").classList.add("active");
-        document.getElementById("monaco-container").style.display = "none";
-        document.getElementById("monaco-warning").style.display = "none";
-        cmEditor.getWrapperElement().style.display = "block";
-      } else {
-        document.getElementById("tab-monaco").classList.add("active");
-        document.getElementById("monaco-container").style.display = "block";
-        document.getElementById("monaco-warning").style.display = "block";
-        cmEditor.getWrapperElement().style.display = "none";
+      // Actualizar Monaco
+      if (monacoEditor) {
+        monaco.editor.setModelLanguage(monacoEditor.getModel(), cfg.monaco);
       }
-    }
+    
+  </script>
+
+  
+    <script>
+    // Hacer el envio
+    const JUDGE0_URL = "https://ce.judge0.com/submissions?base64_encoded=false&wait=true";
 
     function getCurrentCode() {
       if (document.getElementById("tab-cm").classList.contains("active")) {
@@ -446,37 +435,12 @@ class Program
       const code = getCurrentCode();
       let stdin = document.getElementById('stdin').value;
 
-      // 🔹 Normalizar la entrada
-      stdin = stdin.replace(/^\uFEFF/, "");  // quitar BOM
-      stdin = stdin.replace(/\r\n/g, "\n");  // CRLF → LF
-      stdin = stdin.replace(/\r/g, "\n");    // CR sueltos → LF
-
       if (!code.trim()) {
         showMessage("⚠️ El código está vacío, no se puede enviar a Judge0.", "err");
         return;
       }
 
       showMessage("⏳ Ejecutando en Judge0...", "warn");
-
-      function toBase64(str) {
-        return btoa(unescape(encodeURIComponent(str)));
-      }
-
-      function fromBase64(b64) {
-        try {
-          // Decodificar base64 → bytes
-          const binary = atob(b64);
-          const bytes = new Uint8Array(binary.length);
-          for (let i = 0; i < binary.length; i++) {
-            bytes[i] = binary.charCodeAt(i);
-          }
-          // Interpretar como UTF-8
-          return new TextDecoder("utf-8").decode(bytes);
-        } catch (e) {
-          console.error("Error decodificando base64:", e, "input:", b64);
-          return b64; // fallback: mostrar crudo
-        }
-      }
 
       try {
         const response = await fetch(JUDGE0_URL, {
@@ -489,7 +453,6 @@ class Program
           })
         });
 
-        // 👇 Verificar primero si Judge0 respondió bien
         if (!response.ok) {
           const errText = await response.text();
           showMessage("❌ Judge0 devolvió " + response.status + ":\n" + errText, "err");
@@ -497,12 +460,9 @@ class Program
         }
 
         const result = await response.json();
-        console.log("Respuesta Judge0:", result);
-
-        // 🔹 Decodificar stdout / stderr / compile_output si existen
-        const stdout = result.stdout ? result.stdout : "";
-        const stderr = result.stderr ? result.stderr : "";
-        const compile_output = result.compile_output ? result.compile_output : "";
+        const stdout = result.stdout || "";
+        const stderr = result.stderr || "";
+        const compile_output = result.compile_output || "";
 
         if (stderr || compile_output) {
           showMessage("❌ Error:\n" + (stderr || compile_output), "err");
@@ -517,21 +477,12 @@ class Program
 
     async function runOfficial() {
       const problemId = document.getElementById('txtProblemId').value;
-      if (problemId.trim() === '') {
-          alert('Por favor, introduce el identificador de la pregunta.');
-          campo.focus();
-          return ;
-      }
-      
       const studentId = document.getElementById('txtStudentId').value;
-      if (studentId.trim() === '') {
-          alert('Por favor, introduce el identificador del estudiante.');
-          campo.focus();
-          return ;
-      }
-      
       const code = getCurrentCode();
       const stdin = document.getElementById('stdin').value;
+
+      if (!problemId) { alert("Por favor, introduce el identificador de la pregunta."); return; }
+      if (!studentId) { alert("Por favor, introduce el identificador del estudiante."); return; }
 
       showMessage("⏳ Enviando a servidor oficial...", "warn");
 
@@ -541,52 +492,36 @@ class Program
         formData.append("code", blob, getSelectedLang().filename);
         formData.append("language", document.getElementById("selectLanguage").value);
         formData.append("stdin", stdin);
-        formData.append("problemId", problemId); // 🔥 agregado el identificador de pregunta o problema
-        formData.append("studentId", studentId); // 🔥 agregado el identificador del estudiante 
+        formData.append("problemId", problemId);
+        formData.append("studentId", studentId);
 
-        
-        
-        //const response = await fetch("https://130edefab1ce.ngrok-free.app/compile-run", {
         const response = await fetch("/compile-run", {
           method: "POST",
           body: formData
         });
 
-        let result;
         if (!response.ok) {
-           // 💥 Caso error → leer como texto plano
-           const errorText = await response.text();
-           showMessage("❌ Error del servidor:\n" + errorText, "err");
-           return;
-        } else {
-           // ✅ Caso OK → leer como JSON
-           result = await response.json();
-        }
-        
-        // === Manejo de compilación ===
-        if (result.build !== "build:ok") {
-          showMessage(
-            "❌ Errores de compilación:\n" + (result.buildLog || "Sin detalles"),
-            "err"
-          );
+          const errorText = await response.text();
+          showMessage("❌ Error del servidor:\n" + errorText, "err");
           return;
         }
 
-        // === Manejo de ejecución ===
+        const result = await response.json();
+        if (result.build !== "build:ok") {
+          showMessage("❌ Errores de compilación:\n" + (result.buildLog || "Sin detalles"), "err");
+          return;
+        }
         if (result.run !== "run:ok") {
-          showMessage(
-            "❌ Error en ejecución:\n" +
+          showMessage("❌ Error en ejecución:\n" +
             (result.runLog || "Sin detalles") +
-            (result.stderrRaw ? "\nSTDERR:\n" + result.stderrRaw : "") + 
+            (result.stderrRaw ? "\nSTDERR:\n" + result.stderrRaw : "") +
             "\n📝 Summary: " + (result.summary),
             "err"
           );
           return;
         }
 
-        // === Ejecución exitosa ===
-        showMessage(
-          "✅ Ejecución exitosa\n\nSalida:\n" + (result.runLog || "") +
+        showMessage("✅ Ejecución exitosa\n\nSalida:\n" + (result.runLog || "") +
           "\n\n⏱ Tiempo: " + (result.time || "-") +
           "\n💾 Memoria: " + (result.memKb || "-") + " KB" +
           "\n📝 Summary: " + (result.summary),
@@ -598,13 +533,22 @@ class Program
       }
     }
 
-
     function showMessage(msg, type) {
       const out = document.getElementById("output");
       out.className = "result " + type;
       out.textContent = msg;
     }
   </script>
+
+  <br>
+  <label for="stdin">Entrada (stdin):</label><br>
+  <textarea id="stdin" rows="15" cols="80" style="width: 100%;"></textarea>
+
+  <button type="button" onclick="runJudge0()">Ejecutar (En Juez de<br>Prueba, no acepta caracteres<br>especiales)</button>
+  <button type="button" onclick="runOfficial()">Enviar (En Juez Oficial,<br>acepta caracteres especiales y<br><strong>es el que vale para el contest</strong>)</button>
+
+  <div id="output" class="result"></div>
+
   
   <script>
     async function loadStudents() {
