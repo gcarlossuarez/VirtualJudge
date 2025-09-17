@@ -9,6 +9,10 @@ Currently supports:
 - 🚧 Python (in progress)
 - 🚧 Java (in progress)
 
+## Architecture
+![Architecture VirtualJudge](plantuml_out/Architecture/Architecture.png)
+
+
 ---
 
 ## 🚀 Key Features
@@ -39,6 +43,30 @@ VirtualJudge/
  ├── db           → Database schema (SQLite)
  ├── scripts      → Shell scripts for setup and execution
  └── README.md    → This file
+```
+
+## 📂 Project Structure in Docker
+```
+VirtualJudge/
+│
+├── CsJudgeApi/
+│   ├── Program.cs
+│   ├── CsJudgeApi.csproj
+│   ├── submissions.db     <-- SQLite Database
+│   └── ...
+│
+├── cs-single-runner/
+│   ├── Dockerfile
+│   ├── run-single.sh      <-- For every student request
+│   └── ...
+│
+├── problems/
+│   ├── problem1/
+│   │          ├── IN
+│   │          ├── OUT
+│   └── ...
+│
+└── docker-compose.yml
 ```
 
 ---

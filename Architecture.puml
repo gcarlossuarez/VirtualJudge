@@ -1,0 +1,32 @@
+@startuml
+actor Estudiante
+actor Docente
+
+rectangle "Servidor Universidad\n(VirtualJudge)" {
+    rectangle "Backend C#\n(CsJudgeApi)" {
+        [API Web\n(ASP.NET Core)]
+        [Base de Datos\nSQLite / SQL Server]
+    }
+
+    rectangle "Runner Docker\n(cs-single-runner)" {
+        [run-single.sh]
+        [Compilador C# / C++]
+        [Comparador de OUT esperado]
+        [Validator.cs opcional]
+    }
+
+    rectangle "Repositorio de Problemas" {
+        [IN dataset]
+        [OUT esperado]
+        [Validator.cs (opcional)]
+    }
+}
+
+Estudiante --> [API Web\n(ASP.NET Core)] : Envía código fuente
+[API Web\n(ASP.NET Core)] --> [Runner Docker\n(cs-single-runner)] : Crea contenedor y ejecuta run-single.sh
+[Runner Docker\n(cs-single-runner)] --> [Repositorio de Problemas] : Lee IN, OUT y Validator.cs
+[Runner Docker\n(cs-single-runner)] --> [API Web\n(ASP.NET Core)] : Devuelve resultados
+[API Web\n(ASP.NET Core)] --> Estudiante : Muestra veredicto (Accepted, Wrong Answer, etc.)
+Docente --> [Repositorio de Problemas] : Administra datasets y validadores
+
+@enduml

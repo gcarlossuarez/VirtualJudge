@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./CsJudgeApi
+    container_name: virtualjudge_backend
+    ports:
+      - "8080:80"
+    environment:
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - DOTNET_USE_POLLING_FILE_WATCHER=true
+    volumes:
+      - ./problems:/app/problems
+      - ./Utilitarios:/app/Utilitarios
+      - ./CsJudgeApi/submissions.db:/app/data/submissions.db
+
+  runner:
+    build: ./cs-single-runner
+    container_name: virtualjudge_runner
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./problems:/problems
+      - /var/run/docker.sock:/var/run/docker.sock
