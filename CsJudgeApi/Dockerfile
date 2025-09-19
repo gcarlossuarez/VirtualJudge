@@ -31,6 +31,9 @@ RUN dotnet publish -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
+# ⚡ Install Docker CLI (for execute docker containers)
+RUN apt-get update && apt-get install -y docker.io && rm -rf /var/lib/apt/lists/*
+
 # Copy published output from build stage
 COPY --from=build /app/publish .
 
@@ -46,3 +49,4 @@ EXPOSE 80
 
 # Run the application
 ENTRYPOINT ["dotnet", "CsJudgeApi.dll"]
+

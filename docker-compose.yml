@@ -5,14 +5,19 @@ services:
     build: ./CsJudgeApi
     container_name: virtualjudge_backend
     ports:
-      - "8080:80"
+      - "8080:5000"
     environment:
       - DOTNET_RUNNING_IN_CONTAINER=true
       - DOTNET_USE_POLLING_FILE_WATCHER=true
+      - DB_PATH=/app/data/submissions.db
+      - PROBLEMS_PATH=/app/problems
+      - UTILS_PATH=/app/Utilitarios
+      #- RUNNER_URL=http://runner:6000   # 👈 importante
     volumes:
       - ./problems:/app/problems
       - ./Utilitarios:/app/Utilitarios
       - ./CsJudgeApi/submissions.db:/app/data/submissions.db
+      -  /var/run/docker.sock:/var/run/docker.sock   # 🔹 acceso al Docker del host
 
   runner:
     build: ./cs-single-runner

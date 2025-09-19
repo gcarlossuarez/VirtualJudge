@@ -43,6 +43,15 @@ fi
 
 cd /home/sandbox
 
+echo "Contenido de /home/sandbox/in:"
+ls -l /home/sandbox/in
+
+echo "Contenido de /home/sandbox/in/OUT:"
+ls -l /home/sandbox/in/OUT
+
+echo "Contenido de /home/sandbox/in/VALIDATOR:"
+ls -l /home/sandbox/in/VALIDATOR
+
 # Límites razonables (sin limitar memoria virtual)
 ulimit -t "$TIME_LIMIT"   # CPU time (s)
 ulimit -u 256             # procesos/hilos

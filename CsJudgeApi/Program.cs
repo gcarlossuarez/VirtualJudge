@@ -8,9 +8,6 @@ using CsJudgeApi.Data;
 using CsJudgeApi.Models;
 using Xceed.Words.NET; // ⚡ DocX. Para instalar, hacer => dotnet add package DocX --version 1.0.0
 
-const string PROBLEMS_PATH = "/home/vboxuser/VirtualJudge/problems";
-const string UTILS_PATH = "/home/vboxuser/VirtualJudge/Utilitarios";
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
@@ -26,12 +23,16 @@ builder.Services.AddCors(options =>
 
 // EF Core con SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=submissions.db"));
+    options.UseSqlite($"Data Source={PathDirectories.DB_PATH}"));
 
 builder.WebHost.ConfigureKestrel(o =>
 {
     o.Limits.MaxRequestBodySize = 20 * 1024 * 1024; // 20MB
 });
+
+
+builder.WebHost.UseUrls("http://0.0.0.0:5000");
+
 
 var app = builder.Build();
 app.UseCors("AllowAll");
@@ -138,7 +139,6 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
         return Results.BadRequest("Envía un formulario multipart con el archivo 'code' (.cs o .zip).");
 
     // ✅ Obtener la IP del cliente
-    //var ip = req.HttpContext.Connection.RemoteIpAddress?.ToString();
     var ip = GetClientIp(req);
 
     Console.WriteLine($"Nueva petición desde {ip}");
@@ -157,16 +157,52 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
     if (int.TryParse(timeLimitStr, out var tl)) timeLimit = Math.Clamp(tl, 1, 30);
 
     var rootTmp = Path.Combine(Path.GetTempPath(), "cs_api");
+    //var rootTmp = Path.Combine("/home/vboxuser/VirtualJudge/work", "cs_api");
+    //var rootTmp = Path.Combine("/var/tmp", "cs_api");
+
     Directory.CreateDirectory(rootTmp);
     var id = Guid.NewGuid().ToString("N");
     var work = Path.Combine(rootTmp, id);
-    var srcDir = work; //Path.Combine(work, "IN");
+    var srcDir = work;
     var outDir = Path.Combine(work, "OUT");
     var validatorDir = Path.Combine(work, "VALIDATOR");
+
+
+    // 🔹 Ajustar permisos para que cualquiera pueda leer/escribir
+    // Hay un bug conocido en .NET 6/7/8 en Linux cuando se copian archivos 
+    // sobre ciertos tmpfs o directorios montados en Docker con restricciones 
+    // → suele resolverse con permisos explícitos (chmod 777) o copiando con
+    //  FileStream en lugar de File.Copy.
+    var chmodA = new ProcessStartInfo
+    {
+        FileName = "chmod",
+        Arguments = "-R 777 " + rootTmp,
+        RedirectStandardOutput = true,
+        RedirectStandardError = true,
+        UseShellExecute = false
+    };
+    using (var procA= Process.Start(chmodA))
+    {
+        procA.WaitForExit();
+    }
+
     Directory.CreateDirectory(srcDir);
     Directory.CreateDirectory(outDir);
     Directory.CreateDirectory(validatorDir);
-    string problemsRoot = "../problems"; // Carpeta raíz donde están todos los problemas
+    string problemsRoot = PathDirectories.PROBLEMS_PATH;
+
+    var chmodSrcDir = new ProcessStartInfo {
+        FileName = "chmod",
+        Arguments = $"-R 777 {srcDir}",
+        RedirectStandardOutput = true,
+        RedirectStandardError = true,
+        UseShellExecute = false
+    };
+    using (var procSrcDir = Process.Start(chmodSrcDir)) {
+        procSrcDir.WaitForExit();
+    }
+
+
     int.TryParse(form["problemId"], out int problemId); // viene de la BD o del request
 
     long.TryParse(form["studentId"], out long studentId);
@@ -243,11 +279,15 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
     var fileName = codeFile.FileName;
     var lowered = fileName.ToLowerInvariant();
     var originalPath = Path.Combine(work, fileName);
-    await using (var fs = File.Create(originalPath))
+    
+    
+    string sourceCode;
+    using (var reader = new StreamReader(codeFile.OpenReadStream()))
     {
-        await codeFile.CopyToAsync(fs);
+        sourceCode = await reader.ReadToEndAsync();
     }
-
+    File.WriteAllText(originalPath, sourceCode, Encoding.UTF8);
+    Console.WriteLine("Guardando archivo en: " + originalPath);
     try
     {
         if (lowered.EndsWith(".zip")) // Analizar si sigue siendo necesario
@@ -257,10 +297,18 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
         else if (lowered.EndsWith(".cs"))
         {
             //File.Copy(originalPath, Path.Combine(srcDir, "solucion.cs"), overwrite: true);
+
+            //using var src = File.OpenRead(originalPath);
+            //using var dst = File.Create(Path.Combine(srcDir, "solucion.cs"));
+            //await src.CopyToAsync(dst);
         }
         else if (lowered.EndsWith(".cpp"))
         {
             //File.Copy(originalPath, Path.Combine(srcDir, "solucion.cpp"), overwrite: true);
+
+            //using var src = File.OpenRead(originalPath);
+            //using var dst = File.Create(Path.Combine(srcDir, "solucion.cpp"));
+            //await src.CopyToAsync(dst);
         }
         else
         {
@@ -338,6 +386,12 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
 
         // Se obtiene la ruta completa del programa validador, para la pregunta, si existe
         string fullPathValidator = question.FullPathValidatorSourceCode;
+        if (!string.IsNullOrEmpty(fullPathValidator) &&
+        Environment.GetEnvironmentVariable("PROBLEMS_PATH") != null)
+        {
+            fullPathValidator = Path.Combine(problemsRoot, problemId.ToString(), $"Validator{problemId}");
+            fullPathValidator = Path.Combine(fullPathValidator, "Validator.cs"); // por ahora, solo cs
+        }
 
         // Si esta definido el validador
         if (!string.IsNullOrEmpty(fullPathValidator))
@@ -417,7 +471,7 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
 
         psi.ArgumentList.Add(langBin);
         #endregion
-        
+
 
         #region Validador
         // Si esta definido el validador, se lo pasas como argumento
@@ -482,11 +536,12 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
         var m = Regex.Match(summary, @"run:ok", RegexOptions.IgnoreCase);
         bool isCorrect = m.Success;
 
+
         var submission = new Submission
         {
             StudentId = studentId,
             ProblemId = form["problemId"].ToString(),
-            SourceCode = File.ReadAllText(originalPath),
+            SourceCode = sourceCode,
             OutputExpected = expected,
             OutputActual = runLog,
             IsCorrect = isCorrect,
@@ -643,7 +698,7 @@ app.MapGet("/questions/{id}/desc", (int id) =>
 {
     try
     {
-        string baseDir = PROBLEMS_PATH;
+        string baseDir = PathDirectories.PROBLEMS_PATH;
         string path = Directory.GetFiles(Path.Combine(baseDir, id.ToString()), "*.docx").FirstOrDefault();
         if (string.IsNullOrEmpty(path) || !System.IO.File.Exists(path))
             return Results.NotFound($"No existe el archivo para la pregunta {id}");
@@ -665,7 +720,7 @@ app.MapGet("/questions/{id}/desc", (int id) =>
 // Listar datasets disponibles de un problema
 app.MapGet("/problems/{id}/inputs", (int id) =>
 {
-    string dir = Path.Combine(PROBLEMS_PATH, id.ToString(), "IN");
+    string dir = Path.Combine(PathDirectories.PROBLEMS_PATH, id.ToString(), "IN");
     if (!Directory.Exists(dir))
         return Results.NotFound("No hay inputs para este problema");
 
@@ -680,7 +735,7 @@ app.MapGet("/problems/{id}/inputs", (int id) =>
 // Obtener contenido de un dataset
 app.MapGet("/problems/{id}/input/{archivo}", (int id, string archivo) =>
 {
-    string dir = Path.Combine(PROBLEMS_PATH, id.ToString(), "IN");
+    string dir = Path.Combine(PathDirectories.PROBLEMS_PATH, id.ToString(), "IN");
     string path = Path.Combine(dir, archivo);
 
     if (!System.IO.File.Exists(path))
@@ -693,7 +748,7 @@ app.MapGet("/problems/{id}/input/{archivo}", (int id, string archivo) =>
 // Estructura de directorios
 app.MapGet("/utils/tree", () =>
 {
-    string root = Path.Combine(UTILS_PATH);
+    string root = Path.Combine(PathDirectories.UTILS_PATH);
     var tree = BuildTree(root, root);
     return Results.Json(tree);
 });
@@ -701,7 +756,7 @@ app.MapGet("/utils/tree", () =>
 // Contenido de archivo
 app.MapGet("/utils/file/{*path}", (string path) =>
 {
-    string fullPath = Path.Combine(UTILS_PATH, path);
+    string fullPath = Path.Combine(PathDirectories.UTILS_PATH, path);
     if (!System.IO.File.Exists(fullPath)) return Results.NotFound();
     return Results.Text(System.IO.File.ReadAllText(fullPath), "text/plain");
 });
@@ -729,3 +784,13 @@ static object BuildTree(string root, string dir)
 // NOTA. - Mejor, si va a al final
 app.Run();
 
+
+class PathDirectories
+{
+    public static string DB_PATH = Environment.GetEnvironmentVariable("DB_PATH")
+                       ?? "/home/vboxuser/VirtualJudge/CsJudgeApi/submissions.db";
+    public static string PROBLEMS_PATH = Environment.GetEnvironmentVariable("PROBLEMS_PATH")
+                       ?? "/home/vboxuser/VirtualJudge/problems";
+    public static string UTILS_PATH =  Environment.GetEnvironmentVariable("UTILS_PATH") 
+                         ?? "/home/vboxuser/VirtualJudge/Utilitarios";
+}
