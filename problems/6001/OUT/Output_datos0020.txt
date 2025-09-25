@@ -1,0 +1,8 @@
+Rossgvardia Unit;834;98
+Kratovo;16;15
+Lobnya;10;10
+Podolsk;4;4
+Povarovo;22;22
+Sil’tse;41;37
+Voskresenskoye;8;8
+Zaraysk;2;2

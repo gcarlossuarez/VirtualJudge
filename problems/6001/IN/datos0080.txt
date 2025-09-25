@@ -1,0 +1,25 @@
+Chechenos de Kadirov;Chechenos de Kadirov Unit;217
+Khotkovo;38;17
+Malakhovka;40;11
+Lukhovitsy;48;15
+Ozherelye;41;10
+Zhukovsky;15;4
+Troitsk;47;41
+Pereyaslavl-Zalesskiy;5;1
+Dmitrov;31;4
+Klin;2;1
+Golitsyno;15;7
+Voskresensk;9;7
+Elektrostal;17;13
+Voronovo;21;5
+Lukino;19;7
+Podolsk;38;5
+Solnechnogorsk;35;13
+Bronnitsy;48;42
+Reutov;5;5
+Istra;17;4
+Zaraysk;46;45
+Sil’tse;11;8
+Krasnoznamensk;47;45
+Kurovskoye;41;22
+Vereya;40;27

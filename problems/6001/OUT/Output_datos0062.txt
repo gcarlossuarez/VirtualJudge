@@ -1,0 +1,6 @@
+Rossgvardia Unit;583;50
+Aprelevka;19;13
+Bol’shie Vyazemy;28;21
+Bronnitsy;3;1
+Dedenevo;13;12
+Dedovsk;3;3

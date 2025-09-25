@@ -1,0 +1,4 @@
+Rossgvardia Unit;215;22
+Krasnoznamensk;1;1
+Ozherelye;20;18
+Vysokovsk;3;3

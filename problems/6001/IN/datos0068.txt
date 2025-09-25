@@ -1,0 +1,24 @@
+Rossgvardia;Rossgvardia Unit;288
+Podolsk;26;11
+Domodedovo;21;20
+Vereya;44;18
+Krasnozavodsk;37;7
+Dubna;47;12
+Elektrogorsk;26;24
+Krasnoznamensk;9;3
+Sil’tse;30;19
+Kubinka;46;9
+Tuchkovo;44;4
+Dzerzhinsky;48;17
+Lukino;24;5
+Yakhroma;27;6
+Mytishchi;15;14
+Maryino;14;8
+Vostryakovo;10;6
+Yartsevo;42;37
+Korolyov;48;9
+Severny;39;34
+Volokolamsk;38;22
+Dedenevo;17;10
+Chernogolovka;42;14
+Odintsovo;39;13

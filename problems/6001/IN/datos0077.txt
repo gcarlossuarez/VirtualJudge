@@ -1,0 +1,19 @@
+Rossgvardia;Rossgvardia Unit;873
+Kratovo;36;9
+Kolomna;20;20
+Povarovo;28;6
+Voskresensk;35;31
+Vereya;11;11
+Krasnogorsk;39;13
+Kubinka;34;4
+Balashikha;45;29
+Zheleznodorozhny;3;3
+Tuchkovo;34;18
+Chekhov;3;1
+Protvino;38;25
+Ruza;8;8
+Sergiyev Posad;42;14
+Ramenskoye;14;14
+Chernogolovka;6;4
+Kurovskoye;46;10
+Odintsovo;23;16

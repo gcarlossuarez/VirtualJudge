@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Juez Virtual</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #chart { max-width: 900px; max-height: 500px; }
+  </style>
+</head>
+<body>
+  <h1>📊 Dashboard del Juez Virtual</h1>
+  <canvas id="chart"></canvas>
+
+  <script>
+    fetch("/api/dashboard")
+      .then(r => r.json())
+      .then(data => {
+        // Agrupar cantidad de envíos correctos por estudiante
+        const grouped = {};
+        data.forEach(x => {
+          if (!grouped[x.Name]) grouped[x.Name] = 0;
+          if (x.IsCorrect) grouped[x.Name]++; // contar solo correctos
+        });
+
+        const labels = Object.keys(grouped);
+        const values = Object.values(grouped);
+
+        const ctx = document.getElementById("chart");
+        new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [{
+              label: "Problemas resueltos (correctos)",
+              data: values,
+              backgroundColor: "rgba(54, 162, 235, 0.6)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: true },
+              title: { display: true, text: "Ranking de estudiantes" }
+            },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        });
+      });
+  </script>
+</body>
+</html>
+

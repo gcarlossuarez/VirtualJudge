@@ -421,7 +421,7 @@ class Program
   
     <script>
     // Hacer el envio
-    const JUDGE0_URL = "https://ce.judge0.com/submissions?base64_encoded=false&wait=true";
+    const JUDGE0_URL = "https://ce.judge0.com/submissions?base64_encoded=true&wait=true";
 
     function getCurrentCode() {
       if (document.getElementById("tab-cm").classList.contains("active")) {
@@ -447,9 +447,10 @@ class Program
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            source_code: code,
+            // 👇 importante: enviar como Base64
+            source_code: btoa(unescape(encodeURIComponent(code))),
             language_id: getSelectedLang().judge0,
-            stdin: stdin
+            stdin: btoa(unescape(encodeURIComponent(stdin)))
           })
         });
 
@@ -460,9 +461,18 @@ class Program
         }
 
         const result = await response.json();
-        const stdout = result.stdout || "";
-        const stderr = result.stderr || "";
-        const compile_output = result.compile_output || "";
+        
+        function decodeBase64(b64) {
+          try {
+            return decodeURIComponent(escape(atob(b64)));
+          } catch (e) {
+            return b64; // si no es válido, lo dejo tal cual
+          }
+        }
+
+        const stdout = result.stdout ? decodeBase64(result.stdout) : "";
+        const stderr = result.stderr ? decodeBase64(result.stderr) : "";
+        const compile_output = result.compile_output ?    decodeBase64(result.compile_output) : "";
 
         if (stderr || compile_output) {
           showMessage("❌ Error:\n" + (stderr || compile_output), "err");
@@ -544,8 +554,8 @@ class Program
   <label for="stdin">Entrada (stdin):</label><br>
   <textarea id="stdin" rows="15" cols="80" style="width: 100%;"></textarea>
 
-  <button type="button" onclick="runJudge0()">Ejecutar (En Juez de<br>Prueba, no acepta caracteres<br>especiales)</button>
-  <button type="button" onclick="runOfficial()">Enviar (En Juez Oficial,<br>acepta caracteres especiales y<br><strong>es el que vale para el contest</strong>)</button>
+  <button type="button" onclick="runJudge0()">Ejecutar (En Juez de<br>Prueba)</button>
+  <button type="button" onclick="runOfficial()">Enviar (En Juez Oficial,<br> es calificable para el contest</strong>)</button>
 
   <div id="output" class="result"></div>
 

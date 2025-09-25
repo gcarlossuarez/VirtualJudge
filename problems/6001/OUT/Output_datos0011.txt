@@ -1,0 +1,5 @@
+Rossgvardia Unit;437;54
+Fryazino;42;42
+Malakhovka;7;7
+Obukhovo;4;4
+Voskresenskoye;1;1

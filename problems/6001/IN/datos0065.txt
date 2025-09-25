@@ -1,0 +1,9 @@
+Rossgvardia;Rossgvardia Unit;283
+Zheleznodorozhny;3;1
+Reutov;43;30
+Serpukhov;26;25
+Kozhukhovo;19;6
+Staraya Kupavna;46;2
+Krasnogorsk;20;6
+Obukhovo;4;4
+Orekhovo-Zuyevo;28;28

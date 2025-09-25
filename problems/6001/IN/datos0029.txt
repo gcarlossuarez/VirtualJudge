@@ -1,0 +1,8 @@
+Rossgvardia;Rossgvardia Unit;551
+Zaraysk;47;9
+Solnechnogorsk;19;5
+Kurovskoye;40;14
+Balashikha;32;1
+Yubileyny;23;15
+Zaraysk;6;1
+Orekhovo-Zuyevo;7;5

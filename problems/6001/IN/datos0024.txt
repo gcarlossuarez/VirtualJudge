@@ -1,0 +1,37 @@
+Rossgvardia;Rossgvardia Unit;903
+Elektrostal;3;1
+Roshal;26;2
+Klin;45;16
+Lukino;30;14
+Voskresenskoye;35;2
+Vysokovsk;34;3
+Lyubertsy;11;11
+Korolyov;7;5
+Mozhaysk;17;6
+Yartsevo;49;24
+Dedenevo;48;14
+Dmitrov;35;30
+Yubileyny;38;36
+Fryazino;11;8
+Yakhroma;21;7
+Krasnogorsk;19;16
+Istra;25;3
+Krasnozavodsk;10;7
+Staraya Kupavna;6;2
+Vereya;14;13
+Tuchkovo;33;6
+Chernogolovka;1;1
+Voskresensk;46;7
+Lobnya;1;1
+Ruza;36;14
+Shcherbinka;49;25
+Zheleznodorozhny;24;10
+Serpukhov;38;23
+Ivanteevka;31;29
+Pushkino;33;26
+Peresvet;47;37
+Pereyaslavl-Zalesskiy;28;19
+Dubna;41;38
+Domodedovo;10;7
+Troitsk;12;7
+Dolgoprudny;42;9

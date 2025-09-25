@@ -1,0 +1,5 @@
+Rossgvardia Unit;851;21
+Lyubertsy;3;3
+Protvino;41;3
+Vostryakovo;15;7
+Zaraysk;17;8

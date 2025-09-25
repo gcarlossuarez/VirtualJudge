@@ -1,0 +1,6 @@
+Rossgvardia Unit;903;105
+Chernogolovka;1;1
+Dubna;41;38
+Ivanteevka;31;29
+Lobnya;1;1
+Yubileyny;38;36

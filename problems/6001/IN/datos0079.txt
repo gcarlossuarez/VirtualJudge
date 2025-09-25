@@ -1,0 +1,16 @@
+Rossgvardia;Rossgvardia Unit;142
+Chekhov;15;7
+Roshal;28;3
+Kurovskoye;15;11
+Khimki;36;31
+Krasnozavodsk;4;2
+Dedenevo;39;2
+Vysokovsk;16;14
+Aprelevka;18;3
+Lyubertsy;38;33
+Dedovsk;1;1
+Mozhaysk;39;39
+Istra;50;14
+Serpukhov;48;30
+Vidnoye;26;24
+Balashikha;34;28

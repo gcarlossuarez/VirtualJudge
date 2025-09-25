@@ -1,0 +1,16 @@
+Chechenos de Kadirov;Chechenos de Kadirov Unit;100
+Voskresenskoye;26;24
+Kratovo;28;8
+Shchelkovo;28;25
+Pereyaslavl-Zalesskiy;16;16
+Krasnogorsk;15;6
+Lyubertsy;2;2
+Troitsk;44;23
+Kozhukhovo;39;13
+Krasnozavodsk;16;13
+Zhukovsky;30;19
+Dubna;34;20
+Odintsovo;6;5
+Golitsyno;23;10
+Ozherelye;1;1
+Reutov;37;1

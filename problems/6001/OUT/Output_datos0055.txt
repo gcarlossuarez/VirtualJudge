@@ -1,0 +1,3 @@
+Rossgvardia Unit;254;29
+Bol’shie Vyazemy;6;4
+Chernogolovka;25;25

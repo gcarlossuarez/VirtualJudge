@@ -1,0 +1,46 @@
+Chechenos de Kadirov;Chechenos de Kadirov Unit;89
+Vidnoye;49;26
+Volokolamsk;41;5
+Taldom;5;5
+Krasnozavodsk;3;3
+Korolyov;28;23
+Mozhaysk;20;1
+Protvino;8;7
+Zaraysk;34;11
+Lyubertsy;19;11
+Domodedovo;16;7
+Odintsovo;32;29
+Volokolamsk;25;25
+Lukino;8;2
+Serpukhov;42;23
+Dmitrov;36;26
+Sergiyev Posad;23;7
+Voskresensk;38;13
+Sofrino;32;24
+Solnechnogorsk;11;9
+Bronnitsy;3;3
+Bol’shie Vyazemy;23;23
+Pushkino;9;1
+Shchelkovo;27;25
+Fryazino;5;4
+Vereya;7;5
+Zvenigorod;6;1
+Zhukovsky;33;25
+Dzerzhinsky;39;8
+Khotkovo;19;8
+Podolsk;18;4
+Dolgoprudny;35;21
+Ruza;4;1
+Novoivanovskoye;34;29
+Vnukovo;50;1
+Yubileyny;19;9
+Vostryakovo;41;21
+Vysokovsk;12;5
+Severny;14;2
+Tuchkovo;27;24
+Ivanteevka;41;7
+Slobodka;5;3
+Zheleznodorozhny;34;32
+Elektrostal;15;14
+Peresvet;36;11
+Orekhovo-Zuyevo;11;7

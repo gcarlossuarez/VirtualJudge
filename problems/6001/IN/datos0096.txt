@@ -1,0 +1,8 @@
+Chechenos de Kadirov;Chechenos de Kadirov Unit;686
+Elektrogorsk;7;6
+Noginsk;3;2
+Lyubertsy;26;11
+Stupino;14;1
+Novoivanovskoye;46;3
+Krasnoarmeysk;43;28
+Vidnoye;1;1

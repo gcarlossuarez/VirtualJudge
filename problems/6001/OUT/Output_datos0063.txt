@@ -1,0 +1,6 @@
+Rossgvardia Unit;671;82
+Aprelevka;2;2
+Bronnitsy;1;1
+Malakhovka;48;48
+Vysokovsk;17;17
+Yakhroma;15;14

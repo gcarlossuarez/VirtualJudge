@@ -1,0 +1,25 @@
+Rossgvardia;Rossgvardia Unit;212
+Reutov;16;1
+Chekhov;20;10
+Kubinka;39;23
+Noginsk;43;32
+Bronnitsy;45;17
+Odintsovo;9;4
+Dzerzhinsky;21;17
+Protvino;18;16
+Voskresensk;32;5
+Lyubertsy;39;18
+Zheleznodorozhny;39;12
+Peresvet;9;2
+Krasnoarmeysk;7;2
+Khotkovo;17;15
+Dolgoprudny;21;8
+Zaraysk;39;1
+Kurovskoye;19;4
+Vereya;49;37
+Roshal;35;34
+Kolomna;49;38
+Yegoryevsk;20;20
+Zhukovsky;22;5
+Ivanteevka;37;3
+Istra;30;3

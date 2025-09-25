@@ -1,0 +1,5 @@
+Chechenos de Kadirov Unit;667;18
+Bronnitsy;4;3
+Istra;5;4
+Krasnogorsk;6;6
+Ruza;7;5

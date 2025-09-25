@@ -1,0 +1,3 @@
+Rossgvardia Unit;491;55
+Krasnoarmeysk;11;11
+Novlyanskoye;49;44

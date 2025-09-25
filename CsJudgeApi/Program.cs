@@ -780,6 +780,59 @@ static object BuildTree(string root, string dir)
     };
 }
 
+if(currentContest is null)
+    throw new Exception("No hay contest activo");
+// Endpoint rápido de Dashboard
+app.MapGet("/api/dashboard", async (AppDbContext db) =>
+{
+    var result = await (
+        from su in db.Submissions
+        join st in db.Students on su.StudentId equals st.StudentId
+        join q in db.Questions on su.ProblemId equals q.QuestionId.ToString()
+        join c in db.Contests on q.ContestId equals c.ContestId
+        where c.ContestId == currentContest.ContestId && st.StudentId != 123
+        orderby su.CreatedAt descending
+        select new
+        {
+            st.Name,
+            su.ProblemId,
+            su.SubmissionId,
+            su.IsCorrect,
+            su.CreatedAt
+        }
+    ).ToListAsync();
+
+    return Results.Json(result);
+});
+
+// Endpoint de estado del contest (submissions recientes, con detalles)
+app.MapGet("/api/contest-status", async (AppDbContext db) =>
+{
+    
+    if (currentContest  == null)
+        return Results.BadRequest("No hay contest activo");
+
+    // Submissions con join
+    var data = await (
+        from su in db.Submissions
+        join st in db.Students on su.StudentId equals st.StudentId
+        join q in db.Questions on su.ProblemId equals q.QuestionId.ToString()
+        where q.ContestId == currentContest.ContestId
+        orderby su.CreatedAt descending
+        select new
+        {
+            ContestId = currentContest.ContestId,
+            ContestDate = currentContest.Date,
+            Student = st.Name,
+            ProblemId = su.ProblemId,
+            su.IsCorrect,
+            su.CreatedAt
+        }
+    ).ToListAsync();
+
+    return Results.Json(data);
+});
+
 
 // NOTA. - Mejor, si va a al final
 app.Run();

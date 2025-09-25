@@ -1,0 +1,8 @@
+Rossgvardia Unit;475;57
+Chernogolovka;4;4
+Dolgoprudny;1;1
+Lukhovitsy;30;28
+Serpukhov;3;3
+Sil’tse;1;1
+Volokolamsk;10;10
+Zheleznodorozhny;10;10

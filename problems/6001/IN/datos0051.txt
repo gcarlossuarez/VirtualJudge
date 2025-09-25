@@ -1,0 +1,7 @@
+Chechenos de Kadirov;Chechenos de Kadirov Unit;851
+Lukino;12;10
+Domodedovo;47;46
+Mytishchi;12;10
+Krasnoarmeysk;7;4
+Slobodka;9;3
+Likino-Dulyovo;23;21

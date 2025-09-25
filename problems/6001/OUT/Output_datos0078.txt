@@ -1,0 +1,5 @@
+Rossgvardia Unit;562;70
+Kurovskoye;34;34
+Lukhovitsy;2;2
+Troitsk;4;4
+Zheleznodorozhny;30;30

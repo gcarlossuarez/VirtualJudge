@@ -1,0 +1,4 @@
+Rossgvardia Unit;313;39
+Ivanteevka;1;1
+Khotkovo;13;13
+Vysokovsk;25;25

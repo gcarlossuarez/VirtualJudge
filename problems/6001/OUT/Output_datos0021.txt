@@ -1,0 +1,7 @@
+Chechenos de Kadirov Unit;485;16
+Aprelevka;3;3
+Maryino;1;1
+Pavlovsky Posad;1;1
+Vnukovo;1;1
+Vostryakovo;5;5
+Zaraysk;5;5

@@ -1,0 +1,10 @@
+Rossgvardia;Rossgvardia Unit;71
+Novoivanovskoye;7;5
+Zaraysk;50;5
+Stupino;41;19
+Dubna;47;25
+Voskresensk;48;9
+Vidnoye;38;1
+Kurovskoye;17;16
+Yubileyny;4;2
+Vostryakovo;45;9

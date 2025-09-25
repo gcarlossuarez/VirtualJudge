@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/home/vboxuser/VirtualJudge/CsJudgeApi/submissions.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3094"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,15:mainContestStudents"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="ContestStudents" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="1" mode="1"/></sort><column_widths><column index="1" value="68"/><column index="2" value="98"/><column index="3" value="130"/><column index="4" value="263"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Contests" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="68"/><column index="2" value="75"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Questions" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="5" mode="0"/></sort><column_widths><column index="1" value="77"/><column index="2" value="190"/><column index="3" value="206"/><column index="4" value="68"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Students" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="98"/><column index="2" value="254"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">select st.Name, su.ProblemId, *
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/home/vboxuser/VirtualJudge/CsJudgeApi/submissions.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3094"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,15:mainContestStudents"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="ContestLanguage" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="68"/><column index="2" value="69"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="ContestStudents" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="1" mode="1"/></sort><column_widths><column index="1" value="68"/><column index="2" value="98"/><column index="3" value="130"/><column index="4" value="263"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Contests" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="68"/><column index="2" value="75"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Questions" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="5" mode="0"/></sort><column_widths><column index="1" value="77"/><column index="2" value="190"/><column index="3" value="326"/><column index="4" value="68"/><column index="5" value="263"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Students" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="98"/><column index="2" value="254"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">select st.Name, su.ProblemId, *
 from Submissions su, Students st, Questions q, Contests c
 where su.StudentId = st.StudentId
 --and su.IsCorrect = 1 
 --and su.ProblemId  IN (2001, 2002, 2003)
 and q.ContestId = c.ContestId
 and su.ProblemId = q.QuestionId
-and c.ContestId = 5
+and c.ContestId = 6
 and st.StudentId &lt;&gt; 123
 order by su.CreatedAt DESC;
 
 --update Questions set FullPathValidatorSourceCode = '' where QuestionId = 5001;
 --update Questions set FullPathValidatorSourceCode = '/home/vboxuser/problems/5001/Validator5001/Validator.cs' where QuestionId = 5001;
 --update ContestStudents set IP = '' where ContestId = 4
---/home/vboxuser/problems/5001/Validator5001/Validator.cs
+--/home/vboxuser/problems/6001/Validator6001/Validator.cs
 SELECT r.Name, COUNT(*)
 FROM 
 (
@@ -40,14 +40,13 @@ from Questions
 --delete from Submissions where SubmissionId = 73;
 
 /*
-insert into Contests VALUES(5, '2025-09-08');
+insert into Contests VALUES(6, '2025-09-22');
 
 delete from Questions where QuestionId = 5001;
-INSERT INTO &quot;main&quot;.&quot;Questions&quot; (&quot;QuestionId&quot;, &quot;Review&quot;, &quot;Path&quot;, &quot;ContestId&quot;, FullPathValidatorSourceCode) VALUES ('5001', '1) N Reinas', '/home/vboxuser/problems/5001', '5', '/home/vboxuser/problems/5001/Validator5001/Validator.cs');
+INSERT INTO &quot;main&quot;.&quot;Questions&quot; (&quot;QuestionId&quot;, &quot;Review&quot;, &quot;Path&quot;, &quot;ContestId&quot;, FullPathValidatorSourceCode) VALUES ('6004', '4) Selección de carga (versión 3)', '/home/vboxuser/VirtualJudge/problems/6004', '6', '/home/vboxuser/VirtualJudge/problems/6004/Validator6004/Validator.cs');
 
-INSERT INTO &quot;main&quot;.&quot;Questions&quot; (&quot;QuestionId&quot;, &quot;Review&quot;, &quot;Path&quot;, &quot;ContestId&quot;) VALUES ('4002', '2) Logistica de camiones 2.0', '/home/vboxuser/problems/4002', '4');
+INSERT INTO &quot;main&quot;.&quot;Questions&quot; (&quot;QuestionId&quot;, &quot;Review&quot;, &quot;Path&quot;, &quot;ContestId&quot;) VALUES ('4002', '2) Logistica de camiones 2.0', '/home/vboxuser/VirtualJudge/problems/4002', '4');
 
-INSERT INTO &quot;main&quot;.&quot;Questions&quot; (&quot;QuestionId&quot;, &quot;Review&quot;, &quot;Path&quot;, &quot;ContestId&quot;) VALUES ('2003', '3) N Reinas', '/home/vboxuser/problems/2003', '2');
 
 */
 </sql><sql name="SQL 1 (1)">--UPDATE Questions

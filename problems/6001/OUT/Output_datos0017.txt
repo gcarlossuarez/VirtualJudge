@@ -1,0 +1,9 @@
+Rossgvardia Unit;685;85
+Dedovsk;1;1
+Dubna;5;5
+Kratovo;11;11
+Kurovskoye;1;1
+Losino-Petrovsky;1;1
+Staraya Kupavna;40;40
+Voskresensk;6;6
+Zhukovsky;20;20

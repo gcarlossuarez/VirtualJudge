@@ -1,0 +1,21 @@
+Rossgvardia;Rossgvardia Unit;599
+Kratovo;9;2
+Ramenskoye;3;3
+Vysokovsk;33;17
+Kashira;6;3
+Sil’tse;41;41
+Pushkino;42;33
+Lobnya;46;18
+Elektrostal;25;11
+Lyubertsy;17;11
+Volokolamsk;12;12
+Istra;13;1
+Mozhaysk;29;16
+Solnechnogorsk;8;8
+Novoivanovskoye;39;13
+Golitsyno;32;23
+Slobodka;46;30
+Lukino;37;2
+Dmitrov;41;29
+Troitsk;1;1
+Protvino;9;9
