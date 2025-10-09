@@ -1,0 +1,5 @@
+Cantidad de operaciones:3
+OPERACIONES
+- Línea:1, valor:'x'
+- Línea:2, valor:'c'
+- Línea:3, valor:'d'

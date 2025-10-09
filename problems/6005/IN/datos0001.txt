@@ -1,0 +1,11 @@
+File1
+Juan Perez
+
+
+
+
+                  
+La Programación Orientada a Objetos, conocido como un campo de la informática que se centra en la creación de sistemas capaces de realizar tareas que normalmente requieren alto nivel de abstracción. Estas tareas incluyen: la encapsulación, la herencia y el polimorfismo.
+File2
+Maria Segovia
+Programación Orientada a Objetos; el cual, se conoce como un campo de la computación que se centra en la creación de sistemas capaces de realizar tareas que normalmente requieren cierto nivel de abstracción. Estas tareas incluyen; pero no se restringen a: la encapsulación, la herencia y el polimorfismo.

@@ -1,0 +1,7 @@
+Cantidad de operaciones:5
+OPERACIONES
++ Línea:0, valor:'' => de la línea:1
+- Línea:3, valor:'Se utiliza la Programación Orientada a Objetos, mucho más.'
+Cambiado Línea:4, valor:'La Programación Funcional, también está en boga.' por => Línea:4, valor:'La Programación Estructurada, está un tanto deprecada'
+Cambiado Línea:5, valor:'Debe elegir lo que le convenga, según el tipo de software deseado.' por => Línea:5, valor:'Se utiliza la Programación Orientada a Objetos, en mucho mayor medida'
+Cambiado Línea:6, valor:'FIN' por => Línea:6, valor:'Final'

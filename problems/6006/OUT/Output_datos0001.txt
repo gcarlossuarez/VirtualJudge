@@ -1,0 +1,5 @@
+Cantidad de operaciones:3
+OPERACIONES
++ Línea:0, valor:'x' => de la línea:1
++ Línea:0, valor:'c' => de la línea:2
++ Línea:0, valor:'d' => de la línea:3

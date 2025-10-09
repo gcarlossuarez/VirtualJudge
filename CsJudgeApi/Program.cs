@@ -217,6 +217,12 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
     if (question == null)
         return Results.BadRequest($"El problema {problemId} no pertenece al contest {currentContest.ContestId}");
 
+    if(question.TimeLimitSeconds != null && question.TimeLimitSeconds != timeLimit)
+    {
+        timeLimit = question.TimeLimitSeconds.Value;
+        Console.WriteLine($"Ajustando timeLimit a {timeLimit} segundos, según la configuración de la pregunta.");
+    }
+    
     // ✅ Validar que el estudiante exista
     var student = db.Students.FirstOrDefault(s => s.StudentId == studentId);
     if (student == null)

@@ -1,0 +1,4 @@
+La programación Estructurada, ya no se utiliza tanto.
+
+La Programación Estructurada, está un tanto deprecada
+Se utiliza la Programación Orientada a Objetos, en mucho mayor medida

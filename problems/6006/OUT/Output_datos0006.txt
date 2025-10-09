@@ -1,0 +1,199 @@
+Cantidad de operaciones:197
+OPERACIONES
+- Línea:9, valor:'Esta es la línea número 9'
+- Línea:31, valor:'Esta es la línea número 31'
+Cambiado Línea:114, valor:'Esta es la línea número 114' por => Línea:112, valor:'Esta palabra4 la línea número 114'
+- Línea:125, valor:'Esta es la línea número 125'
+Cambiado Línea:156, valor:'Esta es la línea número 156' por => Línea:153, valor:'Esta es palabra2 línea número 156'
+Cambiado Línea:175, valor:'Esta es la línea número 175' por => Línea:172, valor:'Esta palabra4 la línea número 175'
++ Línea:215, valor:'LÍNEA AÑADIDA 29' => de la línea:213
+Cambiado Línea:218, valor:'Esta es la línea número 218' por => Línea:216, valor:'Esta palabra2 la línea número 218'
+- Línea:233, valor:'Esta es la línea número 233'
+Cambiado Línea:257, valor:'Esta es la línea número 257' por => Línea:254, valor:'Esta es la línea número palabra2'
++ Línea:270, valor:'LÍNEA AÑADIDA 7' => de la línea:268
+- Línea:282, valor:'Esta es la línea número 282'
+Cambiado Línea:417, valor:'Esta es la línea número 417' por => Línea:414, valor:'Esta es la línea palabra4 417'
++ Línea:606, valor:'LÍNEA AÑADIDA 2' => de la línea:604
+- Línea:658, valor:'Esta es la línea número 658'
++ Línea:709, valor:'LÍNEA AÑADIDA 32' => de la línea:707
++ Línea:710, valor:'LÍNEA AÑADIDA 12' => de la línea:709
+- Línea:719, valor:'Esta es la línea número 719'
+- Línea:750, valor:'Esta es la línea número 750'
+Cambiado Línea:767, valor:'Esta es la línea número 767' por => Línea:764, valor:'Esta es la palabra3 número 767'
++ Línea:811, valor:'LÍNEA AÑADIDA 24' => de la línea:809
++ Línea:829, valor:'LÍNEA AÑADIDA 1' => de la línea:828
+Cambiado Línea:914, valor:'Esta es la línea número 914' por => Línea:913, valor:'palabra2 es la línea número 914'
+Cambiado Línea:975, valor:'Esta es la línea número 975' por => Línea:974, valor:'Esta palabra4 la línea número 975'
++ Línea:1015, valor:'LÍNEA AÑADIDA 9' => de la línea:1015
+- Línea:1024, valor:'Esta es la línea número 1024'
+Cambiado Línea:1081, valor:'Esta es la línea número 1081' por => Línea:1080, valor:'Esta es la palabra2 número 1081'
+Cambiado Línea:1123, valor:'Esta es la línea número 1123' por => Línea:1122, valor:'palabra2 es la línea número 1123'
+Cambiado Línea:1124, valor:'Esta es la línea número 1124' por => Línea:1123, valor:'Esta es la palabra2 número 1124'
+- Línea:1137, valor:'Esta es la línea número 1137'
+- Línea:1150, valor:'Esta es la línea número 1150'
+Cambiado Línea:1179, valor:'Esta es la línea número 1179' por => Línea:1176, valor:'Esta palabra3 la línea número 1179'
+Cambiado Línea:1204, valor:'Esta es la línea número 1204' por => Línea:1201, valor:'Esta es la palabra3 número 1204'
+Cambiado Línea:1232, valor:'Esta es la línea número 1232' por => Línea:1229, valor:'Esta es palabra3 línea número 1232'
++ Línea:1265, valor:'LÍNEA AÑADIDA 33' => de la línea:1263
+Cambiado Línea:1385, valor:'Esta es la línea número 1385' por => Línea:1383, valor:'Esta es palabra4 línea número 1385'
+Cambiado Línea:1386, valor:'Esta es la línea número 1386' por => Línea:1384, valor:'Esta palabra1 la línea número 1386'
+- Línea:1392, valor:'Esta es la línea número 1392'
+- Línea:1554, valor:'Esta es la línea número 1554'
+Cambiado Línea:1599, valor:'Esta es la línea número 1599' por => Línea:1595, valor:'Esta es la palabra4 número 1599'
+Cambiado Línea:1718, valor:'Esta es la línea número 1718' por => Línea:1714, valor:'Esta es la línea palabra3 1718'
+Cambiado Línea:1747, valor:'Esta es la línea número 1747' por => Línea:1743, valor:'Esta es la línea número palabra3'
+- Línea:2168, valor:'Esta es la línea número 2168'
++ Línea:2239, valor:'LÍNEA AÑADIDA 30' => de la línea:2235
+Cambiado Línea:2306, valor:'Esta es la línea número 2306' por => Línea:2302, valor:'Esta es la palabra2 número 2306'
++ Línea:2321, valor:'LÍNEA AÑADIDA 14' => de la línea:2318
+Cambiado Línea:2349, valor:'Esta es la línea número 2349' por => Línea:2346, valor:'Esta palabra2 la línea número 2349'
+Cambiado Línea:2420, valor:'Esta es la línea número 2420' por => Línea:2417, valor:'Esta es palabra1 línea número 2420'
+Cambiado Línea:2424, valor:'Esta es la línea número 2424' por => Línea:2421, valor:'Esta es la palabra2 número 2424'
+Cambiado Línea:2453, valor:'Esta es la línea número 2453' por => Línea:2450, valor:'Esta es palabra4 línea número 2453'
+Cambiado Línea:2508, valor:'Esta es la línea número 2508' por => Línea:2505, valor:'palabra2 es la línea número 2508'
+- Línea:2521, valor:'Esta es la línea número 2521'
+Cambiado Línea:2537, valor:'Esta es la línea número 2537' por => Línea:2533, valor:'palabra3 es la línea número 2537'
+Cambiado Línea:2542, valor:'Esta es la línea número 2542' por => Línea:2538, valor:'Esta es palabra3 línea número 2542'
+Cambiado Línea:2650, valor:'Esta es la línea número 2650' por => Línea:2646, valor:'Esta es la línea número palabra4'
++ Línea:2676, valor:'LÍNEA AÑADIDA 40' => de la línea:2673
++ Línea:2778, valor:'LÍNEA AÑADIDA 18' => de la línea:2776
+Cambiado Línea:2817, valor:'Esta es la línea número 2817' por => Línea:2815, valor:'palabra3 es la línea número 2817'
+Cambiado Línea:2884, valor:'Esta es la línea número 2884' por => Línea:2882, valor:'palabra3 es la línea número 2884'
+- Línea:2909, valor:'Esta es la línea número 2909'
++ Línea:3038, valor:'LÍNEA AÑADIDA 15' => de la línea:3036
++ Línea:3056, valor:'LÍNEA AÑADIDA 34' => de la línea:3055
+- Línea:3105, valor:'Esta es la línea número 3105'
++ Línea:3260, valor:'LÍNEA AÑADIDA 19' => de la línea:3259
++ Línea:3291, valor:'LÍNEA AÑADIDA 5' => de la línea:3291
+Cambiado Línea:3450, valor:'Esta es la línea número 3450' por => Línea:3450, valor:'Esta es palabra3 línea número 3450'
+- Línea:3506, valor:'Esta es la línea número 3506'
++ Línea:3570, valor:'LÍNEA AÑADIDA 36' => de la línea:3570
+- Línea:3575, valor:'Esta es la línea número 3575'
+Cambiado Línea:3638, valor:'Esta es la línea número 3638' por => Línea:3637, valor:'palabra1 es la línea número 3638'
+Cambiado Línea:3669, valor:'Esta es la línea número 3669' por => Línea:3668, valor:'Esta palabra4 la línea número 3669'
+- Línea:3823, valor:'Esta es la línea número 3823'
+Cambiado Línea:3849, valor:'Esta es la línea número 3849' por => Línea:3847, valor:'Esta es la palabra4 número 3849'
++ Línea:3925, valor:'LÍNEA AÑADIDA 41' => de la línea:3924
++ Línea:4048, valor:'LÍNEA AÑADIDA 28' => de la línea:4048
+- Línea:4079, valor:'Esta es la línea número 4079'
+Cambiado Línea:4164, valor:'Esta es la línea número 4164' por => Línea:4163, valor:'Esta es la palabra4 número 4164'
+- Línea:4270, valor:'Esta es la línea número 4270'
+Cambiado Línea:4381, valor:'Esta es la línea número 4381' por => Línea:4379, valor:'Esta es la palabra1 número 4381'
+Cambiado Línea:4387, valor:'Esta es la línea número 4387' por => Línea:4385, valor:'Esta es palabra1 línea número 4387'
++ Línea:4402, valor:'LÍNEA AÑADIDA 39' => de la línea:4401
+- Línea:4548, valor:'Esta es la línea número 4548'
+Cambiado Línea:4642, valor:'Esta es la línea número 4642' por => Línea:4640, valor:'Esta es la palabra2 número 4642'
+Cambiado Línea:4701, valor:'Esta es la línea número 4701' por => Línea:4699, valor:'Esta es la palabra4 número 4701'
++ Línea:4741, valor:'LÍNEA AÑADIDA 8' => de la línea:4740
+- Línea:4765, valor:'Esta es la línea número 4765'
++ Línea:4777, valor:'LÍNEA AÑADIDA 23' => de la línea:4776
+- Línea:4916, valor:'Esta es la línea número 4916'
+Cambiado Línea:4935, valor:'Esta es la línea número 4935' por => Línea:4933, valor:'palabra2 es la línea número 4935'
+Cambiado Línea:4938, valor:'Esta es la línea número 4938' por => Línea:4936, valor:'Esta es palabra2 línea número 4938'
++ Línea:4955, valor:'LÍNEA AÑADIDA 20' => de la línea:4954
++ Línea:5099, valor:'LÍNEA AÑADIDA 42' => de la línea:5099
+- Línea:5338, valor:'Esta es la línea número 5338'
+Cambiado Línea:5339, valor:'Esta es la línea número 5339' por => Línea:5338, valor:'palabra1 es la línea número 5339'
+Cambiado Línea:5591, valor:'Esta es la línea número 5591' por => Línea:5590, valor:'Esta es la línea número palabra1'
+- Línea:5616, valor:'Esta es la línea número 5616'
+Cambiado Línea:5641, valor:'Esta es la línea número 5641' por => Línea:5639, valor:'palabra1 es la línea número 5641'
+- Línea:5667, valor:'Esta es la línea número 5667'
++ Línea:5695, valor:'LÍNEA AÑADIDA 37' => de la línea:5693
++ Línea:5710, valor:'LÍNEA AÑADIDA 35' => de la línea:5709
+Cambiado Línea:5749, valor:'Esta es la línea número 5749' por => Línea:5748, valor:'Esta es palabra2 línea número 5749'
+- Línea:5759, valor:'Esta es la línea número 5759'
+Cambiado Línea:5761, valor:'Esta es la línea número 5761' por => Línea:5759, valor:'Esta es palabra1 línea número 5761'
+Cambiado Línea:5764, valor:'Esta es la línea número 5764' por => Línea:5762, valor:'Esta es la línea palabra4 5764'
+- Línea:5771, valor:'Esta es la línea número 5771'
+Cambiado Línea:5923, valor:'Esta es la línea número 5923' por => Línea:5920, valor:'Esta es la palabra3 número 5923'
+Cambiado Línea:5980, valor:'Esta es la línea número 5980' por => Línea:5977, valor:'Esta es palabra4 línea número 5980'
+Cambiado Línea:5985, valor:'Esta es la línea número 5985' por => Línea:5982, valor:'Esta es la línea palabra2 5985'
+- Línea:6002, valor:'Esta es la línea número 6002'
++ Línea:6081, valor:'LÍNEA AÑADIDA 17' => de la línea:6078
+- Línea:6193, valor:'Esta es la línea número 6193'
+- Línea:6225, valor:'Esta es la línea número 6225'
+- Línea:6273, valor:'Esta es la línea número 6273'
+Cambiado Línea:6297, valor:'Esta es la línea número 6297' por => Línea:6291, valor:'Esta palabra4 la línea número 6297'
+Cambiado Línea:6307, valor:'Esta es la línea número 6307' por => Línea:6301, valor:'palabra2 es la línea número 6307'
+- Línea:6368, valor:'Esta es la línea número 6368'
+Cambiado Línea:6386, valor:'Esta es la línea número 6386' por => Línea:6379, valor:'palabra3 es la línea número 6386'
+Cambiado Línea:6404, valor:'Esta es la línea número 6404' por => Línea:6397, valor:'Esta es la línea palabra1 6404'
+- Línea:6493, valor:'Esta es la línea número 6493'
+- Línea:6497, valor:'Esta es la línea número 6497'
+Cambiado Línea:6546, valor:'Esta es la línea número 6546' por => Línea:6537, valor:'palabra3 es la línea número 6546'
+Cambiado Línea:6593, valor:'Esta es la línea número 6593' por => Línea:6584, valor:'Esta palabra1 la línea número 6593'
+- Línea:6608, valor:'Esta es la línea número 6608'
+- Línea:6648, valor:'Esta es la línea número 6648'
+- Línea:6701, valor:'Esta es la línea número 6701'
+Cambiado Línea:6727, valor:'Esta es la línea número 6727' por => Línea:6715, valor:'Esta palabra2 la línea número 6727'
+- Línea:6739, valor:'Esta es la línea número 6739'
+Cambiado Línea:6774, valor:'Esta es la línea número 6774' por => Línea:6761, valor:'Esta es palabra1 línea número 6774'
+Cambiado Línea:6860, valor:'Esta es la línea número 6860' por => Línea:6847, valor:'Esta es la palabra2 número 6860'
+Cambiado Línea:6875, valor:'Esta es la línea número 6875' por => Línea:6862, valor:'Esta es la línea número palabra4'
+- Línea:6892, valor:'Esta es la línea número 6892'
+Cambiado Línea:7000, valor:'Esta es la línea número 7000' por => Línea:6986, valor:'Esta es palabra3 línea número 7000'
++ Línea:7006, valor:'LÍNEA AÑADIDA 27' => de la línea:6993
+Cambiado Línea:7195, valor:'Esta es la línea número 7195' por => Línea:7182, valor:'Esta es palabra1 línea número 7195'
++ Línea:7357, valor:'LÍNEA AÑADIDA 25' => de la línea:7345
++ Línea:7370, valor:'LÍNEA AÑADIDA 4' => de la línea:7359
+Cambiado Línea:7420, valor:'Esta es la línea número 7420' por => Línea:7409, valor:'Esta palabra4 la línea número 7420'
+Cambiado Línea:7444, valor:'Esta es la línea número 7444' por => Línea:7433, valor:'Esta es la palabra3 número 7444'
+- Línea:7481, valor:'Esta es la línea número 7481'
+Cambiado Línea:7483, valor:'Esta es la línea número 7483' por => Línea:7471, valor:'palabra3 es la línea número 7483'
++ Línea:7504, valor:'LÍNEA AÑADIDA 31' => de la línea:7493
+Cambiado Línea:7515, valor:'Esta es la línea número 7515' por => Línea:7504, valor:'Esta es la línea número palabra4'
+Cambiado Línea:7525, valor:'Esta es la línea número 7525' por => Línea:7514, valor:'palabra3 es la línea número 7525'
+Cambiado Línea:7533, valor:'Esta es la línea número 7533' por => Línea:7522, valor:'Esta es palabra3 línea número 7533'
+- Línea:7545, valor:'Esta es la línea número 7545'
+Cambiado Línea:7614, valor:'Esta es la línea número 7614' por => Línea:7602, valor:'palabra2 es la línea número 7614'
+Cambiado Línea:7784, valor:'Esta es la línea número 7784' por => Línea:7772, valor:'palabra4 es la línea número 7784'
+Cambiado Línea:7861, valor:'Esta es la línea número 7861' por => Línea:7849, valor:'Esta es la línea palabra2 7861'
+- Línea:7927, valor:'Esta es la línea número 7927'
+Cambiado Línea:8017, valor:'Esta es la línea número 8017' por => Línea:8004, valor:'Esta es la línea palabra3 8017'
+- Línea:8120, valor:'Esta es la línea número 8120'
+Cambiado Línea:8124, valor:'Esta es la línea número 8124' por => Línea:8110, valor:'Esta es la línea número palabra3'
+Cambiado Línea:8147, valor:'Esta es la línea número 8147' por => Línea:8133, valor:'Esta palabra2 la línea número 8147'
++ Línea:8149, valor:'LÍNEA AÑADIDA 26' => de la línea:8136
+Cambiado Línea:8154, valor:'Esta es la línea número 8154' por => Línea:8141, valor:'Esta es la línea número palabra2'
+Cambiado Línea:8191, valor:'Esta es la línea número 8191' por => Línea:8178, valor:'Esta es la palabra4 número 8191'
+- Línea:8201, valor:'Esta es la línea número 8201'
+- Línea:8372, valor:'Esta es la línea número 8372'
+Cambiado Línea:8387, valor:'Esta es la línea número 8387' por => Línea:8372, valor:'Esta es la línea número palabra3'
++ Línea:8401, valor:'LÍNEA AÑADIDA 13' => de la línea:8387
++ Línea:8480, valor:'LÍNEA AÑADIDA 16' => de la línea:8467
+- Línea:8566, valor:'Esta es la línea número 8566'
+- Línea:8658, valor:'Esta es la línea número 8658'
+- Línea:8675, valor:'Esta es la línea número 8675'
+Cambiado Línea:8763, valor:'Esta es la línea número 8763' por => Línea:8747, valor:'palabra2 es la línea número 8763'
+Cambiado Línea:8774, valor:'Esta es la línea número 8774' por => Línea:8758, valor:'palabra3 es la línea número 8774'
+- Línea:8823, valor:'Esta es la línea número 8823'
++ Línea:8826, valor:'LÍNEA AÑADIDA 11' => de la línea:8810
+Cambiado Línea:8869, valor:'Esta es la línea número 8869' por => Línea:8853, valor:'Esta es palabra2 línea número 8869'
+- Línea:8872, valor:'Esta es la línea número 8872'
+Cambiado Línea:8906, valor:'Esta es la línea número 8906' por => Línea:8889, valor:'Esta es la línea palabra1 8906'
+Cambiado Línea:8925, valor:'Esta es la línea número 8925' por => Línea:8908, valor:'Esta es palabra3 línea número 8925'
+- Línea:9011, valor:'Esta es la línea número 9011'
+Cambiado Línea:9051, valor:'Esta es la línea número 9051' por => Línea:9033, valor:'palabra1 es la línea número 9051'
+- Línea:9103, valor:'Esta es la línea número 9103'
+Cambiado Línea:9155, valor:'Esta es la línea número 9155' por => Línea:9136, valor:'LÍNEA AÑADIDA 3'
+Cambiado Línea:9169, valor:'Esta es la línea número 9169' por => Línea:9150, valor:'Esta palabra3 la línea número 9169'
+Cambiado Línea:9181, valor:'Esta es la línea número 9181' por => Línea:9162, valor:'Esta es palabra1 línea número 9181'
+Cambiado Línea:9184, valor:'Esta es la línea número 9184' por => Línea:9165, valor:'Esta es palabra4 línea número 9184'
+Cambiado Línea:9194, valor:'Esta es la línea número 9194' por => Línea:9175, valor:'Esta es palabra4 línea número 9194'
+Cambiado Línea:9217, valor:'Esta es la línea número 9217' por => Línea:9198, valor:'Esta es la línea palabra3 9217'
++ Línea:9257, valor:'LÍNEA AÑADIDA 6' => de la línea:9239
+Cambiado Línea:9330, valor:'Esta es la línea número 9330' por => Línea:9312, valor:'Esta es la palabra3 número 9330'
+Cambiado Línea:9363, valor:'Esta es la línea número 9363' por => Línea:9345, valor:'Esta es la línea palabra1 9363'
++ Línea:9394, valor:'LÍNEA AÑADIDA 22' => de la línea:9377
+- Línea:9397, valor:'Esta es la línea número 9397'
++ Línea:9409, valor:'LÍNEA AÑADIDA 21' => de la línea:9392
+Cambiado Línea:9467, valor:'Esta es la línea número 9467' por => Línea:9450, valor:'Esta es palabra1 línea número 9467'
++ Línea:9586, valor:'LÍNEA AÑADIDA 38' => de la línea:9570
+Cambiado Línea:9638, valor:'Esta es la línea número 9638' por => Línea:9622, valor:'Esta es la línea palabra1 9638'
+Cambiado Línea:9700, valor:'Esta es la línea número 9700' por => Línea:9684, valor:'palabra1 es la línea número 9700'
+- Línea:9745, valor:'Esta es la línea número 9745'
+Cambiado Línea:9773, valor:'Esta es la línea número 9773' por => Línea:9756, valor:'Esta palabra2 la línea número 9773'
+Cambiado Línea:9807, valor:'Esta es la línea número 9807' por => Línea:9790, valor:'palabra2 es la línea número 9807'
+Cambiado Línea:9826, valor:'Esta es la línea número 9826' por => Línea:9809, valor:'Esta es la línea palabra3 9826'
++ Línea:9852, valor:'LÍNEA AÑADIDA 10' => de la línea:9836
+Cambiado Línea:9987, valor:'Esta es la línea número 9987' por => Línea:9971, valor:'Esta es la línea número palabra3'

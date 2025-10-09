@@ -1,0 +1,13 @@
+La programación Estructurada, ya no se utiliza tanto.
+
+Se utiliza la Programación Orientada a Objetos, mucho más.
+La Programación Funcional, también está en boga.
+Debe elegir lo que le convenga, según el tipo de software deseado.
+FIN
+====
+
+La programación Estructurada, ya no se utiliza tanto.
+
+La Programación Estructurada, está un tanto deprecada
+Se utiliza la Programación Orientada a Objetos, en mucho mayor medida
+Final

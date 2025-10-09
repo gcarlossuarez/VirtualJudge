@@ -1,0 +1,4 @@
+Texto común:
+Programación Orientada a Objetos, conoc como un campo de la omti que se centra en la creación de sistemas capaces de realizar tareas que normalmente requieren to nivel de abstracción. Estas tareas incluyen: la encapsulación, la herencia y el polimorfismo.
+Similitud: 89.16%
+¡Posible plagio detectado! entre Juan Perez y Maria Segovia.

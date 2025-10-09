@@ -103,12 +103,6 @@
 
   </style>
   
-  
-  <!DOCTYPE html>
-  <html lang="es">
-  <head>
-  <meta charset="UTF-8">
-  <title>Juez Virtual</title>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; margin:0; padding:0; }
@@ -174,7 +168,17 @@
     }
     .copy-btn:hover { background: #222; }
   </style>
+    <!-- CodeMirror -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+
+  <!-- Monaco -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+
   </head>
+  
+  
   <body>
 
   <!-- Botón flotante -->
@@ -222,21 +226,7 @@
   }
   </script>
 
-  </body>
-  </html>
-
   
-
-  <!-- CodeMirror -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
-
-  <!-- Monaco -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
-</head>
-<body>
-
   <h1>Juez Online</h1>
 
   <div>
@@ -315,10 +305,14 @@ using System.Threading;
 
 class Program
 {
-    static void Main() {
-        string val;
-        while (!string.IsNullOrEmpty(val = Console.ReadLine())) {
-            Console.WriteLine($"valor enviado={val}");
+    static void Main()
+    {
+        string line;
+        
+        // Leer hasta que no haya más líneas (hasta el final del stream)
+        while ((line = Console.ReadLine()) != null)
+        {
+            Console.WriteLine($"valor enviado={line}");
         }
         Console.WriteLine("Hola C#!");
     }
@@ -332,9 +326,9 @@ class Program
         template: `  #include <bits/stdc++.h>
   using namespace std;
   int main() {
-      string val;
-      while (getline(cin, val) && !val.empty()) {
-          cout << "valor enviado=" << val << endl;
+      string line;
+      while (getline(cin, line)) {
+          cout << "valor enviado=" << line << endl;
       }
       cout << "Hola C++!" << endl;
       return 0;
@@ -342,21 +336,22 @@ class Program
       }
     };
 
-    function getSelectedLang() {
-      const val = document.getElementById("selectLanguage").value;
-      return LANG_CONFIG[val] || LANG_CONFIG.csharp;
-    }
-
     // === Inicializar CodeMirror ===
     const cmEditor = CodeMirror.fromTextArea(document.getElementById("code-cm"), {
       lineNumbers: true,
       mode: "text/x-csharp",
       theme: "default"
     });
-
+    
+    function getSelectedLang() {
+      const val = document.getElementById("selectLanguage").value;
+      return LANG_CONFIG[val] || LANG_CONFIG.csharp;
+    }
+    
+    
     // === Inicializar Monaco ===
     let monacoEditor = null;
-    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+    /*require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
     require(["vs/editor/editor.main"], function () {
       const cfg = getSelectedLang();
       monacoEditor = monaco.editor.create(document.getElementById('monaco-container'), {
@@ -365,10 +360,95 @@ class Program
         theme: "vs-light",
         automaticLayout: true
       });
+    });*/
+
+    let monacoReady = null;
+
+    function ensureMonaco() {
+      if (monacoReady) return monacoReady;
+      monacoReady = new Promise((resolve, reject) => {
+        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
+        require(['vs/editor/editor.main'], function () {
+          const cfg = getSelectedLang();
+          monacoEditor = monaco.editor.create(document.getElementById('monaco-container'), {
+            value: cfg.template,
+            language: cfg.monaco,
+            theme: 'vs-light',
+            automaticLayout: true
+          });
+          resolve(monacoEditor);
+        }, function (err) {
+          showMessage("⚠️ Error al cargar el editor Monaco: " + err, "err");
+          reject(err);
+        });
+      });
+      return monacoReady;
+    }
+
+    // Inicializar Monaco al cargar la página
+    window.addEventListener("load", async () => {
+      const cfg = getSelectedLang();
+      cmEditor.setValue(cfg.template); // Establecer plantilla en CodeMirror
+      await ensureMonaco(); // Asegurar que Monaco esté listo
+      monacoEditor.setValue(cfg.template); // Establecer plantilla en Monaco
     });
+    /*
+    async function switchEditor(type) {
+      const cmTab = document.getElementById("tab-cm");
+      const monacoTab = document.getElementById("tab-monaco");
+      const cmContainer = document.querySelector(".CodeMirror").parentNode;
+      const monacoContainer = document.getElementById("monaco-container");
+      const warning = document.getElementById("monaco-warning");
+
+      if (type === "cm") {
+        cmTab.classList.add("active");
+        monacoTab.classList.remove("active");
+        cmContainer.style.display = "block";
+        monacoContainer.style.display = "none";
+        warning.style.display = "none";
+      } else {
+        monacoTab.classList.add("active");
+        cmTab.classList.remove("active");
+        cmContainer.style.display = "none";
+        monacoContainer.style.display = "block";
+        warning.style.display = "block";
+      }
+    }
+    */
+    async function switchEditor(type) {
+      const cmTab = document.getElementById("tab-cm");
+      const monacoTab = document.getElementById("tab-monaco");
+      const cmContainer = document.querySelector(".CodeMirror").parentNode;
+      const monacoContainer = document.getElementById("monaco-container");
+      const warning = document.getElementById("monaco-warning");
+
+      if (type === "cm") {
+        cmTab.classList.add("active");
+        monacoTab.classList.remove("active");
+        cmContainer.style.display = "block";
+        monacoContainer.style.display = "none";
+        warning.style.display = "none";
+      } else {
+        monacoTab.classList.add("active");
+        cmTab.classList.remove("active");
+        cmContainer.style.display = "none";
+        monacoContainer.style.display = "block";
+        warning.style.display = "block";
+
+        // Asegurar que Monaco esté inicializado
+        await ensureMonaco();
+        const cfg = getSelectedLang();
+        monaco.editor.setModelLanguage(monacoEditor.getModel(), cfg.monaco);
+        // Establecer la plantilla si el editor está vacío o no tiene cambios significativos
+        if (!monacoEditor.getValue().trim()) {
+          monacoEditor.setValue(cfg.template);
+        }
+        monacoEditor.layout(); // Forzar el re-renderizado del editor
+      }
+    }
 
     // === Cambiar lenguaje ===
-    document.getElementById("selectLanguage").addEventListener("change", () => {
+    document.getElementById("selectLanguage").addEventListener("change", async () => {
       const cfg = getSelectedLang();
 
       // Actualizar CodeMirror
@@ -376,19 +456,14 @@ class Program
       cmEditor.setValue(cfg.template);
 
       // Actualizar Monaco
-      if (monacoEditor) {
+      
         monaco.editor.setModelLanguage(monacoEditor.getModel(), cfg.monaco);
         monacoEditor.setValue(cfg.template);
-      }
+        monacoEditor.layout();
+      
     });
 
-    // === Al cargar página, poner plantilla inicial ===
-    window.addEventListener("load", () => {
-      const cfg = getSelectedLang();
-      cmEditor.setValue(cfg.template);
-      if (monacoEditor) monacoEditor.setValue(cfg.template);
-    });
-    </script>
+  </script>
 
   </div>
 
@@ -408,6 +483,8 @@ class Program
         }
       });
 
+      const cfg = getSelectedLang();
+      
       // Actualizar CodeMirror
       cmEditor.setOption("mode", cfg.codemirror);
 
@@ -418,8 +495,7 @@ class Program
     
   </script>
 
-  
-    <script>
+  <script>
     // Hacer el envio
     const JUDGE0_URL = "https://ce.judge0.com/submissions?base64_encoded=true&wait=true";
 
