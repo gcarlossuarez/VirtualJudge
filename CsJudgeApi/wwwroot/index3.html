@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juez Online</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .tab { display: inline-block; padding: 10px 20px; margin-right: 5px; border: 1px solid #ccc; border-bottom: none; cursor: pointer; background: #eee; }
+    .tab.active { background: #fff; font-weight: bold; }
+    .editor-container { border: 1px solid #ccc; padding: 10px; }
+    .CodeMirror { border: 1px solid #ccc; height: 300px; font-size: 14px; }
+    #monaco-container { width: 100%; height: 300px; border: 1px solid #ccc; display: none; }
+    .result { margin-top: 20px; padding: 10px; border-radius: 5px; white-space: pre-wrap; }
+    .ok { background: #e0ffe0; border: 1px solid #0c0; }
+    .warn { background: #fff5cc; border: 1px solid #cc0; }
+    .err { background: #ffe0e0; border: 1px solid #c00; }
+    #monaco-warning { color: red; display: none; }
+  </style>
+
+  <!-- CodeMirror -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+
+  <!-- Monaco (loader + carga inmediata como en tu versión que funcionaba) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+</head>
+<body>
+  <h1>Juez Online</h1>
+
+  <div>
+    <div id="tab-cm" class="tab active" onclick="switchEditor('cm')">Editor rápido (CodeMirror)</div>
+    <div id="tab-monaco" class="tab" onclick="switchEditor('monaco')">Editor avanzado (Monaco)</div>
+  </div>
+
+  <p id="monaco-warning">⚠️ El editor Monaco es más pesado, puede tardar unos segundos en cargar.</p>
+
+  <label for="selectLanguage">Lenguaje:</label>
+  <select id="selectLanguage">
+    <option value="csharp">C#</option>
+    <option value="cpp">C++</option>
+  </select>
+  <br><br>
+
+  <div class="editor-container">
+    <textarea id="code-cm">using System;
+class Program
+{
+    static void Main()
+    {
+        string val;
+        while ((val = Console.ReadLine()) != null)
+            Console.WriteLine($"valor enviado={val}");
+        Console.WriteLine("Hola C#!");
+    }
+}</textarea>
+    <div id="monaco-container"></div>
+  </div>
+
+  <div id="output" class="result"></div>
+
+  <script>
+    // === Plantillas y modos por lenguaje ===
+    const LANG_CONFIG = {
+      csharp: {
+        codemirror: "text/x-csharp",
+        monaco: "csharp",
+        template: `using System;
+class Program
+{
+    static void Main()
+    {
+        string val;
+        while ((val = Console.ReadLine()) != null)
+            Console.WriteLine($"valor enviado={val}");
+        Console.WriteLine("Hola C#!");
+    }
+}`
+      },
+      cpp: {
+        codemirror: "text/x-c++src",
+        monaco: "cpp",
+        template: `#include <bits/stdc++.h>
+using namespace std;
+int main(){
+    string val;
+    while (getline(cin, val))
+        cout << "valor enviado=" << val << endl;
+    cout << "Hola C++!" << endl;
+    return 0;
+}`
+      }
+    };
+
+    function getSelectedLang() {
+      const key = document.getElementById("selectLanguage").value;
+      return LANG_CONFIG[key] || LANG_CONFIG.csharp;
+    }
+
+    // === Inicializar CodeMirror ===
+    const cmEditor = CodeMirror.fromTextArea(document.getElementById("code-cm"), {
+      lineNumbers: true,
+      mode: "text/x-csharp",
+      theme: "default"
+    });
+
+    // === Inicializar Monaco (como en tu versión que funcionaba) ===
+    let monacoEditor = null;
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+    require(["vs/editor/editor.main"], function () {
+      const cfg = getSelectedLang();
+      monacoEditor = monaco.editor.create(document.getElementById('monaco-container'), {
+        value: cfg.template,
+        language: cfg.monaco,
+        theme: "vs-light",
+        automaticLayout: true
+      });
+      console.log("✅ Monaco cargado");
+    });
+
+    // === Cambiar editor ===
+    function switchEditor(type) {
+      const cmTab = document.getElementById("tab-cm");
+      const monacoTab = document.getElementById("tab-monaco");
+      const cmWrapper = cmEditor.getWrapperElement();
+      const monacoContainer = document.getElementById("monaco-container");
+      const warning = document.getElementById("monaco-warning");
+
+      if (type === "cm") {
+        cmTab.classList.add("active");
+        monacoTab.classList.remove("active");
+        cmWrapper.style.display = "block";
+        monacoContainer.style.display = "none";
+        warning.style.display = "none";
+      } else {
+        monacoTab.classList.add("active");
+        cmTab.classList.remove("active");
+        cmWrapper.style.display = "none";
+        monacoContainer.style.display = "block";
+        warning.style.display = "block";
+        // fuerza layout si ya existe
+        if (monacoEditor) setTimeout(() => monacoEditor.layout(), 50);
+      }
+    }
+
+    // === Cambio de lenguaje ===
+    document.getElementById("selectLanguage").addEventListener("change", () => {
+      const cfg = getSelectedLang();
+
+      // CodeMirror
+      cmEditor.setOption("mode", cfg.codemirror);
+      cmEditor.setValue(cfg.template);
+
+      // Monaco (si ya está creado)
+      if (monacoEditor) {
+        monaco.editor.setModelLanguage(monacoEditor.getModel(), cfg.monaco);
+        monacoEditor.setValue(cfg.template);
+        monacoEditor.layout();
+      }
+    });
+
+    // === Ajustar CM a la plantilla inicial del selector ===
+    window.addEventListener("load", () => {
+      const cfg = getSelectedLang();
+      cmEditor.setOption("mode", cfg.codemirror);
+      cmEditor.setValue(cfg.template);
+    });
+  </script>
+</body>
+</html>

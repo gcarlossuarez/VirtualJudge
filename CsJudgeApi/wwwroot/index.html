@@ -175,6 +175,16 @@
 
   <!-- Monaco -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+  <script>
+    /* Esperar a que el loader de Monaco esté disponible; ya que, el require de Monaco aún no está definido en ese punto
+   cuando se carga el script (porque loader.min.js se ejecuta de forma asíncrona).*/ 
+    window.addEventListener("load", () => {
+      require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
+      require(['vs/editor/editor.main'], function () {
+        console.log("✅ Monaco base cargado");
+      });
+    });
+  </script>
 
   </head>
   
@@ -286,11 +296,15 @@
   </select>
   <br><br>
 
-    <div class="editor-container">
+  <div class="editor-container">
     <textarea id="code-cm"></textarea>
-    <div id="monaco-container"></div>
+  <div id="monaco-container"></div>
+  </div>
 
-    <script>
+
+
+  <script>
+    // ⚡ Mapear lenguaje elegido → configuración de editores + Judge0
     const LANG_CONFIG = {
       csharp: {
         codemirror: "text/x-csharp",
@@ -336,162 +350,125 @@ class Program
       }
     };
 
-    // === Inicializar CodeMirror ===
-    const cmEditor = CodeMirror.fromTextArea(document.getElementById("code-cm"), {
-      lineNumbers: true,
-      mode: "text/x-csharp",
-      theme: "default"
-    });
-    
+    let monacoEditor = null;
+
+
     function getSelectedLang() {
       const val = document.getElementById("selectLanguage").value;
       return LANG_CONFIG[val] || LANG_CONFIG.csharp;
     }
+
+    // === Inicializar CodeMirror con código por defecto ===
+    const defaultConfig = getSelectedLang();
+    const cmEditor = CodeMirror.fromTextArea(document.getElementById("code-cm"), {
+      lineNumbers: true,
+      mode: defaultConfig.codemirror,
+      theme: "default"
+    });
     
+    // Establecer el contenido inicial
+    cmEditor.setValue(defaultConfig.template);
     
-    // === Inicializar Monaco ===
-    let monacoEditor = null;
-    /*require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+    // Mostrar el código en la consola (para depuración)
+    function showCodeParamInConsole(code) {
+      console.log("=== CÓDIGO ACTUAL ===");
+      console.log(code);
+      console.log("=== FIN DEL CÓDIGO ===");
+    }
+
+    // Obtener el código actual (de CodeMirror o Monaco)
+    function showCodeInConsole() {
+        const code = getCurrentCode();
+        showCodeParamInConsole(code);
+    }
+
+    
+    // === Función switchEditor (debe estar disponible globalmente) ===
+    function switchEditor(type) {
+      // Depurar, en la consola, el código actual
+      console.log("=== CÓDIGO ACTUAL ANTES DE CAMBIAR DE EDITOR DE CÓDIGO ===");
+      showCodeInConsole();
+
+      document.getElementById("tab-cm").classList.remove("active");
+      document.getElementById("tab-monaco").classList.remove("active");
+      
+      if (type === "cm") {
+        document.getElementById("tab-cm").classList.add("active");
+        document.getElementById("monaco-container").style.display = "none";
+        document.getElementById("monaco-warning").style.display = "none";
+        cmEditor.getWrapperElement().style.display = "block";
+      } else {
+        document.getElementById("tab-monaco").classList.add("active");
+        document.getElementById("monaco-container").style.display = "block";
+        document.getElementById("monaco-warning").style.display = "block";
+        cmEditor.getWrapperElement().style.display = "none";
+        
+        // Asegurarse de que Monaco se redibuje correctamente
+        if (monacoEditor) {
+          setTimeout(() => monacoEditor.layout(), 50);
+        }
+      }
+    }
+
+    // === Inicialización de Monaco ===
+    require.config({ 
+      paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } 
+    });
+
     require(["vs/editor/editor.main"], function () {
-      const cfg = getSelectedLang();
       monacoEditor = monaco.editor.create(document.getElementById('monaco-container'), {
-        value: cfg.template,
-        language: cfg.monaco,
+        value: `using System;
+using System.Linq; // Para utilizar poder Linq
+using System.Collections.Generic; // Para poder trabajar con listas, diccionarios, etc.
+
+// Ejemplo para ser probado en Monaco (con entrada desde teclado).
+class Program
+{
+    static void Main()
+    {
+        string val;
+        while (!string.IsNullOrEmpty(val = Console.ReadLine()))
+        {
+            Console.WriteLine($"Valor enviado={val}");
+        }
+        Console.WriteLine("Hola Monaco!");
+    }
+}`,
+        language: "csharp",
         theme: "vs-light",
         automaticLayout: true
       });
-    });*/
-
-    let monacoReady = null;
-
-    function ensureMonaco() {
-      if (monacoReady) return monacoReady;
-      monacoReady = new Promise((resolve, reject) => {
-        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
-        require(['vs/editor/editor.main'], function () {
-          const cfg = getSelectedLang();
-          monacoEditor = monaco.editor.create(document.getElementById('monaco-container'), {
-            value: cfg.template,
-            language: cfg.monaco,
-            theme: 'vs-light',
-            automaticLayout: true
-          });
-          resolve(monacoEditor);
-        }, function (err) {
-          showMessage("⚠️ Error al cargar el editor Monaco: " + err, "err");
-          reject(err);
-        });
-      });
-      return monacoReady;
-    }
-
-    // Inicializar Monaco al cargar la página
-    window.addEventListener("load", async () => {
-      const cfg = getSelectedLang();
-      cmEditor.setValue(cfg.template); // Establecer plantilla en CodeMirror
-      await ensureMonaco(); // Asegurar que Monaco esté listo
-      monacoEditor.setValue(cfg.template); // Establecer plantilla en Monaco
+      console.log("✅ Monaco cargado correctamente");
     });
-    /*
-    async function switchEditor(type) {
-      const cmTab = document.getElementById("tab-cm");
-      const monacoTab = document.getElementById("tab-monaco");
-      const cmContainer = document.querySelector(".CodeMirror").parentNode;
-      const monacoContainer = document.getElementById("monaco-container");
-      const warning = document.getElementById("monaco-warning");
 
-      if (type === "cm") {
-        cmTab.classList.add("active");
-        monacoTab.classList.remove("active");
-        cmContainer.style.display = "block";
-        monacoContainer.style.display = "none";
-        warning.style.display = "none";
-      } else {
-        monacoTab.classList.add("active");
-        cmTab.classList.remove("active");
-        cmContainer.style.display = "none";
-        monacoContainer.style.display = "block";
-        warning.style.display = "block";
-      }
-    }
-    */
-    async function switchEditor(type) {
-      const cmTab = document.getElementById("tab-cm");
-      const monacoTab = document.getElementById("tab-monaco");
-      const cmContainer = document.querySelector(".CodeMirror").parentNode;
-      const monacoContainer = document.getElementById("monaco-container");
-      const warning = document.getElementById("monaco-warning");
-
-      if (type === "cm") {
-        cmTab.classList.add("active");
-        monacoTab.classList.remove("active");
-        cmContainer.style.display = "block";
-        monacoContainer.style.display = "none";
-        warning.style.display = "none";
-      } else {
-        monacoTab.classList.add("active");
-        cmTab.classList.remove("active");
-        cmContainer.style.display = "none";
-        monacoContainer.style.display = "block";
-        warning.style.display = "block";
-
-        // Asegurar que Monaco esté inicializado
-        await ensureMonaco();
-        const cfg = getSelectedLang();
-        monaco.editor.setModelLanguage(monacoEditor.getModel(), cfg.monaco);
-        // Establecer la plantilla si el editor está vacío o no tiene cambios significativos
-        if (!monacoEditor.getValue().trim()) {
-          monacoEditor.setValue(cfg.template);
-        }
-        monacoEditor.layout(); // Forzar el re-renderizado del editor
-      }
-    }
-
-    // === Cambiar lenguaje ===
-    document.getElementById("selectLanguage").addEventListener("change", async () => {
+    // === Cambio de lenguaje (compatible con CodeMirror y Monaco) ===
+    document.getElementById("selectLanguage").addEventListener("change", () => {
       const cfg = getSelectedLang();
 
-      // Actualizar CodeMirror
+      // Depurar, en la consola, el código actual antes de cambiar
+      console.log("=== CÓDIGO ACTUAL ANTES DE CAMBIAR DE LENGUAJE ===");
+      showCodeInConsole();
+
+      // CodeMirror
       cmEditor.setOption("mode", cfg.codemirror);
       cmEditor.setValue(cfg.template);
 
-      // Actualizar Monaco
-      
+      // Monaco (si ya está creado)
+      if (monacoEditor) {
         monaco.editor.setModelLanguage(monacoEditor.getModel(), cfg.monaco);
         monacoEditor.setValue(cfg.template);
         monacoEditor.layout();
-      
+      }
     });
 
-  </script>
-
-  </div>
-
-  <script>
-      // ⚡ Mapear lenguaje elegido → configuración de editores + Judge0
-      document.getElementById("selectLanguage").addEventListener("change", () => {
-        const cfg = getSelectedLang();
-
-        // CodeMirror: cambiar resaltado y plantilla
-        cmEditor.setOption("mode", cfg.codemirror);
-        cmEditor.setValue(cfg.template);
-
-        // Monaco: cambiar lenguaje y plantilla
-        if (monacoEditor) {
-          monaco.editor.setModelLanguage(monacoEditor.getModel(), cfg.monaco);
-          monacoEditor.setValue(cfg.template);
-        }
-      });
-
+    // === Inicializar CodeMirror con plantilla inicial ===
+    window.addEventListener("load", () => {
       const cfg = getSelectedLang();
-      
-      // Actualizar CodeMirror
       cmEditor.setOption("mode", cfg.codemirror);
+      cmEditor.setValue(cfg.template);
+    });
 
-      // Actualizar Monaco
-      if (monacoEditor) {
-        monaco.editor.setModelLanguage(monacoEditor.getModel(), cfg.monaco);
-      }
+
     
   </script>
 
@@ -509,12 +486,16 @@ class Program
 
     async function runJudge0() {
       const code = getCurrentCode();
+      
       let stdin = document.getElementById('stdin').value;
 
       if (!code.trim()) {
         showMessage("⚠️ El código está vacío, no se puede enviar a Judge0.", "err");
         return;
       }
+
+      console.log("=== CÓDIGO ACTUAL ANTES DE ENVIAR A JUDGE0 ===");
+      showCodeParamInConsole(code);
 
       showMessage("⏳ Ejecutando en Judge0...", "warn");
 
@@ -569,6 +550,14 @@ class Program
 
       if (!problemId) { alert("Por favor, introduce el identificador de la pregunta."); return; }
       if (!studentId) { alert("Por favor, introduce el identificador del estudiante."); return; }
+
+      if (!code.trim()) {
+        showMessage("⚠️ El código está vacío, no se puede enviar a Judge0.", "err");
+        return;
+      }
+
+      console.log("=== CÓDIGO ACTUAL ANTES DE ENVIAR AL SERVIDOR OFICIAL ===");
+      showCodeParamInConsole(code);
 
       showMessage("⏳ Enviando a servidor oficial...", "warn");
 
@@ -631,7 +620,7 @@ class Program
   <textarea id="stdin" rows="15" cols="80" style="width: 100%;"></textarea>
 
   <button type="button" onclick="runJudge0()">Ejecutar (En Juez de<br>Prueba)</button>
-  <button type="button" onclick="runOfficial()">Enviar (En Juez Oficial,<br> es calificable para el contest</strong>)</button>
+  <button type="button" onclick="runOfficial()">Enviar (En Juez Oficial,<br> <strong>es calificable para el contest</strong>)</button>
 
   <div id="output" class="result"></div>
 
