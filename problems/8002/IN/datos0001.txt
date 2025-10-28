@@ -1,0 +1,13 @@
+4
+5 6
+M-A B-B T-M C-1 O-E
+M-M B-R T-A C-1 S-N O-M
+2 2
+T-1 C-1
+T-2 C-1
+1 2
+O-E
+O-M S-N
+3 3
+B-B C-1 O-E
+B-R S-N C-1

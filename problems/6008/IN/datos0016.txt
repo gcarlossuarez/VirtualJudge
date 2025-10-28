@@ -1,0 +1,23 @@
+10000
+2759
+20
+YouTube;656;77
+Puzzle;159;162
+Music Two;221;61
+Discord;693;7
+Noticias;874;23
+Spotify;677;136
+Navegador;427;168
+Mapas;414;127
+Music One;103;108
+Telefonia;658;59
+Twitch;555;123
+Facebook;667;120
+Camara;744;164
+Correo;848;171
+Duolingo;623;80
+Cortana;876;138
+Tareas;71;118
+Musica;871;159
+Musix Three;778;109
+Babilon Bee;594;122

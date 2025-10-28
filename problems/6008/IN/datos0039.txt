@@ -1,0 +1,31 @@
+10000
+2649
+28
+YouTube;245;112
+Navegador;224;147
+Camara;760;153
+Noticias;656;119
+Notas;627;60
+Music One;62;148
+Music Two;770;55
+Spotify;533;137
+Correo;814;72
+Twiter;397;77
+Discord;900;129
+Telefonia;100;131
+Mensajes;702;170
+Mapas;174;149
+Calendario;734;31
+Greenfits;698;24
+Maptube;576;114
+Banco;682;144
+Clima;824;169
+Tareas;122;146
+Galeria;296;91
+Musica;580;82
+Twitch;739;176
+Puzzle;885;149
+Podcast;823;80
+Facebook;84;155
+Cortana;652;71
+Duolingo;512;154

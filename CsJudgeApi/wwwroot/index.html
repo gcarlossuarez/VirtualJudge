@@ -101,6 +101,11 @@
        background-color: #fff8dc; /* palido, tipo bloc de notas */
     }
 
+    /* Cambio suave entre tema */
+    body, textarea, input, select {
+      transition: background-color 0.3s, color 0.3s;
+    }
+
   </style>
   
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -167,11 +172,66 @@
       border-radius: 3px;
     }
     .copy-btn:hover { background: #222; }
+    
+    /* === Tema oscuro === */
+    body.dark-mode {
+      background-color: #1e1e1e;
+      color: #ddd;
+    }
+
+    body.dark-mode textarea,
+    body.dark-mode input,
+    body.dark-mode select {
+      background-color: #2b2b2b;
+      color: #eee;
+      border-color: #555;
+    }
+
+    body.dark-mode .editor-container,
+    body.dark-mode #utils-panel,
+    body.dark-mode #utils-viewer,
+    body.dark-mode .result {
+      background-color: #252526;
+      border-color: #555;
+      color: #ddd;
+    }
+
+    body.dark-mode #copy-btn {
+      background: #006400;
+    }
+
+    body.dark-mode .tab {
+      background: #333;
+      color: #ccc;
+      border-color: #555;
+    }
+
+    body.dark-mode .tab.active {
+      background: #1e1e1e;
+      color: #fff;
+      border-bottom: 1px solid #1e1e1e;
+    }
+
+    body.dark-mode #toast-container .toast {
+      background: #444;
+    }
+
   </style>
-    <!-- CodeMirror -->
+  
+  <!-- CodeMirror -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+  
+  /*
+  El archivo monokai.min.css define los colores de sintaxis, fondo, números de línea, etc. para CodeMirror cuando se usa el tema "monokai".
+  Por ejemplo:
+  - Fondo negro (#272822)
+  - Texto claro
+  - Keywords en azul/verde
+  - Literales en naranja
+  */
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
 
   <!-- Monaco -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
@@ -238,6 +298,19 @@
 
   
   <h1>Juez Online</h1>
+  <button id="theme-toggle" style="
+              position: fixed;
+              bottom: 90px;
+              right: 20px;
+              background-color: #333;
+              color: white;
+              padding: 10px 15px;
+              border: none;
+              border-radius: 50px;
+              cursor: pointer;
+              font-size: 16px;
+              box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+              z-index: 10000;">🌙</button>
 
   <div>
     <div id="tab-cm" class="tab active" onclick="switchEditor('cm')">Editor rápido (CodeMirror)</div>
@@ -639,11 +712,67 @@ class Program
           select.appendChild(opt);
         });
 
-        // 🔥 Cuando cambie el select → copiar el valor al input
-        select.addEventListener("change", () => {
+        // === Función para notificar selección de estudiante al backend ===
+        async function notifyStudentSelection(studentId) {
+          try {
+            console.log(`� Notificando selección de estudiante: ${studentId}`);
+            
+            const response = await fetch("/api/student-login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                studentId: studentId,
+                timestamp: new Date().toISOString(),
+                action: "login"
+              })
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              console.log("✅ Estudiante registrado correctamente:", result);
+              
+              // Mostrar mensaje de bienvenida
+              showMessage(`✅ ${result.message}`, "ok");
+            } else {
+              // Error del servidor - manejar bloqueos y otros errores
+              const errorData = await response.json();
+              console.error("❌ Error del servidor:", errorData);
+              
+              if (response.status === 400 && errorData.error) {
+                // Bloqueo por IP - mostrar alerta prominente
+                alert(`🚫 ACCESO BLOQUEADO\n\n${errorData.error}\n\nContacte al instructor si necesita ayuda.`);
+                
+                // Revertir la selección del dropdown
+                document.getElementById("selectStudent").value = "";
+                document.getElementById("txtStudentId").value = "";
+                
+                // Mostrar mensaje de error en la interfaz
+                showMessage(`❌ BLOQUEADO: ${errorData.error}`, "err");
+              } else {
+                // Otro tipo de error
+                showMessage(`⚠️ Error al registrar estudiante: ${response.status}`, "warn");
+              }
+            }
+          } catch (error) {
+            console.error("❌ Error de conexión:", error);
+          }
+        }
+
+        // 🔥 Cuando cambie el select → copiar el valor al input y notificar al backend
+        select.addEventListener("change", async () => {
           const selectedValue = select.value;
           if (selectedValue) {
+            // Temporalmente actualizar el campo (se revertirá si hay error)
             document.getElementById("txtStudentId").value = selectedValue;
+            
+            // Notificar al backend sobre la selección del estudiante
+            // Si hay bloqueo, la función notifyStudentSelection revertirá automáticamente
+            await notifyStudentSelection(selectedValue);
+          } else {
+            // Si deseleccionó, limpiar el campo
+            document.getElementById("txtStudentId").value = "";
           }
         });
 
@@ -893,6 +1022,38 @@ class Program
         </script>
 
       <div id="toast-container"></div>
+      
+      
+      <script>
+        // --- Modo oscuro / claro ---
+        const themeToggle = document.getElementById("theme-toggle");
+
+        // Leer tema guardado
+        const savedTheme = localStorage.getItem("theme") || "light";
+        applyTheme(savedTheme);
+
+        themeToggle.addEventListener("click", () => {
+          const current = document.body.classList.contains("dark-mode") ? "dark" : "light";
+          const next = current === "dark" ? "light" : "dark";
+          applyTheme(next);
+          localStorage.setItem("theme", next);
+        });
+
+        function applyTheme(mode) {
+          if (mode === "dark") {
+            document.body.classList.add("dark-mode");
+            themeToggle.textContent = "☀️";
+            if (monacoEditor) monaco.editor.setTheme("vs-dark");
+            document.querySelectorAll(".CodeMirror").forEach(cm => cm.classList.add("cm-s-monokai"));
+          } else {
+            document.body.classList.remove("dark-mode");
+            themeToggle.textContent = "🌙";
+            if (monacoEditor) monaco.editor.setTheme("vs-light");
+            document.querySelectorAll(".CodeMirror").forEach(cm => cm.classList.remove("cm-s-monokai"));
+          }
+        }
+      </script>
+
 </body>
 </html>
 

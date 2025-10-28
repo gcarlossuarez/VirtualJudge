@@ -1,0 +1,12 @@
+10000
+2708
+9
+YouTube;723;66
+Puzzle;595;64
+Galeria;253;141
+Libros;343;113
+Cortana;653;120
+Spotify;394;161
+Babilon Bee;304;163
+Notas;748;65
+Calendario;254;124

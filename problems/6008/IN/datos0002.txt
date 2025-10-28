@@ -1,0 +1,13 @@
+10000
+2500
+10
+Facebook;500;5
+Spotify;350;15
+YouTube;700;2
+Duolingo;180;90
+App de Banco;280;20
+Instagram;450;10
+Calendario;80;1
+Juego de Puzzle;120;120
+Mapas;400;30
+Notas Rápidas;60;1

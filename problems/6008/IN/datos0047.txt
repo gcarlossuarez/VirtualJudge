@@ -1,0 +1,22 @@
+10000
+2280
+19
+Notas;790;98
+Cortana;875;53
+Podcast;862;172
+Musica;481;164
+Noticias;890;146
+Facebook;100;89
+Instagram;403;174
+Telefonia;880;110
+Blue corner;744;91
+Twiter;579;78
+Clima;257;178
+Twitch;494;121
+Musix Three;466;78
+Maptube;711;170
+Spotify;633;142
+Mensajes;329;172
+Mapas;51;145
+Babilon Bee;648;137
+Banco;694;118

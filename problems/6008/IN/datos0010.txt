@@ -1,0 +1,11 @@
+10000
+2567
+8
+Libros;731;75
+Mensajes;676;137
+Twiter;655;173
+Puzzle;760;129
+Discord;823;166
+Spotify;479;153
+YouTube;792;29
+Facebook;546;147

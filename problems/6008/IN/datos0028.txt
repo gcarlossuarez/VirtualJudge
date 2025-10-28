@@ -1,0 +1,24 @@
+10000
+2544
+21
+Instagram;890;126
+Twiter;815;172
+Telefonia;590;46
+Facebook;245;173
+Libros;812;133
+Mapas;538;143
+Cortana;647;21
+Noticias;563;88
+Puzzle;718;148
+Navegador;352;168
+Greenfits;682;170
+Maptube;250;0
+Camara;848;104
+Babilon Bee;300;174
+Notas;399;123
+Discord;796;173
+Spotify;703;174
+Correo;834;110
+Tareas;734;156
+Podcast;418;47
+Music For;426;175

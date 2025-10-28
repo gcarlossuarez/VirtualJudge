@@ -1,0 +1,18 @@
+10000
+2460
+15
+Maptube;303;141
+Telefonia;711;111
+Banco;357;110
+Clima;719;113
+Music One;108;126
+Musica;594;173
+Galeria;314;179
+Noticias;451;167
+Musix Three;641;34
+Spotify;85;29
+Blue corner;767;24
+Facebook;368;122
+Instagram;855;177
+Twitch;313;114
+Mapas;347;112

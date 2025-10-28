@@ -1,0 +1,31 @@
+10000
+2367
+28
+Twiter;277;160
+Camara;477;157
+YouTube;781;56
+Babilon Bee;889;163
+Correo;872;65
+Libros;883;153
+Galeria;486;141
+Musix Three;329;119
+Notas;507;175
+Tareas;790;137
+Facebook;713;66
+Podcast;875;86
+Mensajes;336;161
+Discord;847;125
+Navegador;819;82
+Blue corner;655;136
+Instagram;806;132
+Cortana;754;101
+Twitch;562;142
+Music For;456;152
+Calendario;501;143
+Musica;534;95
+Telefonia;835;99
+Spotify;78;88
+Music Two;533;180
+Maptube;455;170
+Puzzle;392;95
+Mapas;529;170

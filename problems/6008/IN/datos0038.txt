@@ -1,0 +1,25 @@
+10000
+2517
+22
+Notas;592;156
+Telefonia;721;151
+Camara;725;135
+Calendario;873;57
+Banco;586;174
+Greenfits;601;165
+Noticias;732;101
+Facebook;893;98
+Twitch;593;117
+Babilon Bee;830;179
+Cortana;752;141
+Clima;498;170
+Instagram;626;38
+Musica;599;133
+YouTube;860;177
+Spotify;113;179
+Music One;685;110
+Music Two;189;109
+Discord;746;107
+Podcast;771;37
+Mensajes;449;54
+Libros;177;131

@@ -1,0 +1,17 @@
+10000
+2434
+14
+Banco;186;121
+Libros;326;132
+Cortana;408;168
+Camara;611;175
+Mensajes;479;83
+Telefonia;196;169
+Notas;839;138
+Spotify;818;127
+Babilon Bee;365;69
+Blue corner;458;174
+Tareas;726;174
+Galeria;285;108
+Correo;552;177
+Podcast;71;103

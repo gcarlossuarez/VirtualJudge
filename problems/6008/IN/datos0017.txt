@@ -1,0 +1,23 @@
+10000
+2727
+20
+Tareas;780;127
+Discord;598;92
+Music For;686;137
+Libros;780;144
+Facebook;212;126
+Mensajes;585;99
+Telefonia;631;75
+Cortana;347;39
+Music Two;441;42
+Spotify;69;128
+Music One;60;170
+Babilon Bee;266;33
+Navegador;301;145
+Mapas;324;174
+Podcast;207;114
+Noticias;125;28
+Calendario;510;107
+Twitch;677;176
+Maptube;275;127
+Greenfits;564;52

@@ -1,0 +1,16 @@
+5
+20 20
+T-R M-M B-M S-R S-N C-A C-E O-E T-E C-M S-M O-R T-M O-A T-A O-B M-E M-B M-1 T-1
+O-E T-1 T-A C-N O-N S-R M-N M-M S-1 S-B O-B T-M B-A M-A S-A T-R C-B O-A T-N T-B
+20 20
+C-A T-B T-N B-E S-B O-B O-A C-R O-N C-N C-E B-1 C-M S-E O-M T-R M-N M-1 C-1 C-B
+B-R S-1 M-R S-A S-N T-A C-E T-R M-M B-N S-E C-B C-A O-B M-E M-N C-R S-M B-M M-1
+20 20
+T-E T-B C-A S-E T-N O-R M-R S-1 O-1 S-R C-B M-E O-A C-E M-N M-1 S-B C-N B-R O-M
+M-1 S-E B-A C-N O-A M-E S-1 S-A M-B B-E M-N O-R C-A S-R B-N S-B O-1 T-A T-R B-R
+20 20
+S-A T-R C-N B-1 M-R T-B O-1 S-N B-E T-E B-B M-M T-N O-N M-E B-N B-R M-N M-B C-A
+O-B B-M S-M S-1 B-E T-B C-A C-1 M-1 S-R M-M B-B C-N T-A S-E T-E C-B O-A O-E M-E
+20 20
+S-A S-1 B-A T-A B-1 O-1 T-N O-B T-R T-M B-R M-R S-R T-E S-M B-M O-N T-B B-E S-B
+M-A C-M C-R B-M S-E S-N C-B S-B B-N T-A B-1 O-1 T-B C-1 T-1 C-A C-N O-E B-B O-M

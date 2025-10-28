@@ -1,0 +1,14 @@
+10000
+2496
+11
+Twitch;736;149
+Noticias;89;110
+Tareas;408;136
+Cortana;363;134
+Music For;830;149
+Camara;321;25
+Galeria;671;175
+Musica;855;177
+Discord;809;174
+Podcast;98;46
+Twiter;716;139

@@ -1,0 +1,11 @@
+10000
+2607
+8
+Musica;548;146
+Musix Three;440;115
+Puzzle;652;109
+Duolingo;766;43
+Galeria;531;168
+Maptube;236;82
+Greenfits;521;173
+Blue corner;732;173

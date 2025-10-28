@@ -1,0 +1,13 @@
+10000
+2406
+10
+Babilon Bee;801;145
+Musix Three;464;168
+Mensajes;655;108
+YouTube;605;169
+Clima;872;109
+Discord;408;164
+Banco;828;55
+Cortana;80;128
+Instagram;563;109
+Facebook;801;88

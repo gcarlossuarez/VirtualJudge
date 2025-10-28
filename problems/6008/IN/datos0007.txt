@@ -1,0 +1,25 @@
+10000
+2462
+22
+Spotify;233;167
+Libros;821;164
+Cortana;234;118
+Musica;98;82
+Facebook;843;176
+Mensajes;370;165
+Banco;142;67
+Telefonia;77;139
+Discord;291;90
+Babilon Bee;79;130
+Blue corner;806;97
+Puzzle;796;78
+Navegador;715;103
+Musix Three;134;164
+Galeria;58;146
+Clima;543;89
+Music Two;406;142
+Twitch;261;152
+Noticias;267;133
+Twiter;662;141
+Tareas;160;106
+Duolingo;543;139

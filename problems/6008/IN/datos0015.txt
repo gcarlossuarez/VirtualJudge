@@ -1,0 +1,16 @@
+10000
+2291
+13
+Blue corner;533;159
+Telefonia;794;167
+Twitch;870;118
+Cortana;682;137
+YouTube;829;156
+Instagram;369;121
+Correo;430;0
+Musica;138;120
+Navegador;468;174
+Calendario;428;116
+Notas;815;134
+Music Two;325;174
+Camara;862;158

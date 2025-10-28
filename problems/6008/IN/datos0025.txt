@@ -1,0 +1,12 @@
+10000
+2691
+9
+Correo;726;158
+Music For;234;154
+Telefonia;833;83
+Twitch;748;132
+Tareas;133;51
+Instagram;222;99
+YouTube;646;174
+Navegador;719;174
+Noticias;770;176

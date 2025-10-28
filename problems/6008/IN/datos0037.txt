@@ -1,0 +1,13 @@
+10000
+2331
+10
+YouTube;798;147
+Tareas;588;9
+Spotify;268;178
+Cortana;642;165
+Twitch;251;29
+Music Two;105;106
+Puzzle;873;154
+Babilon Bee;630;127
+Calendario;75;77
+Mapas;814;95

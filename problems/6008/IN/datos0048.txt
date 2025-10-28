@@ -1,0 +1,22 @@
+10000
+2542
+19
+Twitch;841;119
+Mensajes;125;78
+Music For;708;149
+Calendario;325;164
+Babilon Bee;670;157
+Tareas;662;112
+Navegador;808;92
+Clima;258;99
+Noticias;759;129
+YouTube;757;168
+Notas;157;127
+Blue corner;729;97
+Mapas;196;167
+Camara;656;79
+Discord;82;69
+Telefonia;794;125
+Greenfits;874;90
+Libros;681;66
+Correo;797;159

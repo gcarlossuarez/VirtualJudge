@@ -1,0 +1,17 @@
+10000
+2354
+14
+Instagram;630;143
+Navegador;529;0
+Music Two;398;130
+Tareas;667;175
+Twiter;357;168
+Galeria;70;93
+Maptube;630;152
+Spotify;591;127
+Noticias;625;96
+Musica;99;97
+Mapas;376;69
+Clima;550;74
+Music One;719;173
+Libros;698;155

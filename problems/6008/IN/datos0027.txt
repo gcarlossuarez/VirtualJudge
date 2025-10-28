@@ -1,0 +1,31 @@
+10000
+2411
+28
+Duolingo;508;33
+Instagram;850;173
+Mapas;334;75
+Notas;860;65
+Banco;532;75
+Noticias;804;157
+Mensajes;714;116
+Facebook;179;156
+Libros;344;63
+Musix Three;824;109
+Spotify;705;180
+Blue corner;496;104
+Music Two;892;117
+Musica;519;128
+Correo;260;55
+Tareas;747;72
+Podcast;521;168
+Camara;57;98
+Greenfits;820;151
+Clima;519;98
+Twitch;234;114
+YouTube;160;96
+Maptube;532;147
+Discord;62;73
+Cortana;555;166
+Calendario;597;128
+Galeria;139;176
+Music One;791;37

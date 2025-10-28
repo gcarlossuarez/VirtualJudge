@@ -1,0 +1,18 @@
+10000
+2264
+15
+Telefonia;320;172
+Cortana;678;154
+Notas;821;131
+Noticias;303;179
+Mapas;184;136
+Maptube;749;22
+Clima;204;155
+Music One;290;171
+Banco;729;50
+YouTube;664;167
+Puzzle;758;156
+Discord;138;53
+Correo;179;28
+Podcast;201;63
+Babilon Bee;811;126

@@ -1,0 +1,32 @@
+10000
+2260
+29
+YouTube;658;81
+Mapas;693;180
+Instagram;288;146
+Calendario;870;150
+Maptube;336;57
+Podcast;473;129
+Duolingo;242;152
+Galeria;589;121
+Cortana;527;104
+Babilon Bee;821;112
+Blue corner;560;129
+Music One;112;127
+Telefonia;50;152
+Spotify;671;152
+Tareas;677;89
+Twiter;370;58
+Camara;484;165
+Twitch;262;172
+Music For;644;163
+Noticias;607;152
+Banco;477;155
+Libros;853;35
+Music Two;693;105
+Puzzle;383;127
+Facebook;831;179
+Musica;811;104
+Correo;572;73
+Clima;478;124
+Mensajes;606;116

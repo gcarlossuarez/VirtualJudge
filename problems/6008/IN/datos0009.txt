@@ -1,0 +1,26 @@
+10000
+2431
+23
+Music One;735;111
+Calendario;165;95
+Discord;210;33
+Music For;789;162
+Banco;679;15
+Puzzle;522;44
+YouTube;270;85
+Notas;352;51
+Galeria;190;161
+Camara;702;50
+Navegador;744;157
+Noticias;739;159
+Telefonia;894;134
+Facebook;393;142
+Tareas;848;63
+Twitch;810;109
+Correo;98;129
+Twiter;772;68
+Blue corner;849;148
+Mapas;773;155
+Mensajes;549;58
+Greenfits;776;125
+Babilon Bee;137;155

@@ -1,0 +1,16 @@
+10000
+2591
+13
+Music Two;359;163
+Banco;820;126
+Telefonia;745;179
+Maptube;94;139
+Galeria;827;108
+Navegador;674;148
+Music For;303;159
+Duolingo;113;88
+Mapas;198;158
+Twitch;209;174
+Clima;862;111
+Puzzle;876;90
+Babilon Bee;478;92

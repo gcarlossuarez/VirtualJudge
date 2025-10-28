@@ -1,0 +1,20 @@
+10000
+2466
+17
+Libros;422;138
+Music Two;301;110
+Facebook;465;83
+Spotify;316;156
+Music For;683;100
+Banco;184;52
+Maptube;659;125
+Galeria;420;38
+Blue corner;763;155
+Navegador;425;129
+Babilon Bee;419;115
+Clima;810;180
+Tareas;735;12
+Noticias;137;82
+Twitch;826;165
+Notas;387;166
+Puzzle;243;177

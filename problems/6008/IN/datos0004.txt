@@ -1,0 +1,19 @@
+10000
+2589
+16
+Noticias;286;180
+Mensajes;837;153
+Twiter;402;135
+Correo;284;55
+Duolingo;184;177
+YouTube;510;110
+Music Two;782;143
+Podcast;416;161
+Music For;195;79
+Twitch;850;164
+Instagram;751;152
+Greenfits;360;104
+Spotify;767;140
+Tareas;652;151
+Banco;69;141
+Libros;407;66

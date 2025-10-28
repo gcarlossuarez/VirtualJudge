@@ -1,0 +1,33 @@
+10000
+2496
+30
+Notas;676;167
+Musica;883;178
+Spotify;66;125
+Instagram;681;153
+Libros;218;170
+Mapas;609;55
+Camara;670;134
+Podcast;656;91
+Banco;894;103
+Duolingo;349;94
+Twiter;180;159
+Telefonia;153;104
+Tareas;734;94
+Noticias;329;171
+Discord;554;135
+Music For;468;154
+Cortana;157;170
+Clima;830;106
+Maptube;588;36
+Music One;710;172
+Musix Three;698;162
+Calendario;678;165
+Mensajes;577;99
+Blue corner;707;132
+Babilon Bee;726;66
+Twitch;593;162
+Galeria;882;117
+Facebook;869;170
+Greenfits;225;107
+YouTube;735;119

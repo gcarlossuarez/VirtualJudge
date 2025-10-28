@@ -1,0 +1,11 @@
+10000
+2300
+8
+Spotify;712;132
+Tareas;514;154
+Puzzle;491;63
+Twiter;698;140
+Galeria;698;104
+Twitch;167;66
+YouTube;891;174
+Podcast;216;155

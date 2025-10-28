@@ -1,0 +1,16 @@
+10000
+2616
+13
+Correo;73;137
+Clima;862;125
+Musica;689;139
+YouTube;609;119
+Instagram;645;175
+Camara;888;171
+Mapas;855;132
+Music Two;627;130
+Telefonia;846;147
+Music One;188;127
+Puzzle;842;133
+Noticias;685;166
+Banco;118;39

@@ -1,0 +1,24 @@
+10000
+2677
+21
+Music One;870;18
+Duolingo;270;150
+Podcast;882;40
+Camara;114;78
+Greenfits;74;168
+Facebook;642;122
+Noticias;846;146
+Blue corner;882;90
+Navegador;805;113
+Twitch;820;82
+Galeria;700;100
+YouTube;436;171
+Maptube;376;104
+Mensajes;524;70
+Discord;747;134
+Instagram;874;94
+Twiter;560;177
+Puzzle;749;81
+Tareas;205;77
+Libros;530;164
+Musica;323;156

@@ -1,0 +1,31 @@
+10000
+2568
+28
+Greenfits;774;172
+Twitch;661;156
+Correo;597;62
+Music For;770;149
+Banco;645;22
+Podcast;791;103
+Instagram;688;155
+Babilon Bee;850;9
+Duolingo;721;55
+Music Two;562;144
+Mensajes;529;74
+Blue corner;651;118
+Music One;297;170
+Libros;831;98
+Camara;683;171
+Tareas;526;140
+Spotify;313;171
+Telefonia;681;101
+Galeria;245;112
+Discord;664;167
+Musica;321;169
+Calendario;203;54
+Facebook;697;69
+Twiter;280;170
+Clima;395;142
+Musix Three;653;139
+Mapas;373;143
+Maptube;764;163

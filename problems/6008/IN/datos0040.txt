@@ -1,0 +1,19 @@
+10000
+2710
+16
+Spotify;725;75
+Music One;77;155
+Blue corner;537;132
+Telefonia;664;109
+Discord;649;180
+Music Two;450;89
+Instagram;355;83
+Clima;826;86
+Libros;531;101
+Twitch;762;152
+Cortana;496;54
+Puzzle;229;111
+Galeria;130;167
+Musica;809;156
+Podcast;834;79
+Mapas;386;87

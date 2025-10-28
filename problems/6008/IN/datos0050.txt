@@ -1,0 +1,13 @@
+10000
+2468
+10
+Banco;543;146
+Galeria;280;145
+Calendario;737;135
+Tareas;868;131
+Clima;749;151
+Telefonia;342;170
+Babilon Bee;773;167
+Music Two;716;117
+Instagram;164;82
+Cortana;307;150

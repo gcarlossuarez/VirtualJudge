@@ -1,0 +1,30 @@
+10000
+2529
+27
+Music Two;191;113
+Noticias;497;50
+Twitch;569;22
+Navegador;475;118
+Blue corner;259;175
+Correo;51;173
+Music One;441;143
+Spotify;777;49
+Notas;704;69
+Greenfits;584;121
+Galeria;339;114
+Instagram;704;172
+Telefonia;134;127
+Camara;870;162
+Music For;892;178
+Babilon Bee;385;41
+Cortana;84;30
+YouTube;896;56
+Libros;464;106
+Podcast;327;71
+Facebook;477;171
+Musix Three;785;149
+Mensajes;464;158
+Puzzle;631;175
+Discord;641;53
+Calendario;842;177
+Twiter;328;136

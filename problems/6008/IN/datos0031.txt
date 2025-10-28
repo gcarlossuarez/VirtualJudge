@@ -1,0 +1,26 @@
+10000
+2729
+23
+Correo;882;109
+Spotify;79;110
+Galeria;472;135
+Blue corner;295;100
+Mapas;216;166
+Puzzle;418;157
+Podcast;876;161
+Libros;510;149
+Twitch;130;178
+Calendario;882;106
+Banco;647;158
+Twiter;650;143
+Greenfits;294;105
+Cortana;429;168
+YouTube;222;130
+Music For;630;157
+Facebook;845;55
+Telefonia;857;177
+Music Two;649;138
+Tareas;712;154
+Discord;135;174
+Music One;769;180
+Maptube;830;132

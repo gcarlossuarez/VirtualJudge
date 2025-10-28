@@ -1,0 +1,23 @@
+10000
+2229
+20
+Libros;197;171
+Maptube;285;68
+YouTube;329;166
+Music For;644;166
+Twiter;730;147
+Tareas;866;161
+Cortana;827;104
+Spotify;651;161
+Mapas;837;20
+Telefonia;107;157
+Galeria;792;174
+Greenfits;102;48
+Blue corner;667;131
+Camara;327;98
+Twitch;520;16
+Music Two;82;117
+Noticias;576;28
+Navegador;751;178
+Facebook;842;85
+Discord;841;116

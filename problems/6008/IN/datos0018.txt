@@ -1,0 +1,11 @@
+10000
+2793
+8
+Music One;472;52
+Instagram;486;178
+Navegador;835;154
+Discord;771;65
+Galeria;681;178
+Music For;368;104
+Cortana;369;142
+Duolingo;661;12

@@ -1,0 +1,20 @@
+10000
+2416
+17
+Facebook;218;0
+Libros;641;56
+Instagram;325;144
+Blue corner;383;143
+Discord;728;167
+Clima;584;146
+Mapas;649;173
+Navegador;898;136
+Music For;300;51
+Mensajes;250;96
+Music Two;826;114
+Notas;116;126
+Galeria;669;180
+Musica;291;176
+Twiter;122;98
+Podcast;641;61
+Noticias;86;111

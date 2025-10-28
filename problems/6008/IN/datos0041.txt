@@ -1,0 +1,16 @@
+10000
+2337
+13
+YouTube;859;82
+Twiter;104;79
+Podcast;411;141
+Mapas;640;78
+Facebook;327;39
+Musix Three;72;164
+Navegador;393;83
+Clima;566;178
+Tareas;832;149
+Musica;455;65
+Calendario;893;124
+Spotify;877;180
+Blue corner;646;39

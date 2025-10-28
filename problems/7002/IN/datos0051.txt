@@ -1,0 +1,10 @@
+3
+13 9
+T-1 B-N O-1 B-E S-E S-M M-E T-B S-1 C-1 S-N T-M T-R
+C-R M-N O-M M-E S-M M-M B-E B-B S-N
+10 3
+T-1 M-E O-1 O-R T-M C-M B-M M-A M-N O-B
+C-M T-E T-A
+9 4
+B-B M-E T-B S-A C-1 C-R O-R O-E C-N
+M-1 O-M S-1 O-N

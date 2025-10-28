@@ -1,0 +1,23 @@
+10000
+2267
+20
+Camara;62;143
+Babilon Bee;769;142
+Mensajes;770;177
+Musix Three;671;71
+Navegador;542;146
+Cortana;614;150
+Libros;513;165
+Noticias;725;138
+Puzzle;846;149
+YouTube;315;34
+Telefonia;404;137
+Duolingo;440;144
+Discord;794;102
+Spotify;733;163
+Correo;730;130
+Instagram;488;103
+Blue corner;235;143
+Music For;537;173
+Facebook;258;93
+Greenfits;112;152

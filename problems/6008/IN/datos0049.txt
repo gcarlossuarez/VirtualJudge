@@ -1,0 +1,26 @@
+10000
+2432
+23
+Greenfits;73;99
+Tareas;866;121
+Facebook;658;69
+Clima;596;121
+Podcast;428;135
+Puzzle;887;125
+Music For;560;137
+Instagram;590;152
+Duolingo;695;138
+Libros;88;57
+Spotify;808;177
+Music Two;692;165
+Twitch;559;90
+Notas;638;107
+Noticias;391;93
+Navegador;831;106
+Musica;839;135
+YouTube;180;138
+Mensajes;774;0
+Galeria;383;142
+Maptube;768;170
+Blue corner;828;147
+Banco;836;147

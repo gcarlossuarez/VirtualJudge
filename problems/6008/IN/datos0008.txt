@@ -1,0 +1,24 @@
+10000
+2350
+21
+Maptube;813;150
+Greenfits;547;151
+Correo;861;113
+Puzzle;146;19
+Calendario;797;114
+Tareas;884;69
+Instagram;352;44
+Duolingo;897;146
+Spotify;744;157
+Libros;249;98
+Facebook;795;70
+Podcast;865;155
+Telefonia;694;88
+Cortana;333;178
+Babilon Bee;428;52
+Galeria;549;167
+Mensajes;778;131
+Camara;755;84
+Music One;677;90
+Banco;149;148
+Clima;432;85

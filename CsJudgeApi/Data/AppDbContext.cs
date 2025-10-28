@@ -9,6 +9,9 @@ public class AppDbContext : DbContext
     public DbSet<ContestStudent> ContestStudents { get; set; } = null!;
     public DbSet<Question> Questions { get; set; } = null!;
     public DbSet<Submission> Submissions => Set<Submission>();
+    // 🔹 Otras tablas ya existentes
+    public DbSet<Configuration> Configurations => Set<Configuration>();
+
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options) { }
@@ -46,6 +49,21 @@ public class AppDbContext : DbContext
             .HasOne(cl => cl.Contest)
             .WithMany(c => c.Languages)
             .HasForeignKey(cl => cl.ContestId);
+
+        // Configuración explícita de la clave primaria en la tabla Configuration
+        modelBuilder.Entity<Configuration>(entity =>
+        {
+            entity.HasKey(e => e.Key);
+            entity.Property(e => e.Key)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+            entity.Property(e => e.Value)
+                    .HasMaxLength(250);
+
+            entity.Property(e => e.Description)
+                    .HasMaxLength(500);
+        });
     }
 }
 
