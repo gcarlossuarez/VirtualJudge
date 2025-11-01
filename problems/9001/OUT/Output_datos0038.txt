@@ -1,0 +1,6 @@
+Rossgvardia Unit;205;22
+Istra;9;8
+Khimki;4;3
+Kozhukhovo;1;1
+Pereyaslavl-Zalesskiy;9;8
+Sil’tse;2;2

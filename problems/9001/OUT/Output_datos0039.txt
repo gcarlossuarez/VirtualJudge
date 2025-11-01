@@ -1,0 +1,5 @@
+Rossgvardia Unit;670;82
+Dubna;45;44
+Kolomna;22;22
+Raduzhny;2;2
+Zvenigorod;14;14

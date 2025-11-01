@@ -1,0 +1,3 @@
+Grupo Rossgvardia 1;1000;85
+Khimki;50;35
+Mytishchi;70;50

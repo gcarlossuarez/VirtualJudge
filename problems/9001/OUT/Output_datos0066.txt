@@ -1,0 +1,7 @@
+Rossgvardia Unit;746;90
+Chekhov;30;30
+Pavlovsky Posad;25;24
+Reutov;21;20
+Ruza;2;2
+Yegoryevsk;1;1
+Zhukovsky;14;13

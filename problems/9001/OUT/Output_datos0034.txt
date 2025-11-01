@@ -1,0 +1,4 @@
+Rossgvardia Unit;253;30
+Bol’shie Vyazemy;3;3
+Severny;1;1
+Staraya Kupavna;27;26

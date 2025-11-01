@@ -1,0 +1,4 @@
+Rossgvardia Unit;362;45
+Krasnozavodsk;1;1
+Kubinka;29;29
+Kurovskoye;15;15

@@ -1,0 +1,5 @@
+Rossgvardia Unit;624;77
+Bronnitsy;32;32
+Dedenevo;18;17
+Staraya Kupavna;26;26
+Voronovo;2;2

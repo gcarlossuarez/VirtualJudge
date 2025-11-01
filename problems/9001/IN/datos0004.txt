@@ -1,0 +1,16 @@
+Rossgvardia;Rossgvardia Unit;878
+Losino-Petrovsky;40;20
+Tuchkovo;39;5
+Roshal;21;8
+Zaraysk;12;10
+Kozhukhovo;39;38
+Balashikha;8;4
+Troitsk;48;46
+Stupino;33;29
+Zheleznodorozhny;32;24
+Dedovsk;23;4
+Bol’shie Vyazemy;33;4
+Serpukhov;11;4
+Yubileyny;36;25
+Krasnoarmeysk;39;12
+Krasnozavodsk;25;25

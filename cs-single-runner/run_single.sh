@@ -241,7 +241,7 @@ if [ -d "$IN_DIR" ]; then
     if [ $RC -eq 124 ]; then
       STATUS_RUN="error"
       DETAILS+="Dataset $base: ⏱ Timeout (excedió ${TIME_LIMIT}s)\n"
-      continue
+      break;
     elif [ $RC -ne 0 ]; then
       STATUS_RUN="error"
       DETAILS+="Dataset $base: ❌ ejecución falló (RC=$RC)\n"

@@ -1,0 +1,6 @@
+Chechenos de Kadirov Unit;628;20
+Dedovsk;5;5
+Golitsyno;7;7
+Peresvet;4;4
+Ramenskoye;1;1
+Skhodnya;3;3

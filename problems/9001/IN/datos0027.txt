@@ -1,0 +1,17 @@
+Rossgvardia;Rossgvardia Unit;548
+Voskresensk;34;27
+Slobodka;43;9
+Kubinka;16;9
+Kozhukhovo;37;28
+Tuchkovo;3;3
+Voskresenskoye;40;22
+Krasnoarmeysk;16;6
+Yubileyny;40;18
+Vysokovsk;9;6
+Kurovskoye;39;37
+Sergiyev Posad;34;8
+Lukino;27;13
+Chekhov;40;7
+Pavlovsky Posad;23;13
+Sil’tse;45;11
+Reutov;33;16

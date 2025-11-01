@@ -1,0 +1,6 @@
+Rossgvardia Unit;219;27
+Dedenevo;7;7
+Krasnoznamensk;12;12
+Kurovskoye;4;4
+Volokolamsk;2;2
+Yartsevo;2;2

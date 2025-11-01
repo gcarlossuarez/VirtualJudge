@@ -1,0 +1,6 @@
+Rossgvardia Unit;435;53
+Kratovo;13;12
+Lukhovitsy;18;18
+Odintsovo;16;16
+Sergiyev Posad;5;5
+Vostryakovo;2;2

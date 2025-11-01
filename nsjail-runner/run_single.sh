@@ -356,12 +356,15 @@ if [ -d "$IN_DIR" ]; then
         RUN_OUTPUT+="$(cat "$actual")"$'\n'
     fi
 
-    if [ $RC -eq 124 ]; then
+    # nsjail NO devuelve 124 en timeout.
+    # nsjail mata el proceso con SIGKILL → código 137.
+    if [ $RC -eq 124 ] || [ $RC -eq 137 ]; then
       if [ $SHOW_OUTPUT -eq 1 ]; then
          echo "✅  Cumple if [ $RC -eq 124 ]; then"
       fi
       STATUS_RUN="error"
       DETAILS+="Dataset $base: ⏱ Timeout\n"
+      break;
     elif [ $RC -ne 0 ]; then
       if [ $SHOW_OUTPUT -eq 1 ]; then
          echo "✅ Cumple elif [ $RC -ne 0 ]; then"

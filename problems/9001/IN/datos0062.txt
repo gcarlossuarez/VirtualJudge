@@ -1,0 +1,9 @@
+Rossgvardia;Rossgvardia Unit;583
+Lukhovitsy;48;17
+Bol’shie Vyazemy;28;21
+Kratovo;14;7
+Dedenevo;13;12
+Bronnitsy;3;1
+Roshal;44;20
+Aprelevka;19;13
+Dedovsk;3;3

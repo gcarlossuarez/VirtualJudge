@@ -1,0 +1,5 @@
+Rossgvardia Unit;698;87
+Krasnogorsk;33;33
+Staraya Kupavna;7;7
+Troitsk;1;1
+Tuchkovo;46;46

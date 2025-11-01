@@ -1,0 +1,5 @@
+Rossgvardia Unit;815;101
+Bol’shie Vyazemy;28;28
+Istra;36;36
+Serpukhov;4;4
+Zvenigorod;33;33

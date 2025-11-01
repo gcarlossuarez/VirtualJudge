@@ -1,0 +1,5 @@
+Rossgvardia Unit;670;80
+Krasnozavodsk;20;20
+Krasnoznamensk;31;29
+Vereya;18;17
+Volokolamsk;14;14

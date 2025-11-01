@@ -1,0 +1,22 @@
+Chechenos de Kadirov;Chechenos de Kadirov Unit;152
+Istra;38;15
+Klin;33;29
+Severny;2;1
+Povarovo;27;26
+Noginsk;18;5
+Dzerzhinsky;6;4
+Dedovsk;49;10
+Kubinka;7;3
+Chernogolovka;17;12
+Kratovo;2;2
+Tuchkovo;36;19
+Yakhroma;4;2
+Zheleznodorozhny;20;10
+Pushkino;12;8
+Staraya Kupavna;17;12
+Lukino;9;1
+Ramenskoye;1;1
+Zvenigorod;7;7
+Bronnitsy;31;2
+Ozherelye;16;4
+Balashikha;1;1

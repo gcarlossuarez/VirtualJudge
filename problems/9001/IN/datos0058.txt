@@ -1,0 +1,25 @@
+Chechenos de Kadirov;Chechenos de Kadirov Unit;54
+Maryino;17;16
+Nakhabino;5;5
+Aprelevka;48;2
+Losino-Petrovsky;31;5
+Voskresensk;4;1
+Dzerzhinsky;27;17
+Podolsk;32;29
+Sergiyev Posad;28;14
+Dedenevo;44;1
+Krasnogorsk;47;13
+Vysokovsk;45;20
+Domodedovo;13;2
+Severny;19;9
+Kozhukhovo;23;20
+Odintsovo;18;5
+Orekhovo-Zuyevo;8;8
+Solnechnogorsk;15;8
+Vnukovo;19;7
+Lobnya;22;12
+Zvenigorod;48;26
+Lyubertsy;40;39
+Povarovo;36;34
+Novoivanovskoye;18;3
+Istra;10;2

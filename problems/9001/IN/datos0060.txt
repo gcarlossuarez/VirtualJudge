@@ -1,0 +1,14 @@
+Chechenos de Kadirov;Chechenos de Kadirov Unit;361
+Serpukhov;38;14
+Vereya;23;10
+Dmitrov;15;10
+Vidnoye;9;4
+Kratovo;13;11
+Zvenigorod;10;5
+Chernogolovka;7;4
+Pereyaslavl-Zalesskiy;35;8
+Tuchkovo;49;19
+Vysokovsk;31;5
+Lukhovitsy;29;25
+Staraya Kupavna;40;31
+Dedovsk;29;24

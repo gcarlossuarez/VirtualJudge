@@ -31,6 +31,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.WebHost.ConfigureKestrel(o =>
 {
     o.Limits.MaxRequestBodySize = 20 * 1024 * 1024; // 20MB
+    o.Limits.MaxConcurrentConnections = 30; // Máximo 30 conexiones simultáneas
+    o.Limits.MaxConcurrentUpgradedConnections = 30; // Para WebSockets/HTTP2
 });
 
 
@@ -44,6 +46,10 @@ app.UseCors("AllowAll");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
+
+// Diccionario para throttling por IP (en producción usar Redis/MemoryCache)
+var lastSubmissionByIp = new Dictionary<string, DateTime>();
+var submissionCooldownSeconds = 5; // 5 segundos entre submissions del mismo IP
 
 Contest? currentContest = null;
 // Aseguramos DB creada
@@ -143,6 +149,21 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
 
     // ✅ Obtener la IP del cliente
     var ip = GetClientIp(req);
+
+    // 🚦 Throttling por IP
+    lock (lastSubmissionByIp)
+    {
+        if (lastSubmissionByIp.TryGetValue(ip, out var lastTime))
+        {
+            var timeSinceLastSubmission = DateTime.UtcNow - lastTime;
+            if (timeSinceLastSubmission.TotalSeconds < submissionCooldownSeconds)
+            {
+                var waitTime = submissionCooldownSeconds - (int)timeSinceLastSubmission.TotalSeconds;
+                return Results.BadRequest($"Debes esperar {waitTime} segundos antes de enviar otra submission.");
+            }
+        }
+        lastSubmissionByIp[ip] = DateTime.UtcNow;
+    }
 
     Console.WriteLine($"Nueva petición desde {ip}");
 

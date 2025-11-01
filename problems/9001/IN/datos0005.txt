@@ -1,0 +1,22 @@
+Rossgvardia;Rossgvardia Unit;807
+Zhukovsky;38;36
+Kolomna;24;4
+Bol’shie Vyazemy;4;1
+Malakhovka;3;3
+Ramenskoye;8;5
+Dmitrov;34;20
+Lukhovitsy;12;7
+Povarovo;1;1
+Lyubertsy;44;5
+Novlyanskoye;8;7
+Istra;33;31
+Ruza;45;8
+Slobodka;38;8
+Krasnoznamensk;15;5
+Vysokovsk;4;3
+Chekhov;8;7
+Kubinka;32;18
+Golitsyno;20;15
+Lobnya;50;23
+Shcherbinka;25;3
+Obukhovo;31;29

@@ -1,0 +1,17 @@
+Chechenos de Kadirov;Chechenos de Kadirov Unit;975
+Bol’shie Vyazemy;22;10
+Sil’tse;50;13
+Kozhukhovo;22;18
+Vostryakovo;19;12
+Aprelevka;34;11
+Roshal;7;2
+Pushkino;37;36
+Dmitrov;16;16
+Voskresensk;18;3
+Mozhaysk;4;2
+Golitsyno;47;15
+Elektrogorsk;46;11
+Tuchkovo;25;4
+Krasnoznamensk;21;3
+Chernogolovka;44;40
+Staraya Kupavna;45;16

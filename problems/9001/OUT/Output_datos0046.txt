@@ -1,0 +1,6 @@
+Rossgvardia Unit;576;71
+Domodedovo;35;34
+Khimki;10;10
+Kratovo;5;5
+Mozhaysk;16;16
+Pereyaslavl-Zalesskiy;6;6

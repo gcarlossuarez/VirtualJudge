@@ -1,0 +1,7 @@
+Rossgvardia Unit;599;74
+Protvino;9;9
+Ramenskoye;3;3
+Sil’tse;41;41
+Solnechnogorsk;8;8
+Troitsk;1;1
+Volokolamsk;12;12

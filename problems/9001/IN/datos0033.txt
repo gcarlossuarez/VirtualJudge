@@ -1,0 +1,4 @@
+Rossgvardia;Rossgvardia Unit;434
+Ramenskoye;38;9
+Golitsyno;36;36
+Orekhovo-Zuyevo;25;2

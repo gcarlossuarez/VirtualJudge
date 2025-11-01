@@ -1,0 +1,7 @@
+Chechenos de Kadirov Unit;756;25
+Kozhukhovo;2;2
+Kubinka;3;3
+Noginsk;1;1
+Povarovo;1;1
+Ruza;16;16
+Vereya;2;2

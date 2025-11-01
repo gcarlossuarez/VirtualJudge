@@ -1,0 +1,5 @@
+Chechenos de Kadirov Unit;969;31
+Khimki;2;2
+Severny;16;16
+Slobodka;8;7
+Zhukovsky;6;6

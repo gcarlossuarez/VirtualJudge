@@ -1,0 +1,5 @@
+Rossgvardia Unit;462;56
+Fryazino;4;4
+Kurovskoye;19;19
+Vereya;16;15
+Volokolamsk;18;18

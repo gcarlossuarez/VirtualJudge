@@ -1,0 +1,5 @@
+Rossgvardia Unit;878;102
+Kozhukhovo;39;38
+Krasnozavodsk;25;25
+Stupino;33;29
+Zaraysk;12;10

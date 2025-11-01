@@ -1,0 +1,9 @@
+Rossgvardia Unit;504;57
+Kurovskoye;36;33
+Lobnya;12;10
+Nakhabino;7;7
+Orekhovo-Zuyevo;1;1
+Pereyaslavl-Zalesskiy;1;1
+Severny;1;1
+Vidnoye;3;3
+Volokolamsk;1;1

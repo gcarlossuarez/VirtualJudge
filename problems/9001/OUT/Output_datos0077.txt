@@ -1,0 +1,8 @@
+Rossgvardia Unit;873;96
+Chekhov;3;1
+Kolomna;20;20
+Odintsovo;23;16
+Ramenskoye;14;14
+Vereya;11;11
+Voskresensk;35;31
+Zheleznodorozhny;3;3

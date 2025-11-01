@@ -1,0 +1,6 @@
+Rossgvardia Unit;881;109
+Bronnitsy;47;46
+Domodedovo;2;2
+Kozhukhovo;4;4
+Kurovskoye;28;28
+Peresvet;29;29

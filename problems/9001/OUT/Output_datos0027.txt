@@ -1,0 +1,5 @@
+Rossgvardia Unit;548;55
+Kubinka;16;9
+Kurovskoye;39;37
+Tuchkovo;3;3
+Vysokovsk;9;6

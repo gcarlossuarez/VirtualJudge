@@ -1,0 +1,55 @@
+Rossgvardia;Rossgvardia Unit;698
+Yartsevo;30;26
+Troitsk;1;1
+Vidnoye;16;6
+Dmitrov;4;4
+Severny;48;11
+Voronovo;27;6
+Serpukhov;37;10
+Sergiyev Posad;9;6
+Solnechnogorsk;12;4
+Krasnoarmeysk;31;2
+Sil’tse;31;3
+Skhodnya;13;8
+Krasnoznamensk;26;15
+Dubna;8;1
+Voskresenskoye;5;1
+Ozherelye;30;15
+Balashikha;26;21
+Pushkino;40;33
+Dedenevo;5;1
+Korolyov;2;2
+Pavlovsky Posad;45;26
+Lobnya;48;34
+Bol’shie Vyazemy;8;1
+Vostryakovo;6;1
+Tuchkovo;46;46
+Mozhaysk;40;16
+Kolomna;28;13
+Chernogolovka;35;20
+Staraya Kupavna;7;7
+Klin;27;21
+Zvenigorod;43;39
+Noginsk;37;13
+Golitsyno;29;11
+Zaraysk;1;1
+Kurovskoye;6;3
+Elektrostal;8;1
+Ruza;25;10
+Sofrino;9;1
+Krasnogorsk;33;33
+Chekhov;37;21
+Shchelkovo;45;2
+Bronnitsy;37;7
+Kashira;21;4
+Vnukovo;43;35
+Roshal;7;1
+Obukhovo;40;7
+Ivanteevka;37;18
+Podolsk;23;7
+Vysokovsk;4;3
+Vereya;49;21
+Malakhovka;35;19
+Lyubertsy;50;29
+Lukhovitsy;1;1
+Maryino;25;16

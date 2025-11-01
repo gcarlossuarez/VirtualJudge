@@ -1,0 +1,4 @@
+Chechenos de Kadirov;Chechenos de Kadirov Unit;500
+Taldom;5;5
+Podolsk;11;9
+Mytishchi;14;13

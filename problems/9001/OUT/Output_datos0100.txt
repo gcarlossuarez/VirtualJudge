@@ -1,0 +1,6 @@
+Rossgvardia Unit;518;61
+Ozherelye;23;22
+Peresvet;2;2
+Pereyaslavl-Zalesskiy;4;3
+Slobodka;2;2
+Yartsevo;33;32

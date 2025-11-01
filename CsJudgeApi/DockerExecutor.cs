@@ -146,7 +146,7 @@ public static class DockerExecutor
         proc = Process.Start(psi)!;
         stdout = proc.StandardOutput.ReadToEnd();
         stderr = proc.StandardError.ReadToEnd();
-        proc.WaitForExit(120_000);
+        proc.WaitForExit(60_000); // Espera a que termine o se produzca TimeOut
         return (flowControl: true, value: Results.Ok());
     }
 }

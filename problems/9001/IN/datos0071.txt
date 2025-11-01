@@ -1,0 +1,61 @@
+Rossgvardia;Rossgvardia Unit;206
+Elektrostal;12;8
+Korolyov;40;28
+Voronovo;31;2
+Bol’shie Vyazemy;19;13
+Elektrogorsk;38;5
+Golitsyno;38;30
+Novlyanskoye;24;13
+Podolsk;33;1
+Yakhroma;5;1
+Severny;15;9
+Lukino;36;36
+Sergiyev Posad;26;24
+Lyubertsy;14;2
+Lobnya;21;20
+Stupino;46;9
+Istra;41;7
+Protvino;27;21
+Voskresensk;7;5
+Solnechnogorsk;1;1
+Ramenskoye;30;25
+Kurovskoye;39;3
+Volokolamsk;48;25
+Taldom;31;24
+Vereya;26;14
+Lukhovitsy;4;3
+Vostryakovo;18;2
+Ivanteevka;39;35
+Khimki;7;4
+Staraya Kupavna;14;13
+Balashikha;28;15
+Pereyaslavl-Zalesskiy;9;1
+Zheleznodorozhny;48;33
+Nakhabino;10;5
+Dmitrov;2;1
+Krasnoznamensk;3;1
+Shcherbinka;34;33
+Kozhukhovo;32;19
+Tuchkovo;4;2
+Roshal;32;5
+Kratovo;39;18
+Pushkino;19;8
+Yartsevo;28;5
+Likino-Dulyovo;3;2
+Slobodka;45;43
+Vnukovo;23;23
+Zvenigorod;47;44
+Losino-Petrovsky;15;15
+Kubinka;27;1
+Aprelevka;46;27
+Dzerzhinsky;23;16
+Shchelkovo;6;5
+Zhukovsky;10;6
+Reutov;25;13
+Troitsk;18;12
+Zaraysk;11;1
+Klin;30;4
+Obukhovo;8;5
+Mytishchi;10;8
+Pavlovsky Posad;21;14
+Kurovskoye;7;6

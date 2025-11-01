@@ -1,0 +1,24 @@
+Rossgvardia;Rossgvardia Unit;238
+Sil’tse;33;21
+Khimki;42;32
+Odintsovo;24;8
+Dedovsk;10;6
+Kubinka;42;36
+Kurovskoye;11;4
+Mytishchi;22;16
+Podolsk;8;2
+Maryino;1;1
+Povarovo;31;22
+Lukino;33;9
+Khotkovo;2;1
+Kratovo;26;23
+Yubileyny;20;2
+Obukhovo;27;5
+Krasnozavodsk;19;17
+Kolomna;8;7
+Volokolamsk;42;21
+Elektrogorsk;3;3
+Likino-Dulyovo;3;3
+Troitsk;35;12
+Yartsevo;8;2
+Vnukovo;16;6

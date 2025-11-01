@@ -1,0 +1,33 @@
+Chechenos de Kadirov;Chechenos de Kadirov Unit;188
+Balashikha;17;14
+Zhukovsky;45;16
+Noginsk;21;3
+Zheleznodorozhny;38;3
+Sofrino;41;33
+Vereya;25;7
+Lyubertsy;34;21
+Elektrostal;19;17
+Aprelevka;18;7
+Shchelkovo;39;19
+Reutov;50;37
+Vidnoye;8;2
+Ozherelye;27;27
+Sergiyev Posad;31;26
+Pushkino;16;5
+Raduzhny;41;21
+Yakhroma;26;14
+Khotkovo;25;18
+Obukhovo;48;27
+Zaraysk;50;40
+Kashira;31;14
+Serpukhov;26;17
+Ruza;4;3
+Dedenevo;18;5
+Dzerzhinsky;21;11
+Kratovo;10;10
+Lukino;21;11
+Podolsk;20;4
+Tuchkovo;50;49
+Lobnya;49;10
+Dmitrov;33;8
+Losino-Petrovsky;16;14

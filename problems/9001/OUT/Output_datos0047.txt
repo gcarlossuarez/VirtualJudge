@@ -1,0 +1,5 @@
+Rossgvardia Unit;765;95
+Lukhovitsy;49;49
+Ozherelye;5;5
+Pavlovsky Posad;5;5
+Zheleznodorozhny;36;36

@@ -1,0 +1,8 @@
+Rossgvardia Unit;807;90
+Chekhov;8;7
+Istra;33;31
+Malakhovka;3;3
+Novlyanskoye;8;7
+Povarovo;1;1
+Ramenskoye;8;5
+Zhukovsky;38;36

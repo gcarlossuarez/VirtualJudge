@@ -1,0 +1,4 @@
+Rossgvardia; Grupo Rossgvardia 1;1000
+Khimki;50;35
+Podolsk;30;20
+Mytishchi;70;50

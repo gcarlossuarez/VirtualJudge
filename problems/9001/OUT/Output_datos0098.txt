@@ -1,0 +1,5 @@
+Rossgvardia Unit;476;58
+Dedenevo;43;43
+Ivanteevka;1;1
+Lukhovitsy;11;11
+Zaraysk;4;3
