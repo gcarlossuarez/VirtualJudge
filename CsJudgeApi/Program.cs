@@ -24,6 +24,7 @@ builder.Services.AddCors(options =>
 });
 
 
+// BOOKMARK: Configuración de base de datos y servidor
 // EF Core con SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source={PathDirectories.DB_PATH}"));
@@ -47,6 +48,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 
+// BOOKMARK: Sistema de throttling y variables globales
 // Diccionario para throttling por IP (en producción usar Redis/MemoryCache)
 var lastSubmissionByIp = new Dictionary<string, DateTime>();
 var submissionCooldownSeconds = 5; // 5 segundos entre submissions del mismo IP
@@ -58,15 +60,35 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 
-    // ✅ Validar que exista contest activo
-    currentContest = db.Contests
-                       .OrderByDescending(c => c.Date).ThenByDescending(c => c.ContestId)
-                       .FirstOrDefault();
+    // Buscar valor configurado
+    var configContestId = db.Configurations
+        .Where(c => c.Key == "CurrentContestId")
+        .Select(c => c.Value)
+        .FirstOrDefault();
+
+    // Intentar parsear el valor
+    if (int.TryParse(configContestId, out int contestId))
+    {
+        currentContest = db.Contests.FirstOrDefault(c => c.ContestId == contestId);
+        if (currentContest == null)
+        {
+            Console.WriteLine($"No se encontró el contest con ContestId={contestId} configurado como CurrentContestId. Se va a utilizar el Const con mayor valor en el campo ContestId.");
+        }
+    }
+
+    // Si no existe o no es válido, usar el último
+    if (currentContest == null)
+    {
+        currentContest = db.Contests
+            .OrderByDescending(c => c.ContestId)
+            .FirstOrDefault();
+    }
+
     Console.WriteLine("ContestId=" + currentContest?.ContestId + " Date=" + currentContest?.Date);
 }
 
 
-// NOTA. / Flujo resumido (con DbContext)
+// NOTA. - Flujo resumido (con DbContext)
 // 1. Al iniciar la app, registra AppDbContext en el contenedor DI.
 // 2. En cada request, ASP.NET Core crea una instancia nueva de AppDbContext (scoped).
 // 3. Esa instancia vive solo durante el request y se libera al terminar.
@@ -101,6 +123,7 @@ app.MapPost("/submit", async (AppDbContext db, HttpContext ctx) =>
     static string Normalize(string s) => s.Replace("\r\n", "\n").Trim();
 });
 
+// BOOKMARK: Endpoints de salud y estado del servicio
 // === ENDPOINT SALUD ===
 app.MapGet("/", () => Results.Json(new { ok = true, service = "CsJudgeApi", version = "1.0" }));
 
@@ -128,6 +151,11 @@ app.MapGet("/healthz", () =>
     }
 });
 
+/// <summary>
+/// Obtiene la IP del cliente, considerando proxies
+/// </summary>
+/// <param name="req">La solicitud HTTP</param>
+/// <returns>La IP del cliente</returns>
 static string GetClientIp(HttpRequest req)
 {
     // 1. Si viene de ngrok o proxy, usar el header X-Forwarded-For
@@ -141,6 +169,7 @@ static string GetClientIp(HttpRequest req)
 }
 
 
+// BOOKMARK: Endpoint principal - Compilar y ejecutar código
 // === ENDPOINT COMPILAR Y EJECUTAR ===
 app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
 {
@@ -257,7 +286,7 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
     Console.WriteLine("Request enviado por el estudiante " + student.Name);
 
     // Verifica que la ip, no este siendo utilizada por otro estudiante, en el mismo Contest
-    var (flowControl, value) = await IpUsed(db, currentContest, student, ip);
+    var (flowControl, value) = await IpIsNotUsed(db, currentContest, student, ip);
     if (!flowControl)
     {
         return value;
@@ -403,6 +432,7 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
             }
         }
 
+        // BOOKMARK: Selección del executor (Docker vs Nsjail)
         //////////////////////////////////////
 
         string stdout, stderr;
@@ -601,6 +631,7 @@ static string? TryMatch(string text, string pattern, int group = 0)
 //static string Normalize(string s) => s.Replace("\r\n", "\n").Trim();
 
 
+// BOOKMARK: API endpoints para contests y estudiantes
 // NOTA. - Si el MapGet("/students", ...) quedó después de "app.Run();", no quedar[a registrado y no se ejecutara.
 // Todo lo que esté después de app.Run(); no se ejecuta.
 app.MapGet("/students", async (AppDbContext db) =>
@@ -617,10 +648,7 @@ app.MapGet("/students", async (AppDbContext db) =>
 app.MapGet("/contest/questions", async (AppDbContext db) =>
 {
     // Validar que haya un contest activo
-    var contest = await db.Contests
-        .OrderByDescending(c => c.Date)
-        .ThenByDescending(c => c.ContestId)
-        .FirstOrDefaultAsync();
+    var contest = currentContest;
 
     if (contest == null)
         return Results.BadRequest("No hay contest activo");
@@ -726,6 +754,24 @@ static object BuildTree(string root, string dir)
     };
 }
 
+
+/// <summary>
+/// Verifica si la configuración DisableIpCheck está activada en la base de datos.
+/// </summary>
+/// <param name="db">Contexto de la base de datos.</param>
+/// <returns>true o false, dependiendo de si está habilitada o no.</returns
+static bool IsIpCheckDisable(AppDbContext db)
+{
+    // BOOKMARK: Verificar si la configuración DisableIpCheck está activada
+    Console.WriteLine(db.Configurations.Any(c => c.Key == "DisableIpCheck") + "--" + db.Configurations.FirstOrDefault(c => c.Key == "DisableIpCheck")?.Value);
+    if (db.Configurations.Any(c => c.Key == "DisableIpCheck" && (c.Value == "true" || c.Value == "1")))
+    {
+        return true;
+    }
+
+    return false;
+}
+
 /// <summary>
 /// Verifica si la IP ya está siendo usada por otro estudiante, en el mismo Contest.
 /// </summary>
@@ -734,23 +780,30 @@ static object BuildTree(string root, string dir)
 /// <param name="student">El estudiante que intenta registrarse.</param>
 /// <param name="ip">La IP del estudiante.</param>
 /// <returns>Tupla con flowControl (bool) y value (IResult?)</returns>
-static async Task<(bool flowControl, IResult? value)> IpUsed(AppDbContext db, Contest currentContest, Student student, string ip)
+static async Task<(bool flowControl, IResult? value)> IpIsNotUsed(AppDbContext db, Contest currentContest, Student student, string ip)
 {
-    // Verificar que la IP no esté siendo usada por otro estudiante
-    bool ipUsed = await db.ContestStudents
-        .AnyAsync(x => x.ContestId == currentContest.ContestId && x.IP == ip && student.StudentId != x.StudentId);
-
-    if (ipUsed)
+    if (!IsIpCheckDisable(db))
     {
-        Console.WriteLine($"❌ BLOQUEADO: IP {ip} ya está usada por otro estudiante");
-        return (flowControl: false, value: Results.BadRequest(new { error = $"La IP {ip} ya está siendo usada por otro estudiante en este Contest." }));
+        // Si no se deshabilto el control de IPs, verificar que la IP no esté siendo usada por otro 
+        //estudiante
+        bool ipUsed = await db.ContestStudents
+            .AnyAsync(x => x.ContestId == currentContest.ContestId && x.IP == ip && student.StudentId != x.StudentId);
+
+        if (ipUsed)
+        {
+            Console.WriteLine($"❌ BLOQUEADO: IP {ip} ya está usada por otro estudiante");
+            return (flowControl: false, value: Results.BadRequest(new { error = $"La IP {ip} ya está siendo usada por otro estudiante en este Contest." }));
+        }
     }
 
     return (flowControl: true, value: null);
 }
 
+
 if (currentContest is null)
     throw new Exception("No hay contest activo");
+    
+// BOOKMARK: API para dashboard y estadísticas
 // Endpoint rápido de Dashboard
 app.MapGet("/api/dashboard", async (AppDbContext db) =>
 {
@@ -849,7 +902,7 @@ app.MapPost("/api/student-login", async (HttpRequest request, AppDbContext db) =
         bool isNewRegistration = false;
 
         // Verifica que la ip, no este siendo utilizada por otro estudiante, en el mismo Contest
-        var (flowControl, value) = await IpUsed(db, currentContest, student, ip);
+        var (flowControl, value) = await IpIsNotUsed(db, currentContest, student, ip);
         if (!flowControl)
         {
             return value;
@@ -871,7 +924,9 @@ app.MapPost("/api/student-login", async (HttpRequest request, AppDbContext db) =
         }
         else
         {
-            // Ya existe → validar IP estrictamente
+            bool isIpCheckDisable = IsIpCheckDisable(db);
+
+            // BOOKMARK: Ya existe → validar IP estrictamente
             if (string.IsNullOrEmpty(cs.IP))
             {
                 // No tenía IP → asignar ahora
@@ -879,7 +934,7 @@ app.MapPost("/api/student-login", async (HttpRequest request, AppDbContext db) =
                 cs.DateParticipation = DateTime.Now;
                 Console.WriteLine($"🔄 IP ASIGNADA: Estudiante {studentId} ({student.Name}) ahora desde IP {ip}");
             }
-            else if (cs.IP != ip)
+            else if (cs.IP != ip && !isIpCheckDisable)
             {
                 // ❌ DIFERENTE IP → ERROR ESTRICTO (anti-fraude)
                 Console.WriteLine($"❌ BLOQUEADO: Estudiante {studentId} ({student.Name}) intentó acceder desde IP {ip}, pero ya está registrado con IP {cs.IP}");
@@ -927,6 +982,3 @@ app.MapPost("/api/student-login", async (HttpRequest request, AppDbContext db) =
 
 // NOTA. - Mejor, si va a al final
 app.Run();
-
-
-

@@ -1,0 +1,64 @@
+{
+	"files": [
+		{
+			"path": "Program.cs",
+			"bookmarks": [
+				{
+					"line": 26,
+					"column": 54,
+					"label": ""
+				},
+				{
+					"line": 50,
+					"column": 55,
+					"label": ""
+				},
+				{
+					"line": 83,
+					"column": 10,
+					"label": "Determina el contest actual"
+				},
+				{
+					"line": 125,
+					"column": 53,
+					"label": ""
+				},
+				{
+					"line": 171,
+					"column": 60,
+					"label": ""
+				},
+				{
+					"line": 434,
+					"column": 62,
+					"label": ""
+				},
+				{
+					"line": 633,
+					"column": 54,
+					"label": ""
+				},
+				{
+					"line": 764,
+					"column": 75,
+					"label": ""
+				},
+				{
+					"line": 782,
+					"column": 1,
+					"label": "Verifica si la IP no es utilizada por otro estudiante"
+				},
+				{
+					"line": 805,
+					"column": 46,
+					"label": ""
+				},
+				{
+					"line": 928,
+					"column": 23,
+					"label": ""
+				}
+			]
+		}
+	]
+}
