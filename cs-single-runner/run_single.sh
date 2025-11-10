@@ -62,9 +62,7 @@ shopt -s nullglob
 # Evita que CS_FILES=("$SRC_DIR"/*.cs) se llene con un string literal "$SRC_DIR/*.cs" 
 # cuando no hay archivos.
 # En cambio, queda un array vacío y se puede chequear con if [ ${#CS_FILES[@]} -eq 0 ]; then ... fi.
-
-# === Copiar archivos fuente según lenguaje ===
-if [ "$LANGUAGE" = "dotnet" ]; then
+if [[ ( -n "$VALIDATOR_SRC" && -f "$VALIDATOR_SRC" ) || "$LANGUAGE" = "dotnet" ]]; then
    # =============================
    # 🔧 Asegurar que exista la plantilla base
    # =============================
@@ -80,7 +78,6 @@ if [ "$LANGUAGE" = "dotnet" ]; then
      # Asegurar permisos de escritura en tmpfs
      if [ ! -w /home/sandbox/tmp ]; then
        echo "🔧 Ajustando permisos de /home/sandbox/tmp..."
-       #chmod 777 /home/sandbox/tmp 2>/dev/null || true
        chmod 777 /home/sandbox/tmp 2>/dev/null || echo "ℹ️ (Aviso benigno) No se pudieron cambiar permisos de /home/sandbox/tmp"
      fi
 
@@ -92,7 +89,7 @@ if [ "$LANGUAGE" = "dotnet" ]; then
         mkdir -p /home/sandbox/.dotnet
      fi
      chown -R "$(id -u)":"$(id -g)" /home/sandbox/.dotnet
-     chmod 777 /home/sandbox/.dotnet
+     chmod 777 /home/sandbox/.dotnet || echo "ℹ️ (Aviso benigno) No se pudieron cambiar permisos de /home/sandbox/.dotnet"
      
      # Crear proyecto base dentro del tmpfs (que sí es escribible)
      echo "🧩 Creando proyecto base temporal (sin restore)..."
@@ -142,7 +139,10 @@ EOF
 
      TEMPLATE_DIR="$FALLBACK_TEMPLATE"
    fi
+fi
 
+# === Copiar archivos fuente según lenguaje ===
+if [ "$LANGUAGE" = "dotnet" ]; then
    # Crear el directorio temporal de trabajo
    mkdir -p "$WORK_DIR"
    chmod 700 "$WORK_DIR" || echo "ℹ️ (Aviso benigno) No se pudieron cambiar permisos de $WORK_DIR"

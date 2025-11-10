@@ -285,6 +285,7 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
 
     Console.WriteLine("Request enviado por el estudiante " + student.Name);
 
+    // BOOKMARK: Validación de IP - Verifica que el estudiante no use IP de otro
     // Verifica que la ip, no este siendo utilizada por otro estudiante, en el mismo Contest
     var (flowControl, value) = await IpIsNotUsed(db, currentContest, student, ip);
     if (!flowControl)
@@ -309,27 +310,33 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
     }
     else
     {
+        bool isIpCheckDisable = IsIpCheckDisable(db);
         if (string.IsNullOrEmpty(cs.IP))
         {
             // No tenía IP → asignar ahora
             cs.IP = ip;
         }
-        else if (cs.IP != ip)
+        else if (cs.IP != ip && !isIpCheckDisable)
         {
             // 🔍 DEBUG: Comparar IPs exactamente
             Console.WriteLine($"🔍 DEBUG COMPILE-RUN:");
             Console.WriteLine($"   Estudiante: {studentId} ({student.Name})");
             Console.WriteLine($"   IP registrada: '{cs.IP}' (Length: {cs.IP.Length})");
             Console.WriteLine($"   IP actual: '{ip}' (Length: {ip.Length})");
+            Console.WriteLine($"   isIpCheckDisable: {isIpCheckDisable}");
             Console.WriteLine($"   ¿Son iguales? {cs.IP == ip}");
-            
+
             // Otro IP → El estudiante ya estaba registrado con otra ip, en el mismo Contest
             return Results.BadRequest($"El estudiante ya estaba registrado con otra IP: {cs.IP}");
         }
-        else
+        else if (!isIpCheckDisable)
         {
             // 🔍 DEBUG: IP coincide
             Console.WriteLine($"✅ IP COINCIDE - Estudiante {studentId} desde IP {ip}");
+        }
+        else if(isIpCheckDisable)
+        {
+            Console.WriteLine($"⚠️  IP CHECK DISABLE - Se omite verificación de IP para el estudiante {studentId} desde IP {ip}");
         }
     }
 
@@ -500,7 +507,7 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
         var m = Regex.Match(summary, @"run:ok", RegexOptions.IgnoreCase);
         bool isCorrect = m.Success;
 
-
+        // BOOKMARK: Guardar submission en base de datos
         var submission = new Submission
         {
             StudentId = studentId,
@@ -855,6 +862,7 @@ app.MapGet("/api/contest-status", async (AppDbContext db) =>
     return Results.Json(data);
 });
 
+// BOOKMARK: Endpoint de login de estudiante con validación de IP
 // === Endpoint para registrar login/actividad de estudiante ===
 app.MapPost("/api/student-login", async (HttpRequest request, AppDbContext db) =>
 {
@@ -926,7 +934,7 @@ app.MapPost("/api/student-login", async (HttpRequest request, AppDbContext db) =
         {
             bool isIpCheckDisable = IsIpCheckDisable(db);
 
-            // BOOKMARK: Ya existe → validar IP estrictamente
+            // BOOKMARK: Login endpoint - Validación de IP estrictamente (anti-fraude)
             if (string.IsNullOrEmpty(cs.IP))
             {
                 // No tenía IP → asignar ahora

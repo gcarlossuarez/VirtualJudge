@@ -175,6 +175,8 @@ if [ -n "$VALIDATOR_SRC" ] && [ -f "$VALIDATOR_SRC" ]; then
   rm -rf "$WORK_DIR/proj_validator"
   cp -r "$TMP_WORK_DIR/template/App" "$WORK_DIR/proj_validator"
   cp "$VALIDATOR_SRC" "$WORK_DIR/proj_validator/Program.cs"
+  
+  
   echo "Archivo en directorio work para Validator"
   ls "$WORK_DIR/proj_validator"
   VALIDATOR_BUILD_LOG="$WORK_DIR/validator_build.log"
@@ -290,14 +292,17 @@ if [ -d "$IN_DIR" ]; then
 
     else  # Para g++ (C++): Usa array similar para consistencia, con límites ajustados
         set +e
-
+	#--rlimit_as 268435456  # 256MB para C++ (suficiente para la mayoría de envíos de estudiantes)
         nsjail_cmd=(
 	    sudo
 	    nsjail
 	    -M o
 	    --time_limit $((TIME_LIMIT + 5))
 	    --rlimit_cpu $TIME_LIMIT
-	    --rlimit_as 268435456  # 256MB para C++ (suficiente para la mayoría de envíos de estudiantes)
+	    
+	    
+	    --rlimit_as 536870912
+	    
 	    --rlimit_nproc 16
 	    --rlimit_fsize 10485760
 	    --disable_proc
@@ -322,7 +327,7 @@ if [ -d "$IN_DIR" ]; then
 	    --
 	    "$EXEC_CMD"
         )
-
+	
         #echo "DEBUG: Ejecutando nsjail para C++..." >&2
         #echo "DEBUG: Ejecutando comando array..." >&2
         #echo "DEBUG: Comando array: ${nsjail_cmd[*]}" >&2
@@ -331,11 +336,15 @@ if [ -d "$IN_DIR" ]; then
         #echo "DEBUG: Código de retorno: $RC" >&2
         #echo "DEBUG: Stderr contenido:" >&2
         
-        if [ $RC -ne 0 ]; then 
+        if [ $RC -ne 0 ]; then
+           echo "⚠️ Dump de stderr para $base:" >&2
            cat "$GEN_DIR/stderr_${base}.log" >&2
         fi
         set -e
     fi
+    # NOTA. - Para tomar en cuenta, error  139
+    # 🧩 Por qué el RC=139 viene de la ejecución de un program
+    # En bash, 139 = 128 + 11 → signal 11 (SIGSEGV) → segmentation fault.
     
     if [ $SHOW_OUTPUT -eq 1 ]; then
         echo "Contenido del archivo generado como resultado de ejecutar el programa"
