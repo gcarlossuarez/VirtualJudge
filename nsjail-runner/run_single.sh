@@ -292,17 +292,14 @@ if [ -d "$IN_DIR" ]; then
 
     else  # Para g++ (C++): Usa array similar para consistencia, con límites ajustados
         set +e
-	#--rlimit_as 268435456  # 256MB para C++ (suficiente para la mayoría de envíos de estudiantes)
+	
         nsjail_cmd=(
 	    sudo
 	    nsjail
 	    -M o
 	    --time_limit $((TIME_LIMIT + 5))
 	    --rlimit_cpu $TIME_LIMIT
-	    
-	    
-	    --rlimit_as 536870912
-	    
+	    --rlimit_as 536870912 #  512MB para C++ (debería bastar con 256 megas; pero, por las dudas)
 	    --rlimit_nproc 16
 	    --rlimit_fsize 10485760
 	    --disable_proc
