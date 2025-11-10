@@ -216,8 +216,8 @@ class Program
     }
 }
 ','','No se generó salida.',1,'','',NULL,NULL,'2025-08-25 00:16:50.9721878','2800:320:41d7:d201:8979:5c9:48b7:908e');
-INSERT INTO "Questions" ("QuestionId","Review","Path","ContestId") VALUES (1,'Promedio','/home/vboxuser/problems/1',1),
- (2,'Permutaciones','/home/vboxuser/problems/2',1);
+INSERT INTO "Questions" ("QuestionId","Review","Path","ContestId") VALUES (1,'Promedio','/home/virtualbox/problems/1',1),
+ (2,'Permutaciones','/home/virtualbox/problems/2',1);
 INSERT INTO "ContestStudents" ("ContestId","StudentId","DateParticipation","IP") VALUES (1,123,'0001-01-01 00:00:00','2800:320:41d7:d201:8979:5c9:48b7:908e');
 CREATE INDEX IF NOT EXISTS "IX_ContestStudents_StudentId" ON "ContestStudents" (
 	"StudentId"

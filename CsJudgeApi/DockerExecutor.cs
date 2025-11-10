@@ -79,17 +79,31 @@ public static class DockerExecutor
             psi.ArgumentList.Add($"{Path.GetDirectoryName(fullFilePathValidatorTmp)}:/home/sandbox/validator");
         }
 
+        // 🔹 Montar la plantilla base del contenedor (solo lectura)
+        //    Esto evita el Permission denied al copiar desde /home/sandbox/template/App
+        psi.ArgumentList.Add("-v");
+        psi.ArgumentList.Add("/home/virtualbox/VirtualJudge/template:/home/sandbox/template:ro");
+
         // Extras adicionados, para mayor seguridad
         psi.ArgumentList.Add("--read-only"); // hace que todo el FS dentro del contenedor sea solo lectura (excepto volúmenes montados).
 
 
         // Directorio temporal para escritura
         psi.ArgumentList.Add("--tmpfs");
-        psi.ArgumentList.Add("/home/sandbox/tmp:exec");
+        //psi.ArgumentList.Add("/home/sandbox/tmp:exec");
+        psi.ArgumentList.Add("/home/sandbox/tmp:exec,mode=777,size=128M");
 
+
+        int uidDocker = 1655;
         // Directorio temporal para no tener que setear "DOTNET_SKIP_FIRST_TIME_EXPERIENCE"
+        //psi.ArgumentList.Add("/home/sandbox/.dotnet:exec");
         psi.ArgumentList.Add("--tmpfs");
-        psi.ArgumentList.Add("/home/sandbox/.dotnet:exec");
+        psi.ArgumentList.Add($"/home/sandbox/.dotnet:exec,mode=777,uid={uidDocker},gid={uidDocker},size=64M");
+
+        // Directorio temporal para las plantillas de dotnet new
+        psi.ArgumentList.Add("--tmpfs");
+        psi.ArgumentList.Add($"/home/sandbox/.templateengine:exec,mode=777,uid={uidDocker},gid={uidDocker},size=64M");
+
 
         // Si necesitan escribir en /tmp, lo hace en RAM y desaparece al terminar. 
         psi.ArgumentList.Add("--tmpfs");

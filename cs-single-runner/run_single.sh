@@ -65,9 +65,91 @@ shopt -s nullglob
 
 # === Copiar archivos fuente según lenguaje ===
 if [ "$LANGUAGE" = "dotnet" ]; then
-   # Copiar la plantilla (ya restaurada en la build) a una carpeta de trabajo
+   # =============================
+   # 🔧 Asegurar que exista la plantilla base
+   # =============================
+   TEMPLATE_DIR="/home/sandbox/template/App"
+   FALLBACK_TEMPLATE="/home/sandbox/tmp/template/App"
+
+   if [ ! -d "$TEMPLATE_DIR" ]; then
+     echo "⚠️ Plantilla base no encontrada (FS solo lectura). Creando plantilla temporal..."
+     mkdir -p "$FALLBACK_TEMPLATE"
+     
+     FALLBACK_BASE_TMP_TEMPLATE="/home/sandbox/tmp/template" 
+     cd "$FALLBACK_BASE_TMP_TEMPLATE"
+     # Asegurar permisos de escritura en tmpfs
+     if [ ! -w /home/sandbox/tmp ]; then
+       echo "🔧 Ajustando permisos de /home/sandbox/tmp..."
+       #chmod 777 /home/sandbox/tmp 2>/dev/null || true
+       chmod 777 /home/sandbox/tmp 2>/dev/null || echo "ℹ️ (Aviso benigno) No se pudieron cambiar permisos de /home/sandbox/tmp"
+     fi
+
+     # =============================
+     # Asegurar /home/sandbox/.dotnet escribible y existente
+     # =============================
+     if [ ! -d "/home/sandbox/.dotnet" ]; then
+        echo "📁 Creando /home/sandbox/.dotnet (faltaba)"
+        mkdir -p /home/sandbox/.dotnet
+     fi
+     chown -R "$(id -u)":"$(id -g)" /home/sandbox/.dotnet
+     chmod 777 /home/sandbox/.dotnet
+     
+     # Crear proyecto base dentro del tmpfs (que sí es escribible)
+     echo "🧩 Creando proyecto base temporal (sin restore)..."
+     dotnet new console -n App -o App --force --no-restore > /dev/null 2>&1
+
+     # 🔧 Generar o copiar el project.assets.json necesario
+     mkdir -p App/obj
+
+     if [ -f "/home/sandbox/template/App/obj/project.assets.json" ]; then
+        cp /home/sandbox/template/App/obj/project.assets.json App/obj/
+        echo "🧩 project.assets.json copiado desde plantilla base"
+     else
+        echo "⚠️ No se encontró project.assets.json en la plantilla base. Creando uno local..."
+        # Generar el archivo mediante un restore rápido local (solo si no existe)
+        #dotnet restore App > /dev/null 2>&1 || echo "⚠️ Restore falló, pero se continuará con build offline"
+        dotnet restore App --ignore-failed-sources --disable-parallel --no-cache > /dev/null 2>&1 || {
+        echo "⚠️ No se pudo restaurar vía NuGet; generando project.assets.json vacío para modo offline..."
+        mkdir -p App/obj
+        cat > App/obj/project.assets.json <<'EOF'
+{
+  "version": 3,
+  "targets": {
+    "net8.0": {}
+  },
+  "libraries": {},
+  "project": {
+    "version": "1.0.0",
+    "restore": { "projectUniqueName": "App" },
+    "frameworks": {
+      "net8.0": {
+        "dependencies": {}
+      }
+    }
+  }
+}
+EOF
+}
+
+     fi
+
+     dotnet build App -c Release --nologo --no-restore > /dev/null 2>&1 || true
+
+     echo "Contenido de App/obj/project.assets.json"
+     cat App/obj/project.assets.json
+     chown -R "$(id -u)":"$(id -g)" "$FALLBACK_TEMPLATE"
+     echo "✅ Plantilla temporal creada y restaurada en $FALLBACK_TEMPLATE"
+
+     TEMPLATE_DIR="$FALLBACK_TEMPLATE"
+   fi
+
+   # Crear el directorio temporal de trabajo
+   mkdir -p "$WORK_DIR"
+   chmod 700 "$WORK_DIR" || echo "ℹ️ (Aviso benigno) No se pudieron cambiar permisos de $WORK_DIR"
+
+   # Copiar la plantilla base al directorio temporal de proyecto
    rm -rf "$WORK_DIR/proj"
-   cp -r /home/sandbox/template/App "$WORK_DIR/proj"
+   cp -r "$TEMPLATE_DIR" "$WORK_DIR/proj"
 
    # Copiar .cs de entrada
    CS_FILES=("$SRC_DIR"/*.cs)
@@ -75,13 +157,14 @@ if [ "$LANGUAGE" = "dotnet" ]; then
       echo "ERROR: No se encontró ningún .cs en $SRC_DIR"
       exit 3
    fi
-   echo Copiado=$CS_FILES 
-
+   
    # Archivos C#
    if [ ${#CS_FILES[@]} -eq 1 ]; then
        cp "${CS_FILES[0]}" "$WORK_DIR/proj/Program.cs"
+       echo Copiado="${CS_FILES[0]} como $WORK_DIR/proj/Program.cs"
    else
        cp "${CS_FILES[@]}" "$WORK_DIR/proj/"
+       echo Copiado=$CS_FILES 
    fi
 
 elif [ "$LANGUAGE" = "g++" ]; then
@@ -114,13 +197,26 @@ RUN_LOG="$WORK_DIR/run.log"
 
 # Compilar SIN restore (offline). No abortar el script si falla la compilación.
 set +e # Para que no aborte en caso de timeout
-#( cd "$WORK_DIR/proj" && dotnet build -c Release --nologo --no-restore ) >"$BUILD_LOG" 2>&1
-#BUILD_RC=$?
 
 BUILD_RC=0
 if [ "$LANGUAGE" = "dotnet" ]; then
     # === Compilar C# ===
-    ( cd "$WORK_DIR/proj" && dotnet build -c Release --nologo --no-restore ) >"$BUILD_LOG" 2>&1
+    cd "$WORK_DIR/proj"
+
+    # 🔧 Siempre regenerar obj limpio y copiar project.assets.json válido
+    rm -rf "$WORK_DIR/proj/obj"
+    mkdir -p "$WORK_DIR/proj/obj"
+    if [ -f "$TEMPLATE_DIR/obj/project.assets.json" ]; then
+       cp "$TEMPLATE_DIR/obj/project.assets.json" "$WORK_DIR/proj/obj/"
+       echo "✅ Copiado project.assets.json desde $TEMPLATE_DIR a $WORK_DIR/proj/obj/"
+    else
+       echo "⚠️ No se encontró project.assets.json base en $TEMPLATE_DIR; la compilación puede fallar."
+    fi
+
+
+    # Compilar
+    dotnet build -c Release --nologo --no-restore >"$BUILD_LOG" 2>&1
+
     BUILD_RC=$?
 
 elif [ "$LANGUAGE" = "g++" ]; then
@@ -198,21 +294,35 @@ DETAILS=""
 # NOTA. - El validadro, podria ser siempre en C#. como es nativo del que creo el DataSet, y el problema, no deberia ser un problema el lenguaje del validador
 VALIDATOR_DLL=""
 if [ -n "$VALIDATOR_SRC" ] && [ -f "$VALIDATOR_SRC" ]; then
-  echo "Compilando validador desde: $VALIDATOR_SRC (archivo verificado)"
+   echo "Compilando validador desde: $VALIDATOR_SRC (archivo verificado)"
   
-  rm -rf "$WORK_DIR/proj_validator"
-  cp -r /home/sandbox/template/App "$WORK_DIR/proj_validator" # Copia el contenido de App dentro de una carpeta nueva llamada proj_validator.
-  cp "$VALIDATOR_SRC" "$WORK_DIR/proj_validator/Program.cs"
+   rm -rf "$WORK_DIR/proj_validator"
 
-  VALIDATOR_BUILD_LOG="$WORK_DIR/validator_build.log"
-  ( cd "$WORK_DIR/proj_validator" && dotnet build -c Release --nologo --no-restore ) >"$VALIDATOR_BUILD_LOG" 2>&1 || true
+   # Usar la plantilla que esté activa (TEMPLATE_DIR apunta a la base o al fallback)
+   if [ -d "$TEMPLATE_DIR" ]; then
+     cp -r "$TEMPLATE_DIR" "$WORK_DIR/proj_validator"
+   else
+     echo "⚠️ No se encontró plantilla base en $TEMPLATE_DIR, creando proyecto validador temporal..."
+     mkdir -p "$WORK_DIR/proj_validator"
+     dotnet new console -n App -o "$WORK_DIR/proj_validator" --force --no-restore > /dev/null 2>&1
+     mkdir -p "$WORK_DIR/proj_validator/obj"
+     if [ -f "$WORK_DIR/proj/obj/project.assets.json" ]; then
+        cp "$WORK_DIR/proj/obj/project.assets.json" "$WORK_DIR/proj_validator/obj/"
+     fi
+   fi
+
+   cp "$VALIDATOR_SRC" "$WORK_DIR/proj_validator/Program.cs"
+
+
+   VALIDATOR_BUILD_LOG="$WORK_DIR/validator_build.log"
+   ( cd "$WORK_DIR/proj_validator" && dotnet build -c Release --nologo --no-restore ) >"$VALIDATOR_BUILD_LOG" 2>&1 || true
   
-  VALIDATOR_DLL=$(find "$WORK_DIR/proj_validator/bin/Release" -type f -name "*.dll" | head -n1 || true)
+   VALIDATOR_DLL=$(find "$WORK_DIR/proj_validator/bin/Release" -type f -name "*.dll" | head -n1 || true)
 
-  if [ -z "$VALIDATOR_DLL" ]; then
-    echo "ERROR: no se pudo compilar el validador"
-    exit 5
-  fi
+   if [ -z "$VALIDATOR_DLL" ]; then
+     echo "ERROR: no se pudo compilar el validador"
+     exit 5
+   fi
 fi
 
 # Iterar datasets si existen

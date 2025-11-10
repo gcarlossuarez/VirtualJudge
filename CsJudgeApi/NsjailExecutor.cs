@@ -91,7 +91,7 @@ public static class NsjailExecutor
         // Copiar todo el contenido de srcDir al directorio destino
         CopyDirectory(srcDir, destDir, true);
         
-        string arguments = $"bash /home/vboxuser/VirtualJudge/nsjail-runner/run_single.sh /tmp/temp-workdir /tmp/temp-workdir/{dirName} {timeLimit} {langBin} {fullPathValidator.Trim()}";
+        string arguments = $"bash /home/virtualbox/VirtualJudge/nsjail-runner/run_single.sh /tmp/temp-workdir /tmp/temp-workdir/{dirName} {timeLimit} {langBin} {fullPathValidator.Trim()}";
 
         Console.WriteLine($"Comando nsjail: sudo {arguments}");
         var process = new Process

@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 # NOTA. - Para facil acceso de nsjail, utilizar el directorio temporal tmp (de paso, se garantiza limpieza auotmatica).
-# Es importante haber creado, desde el programa principal, el subdirectorio temporal con los datos del usuiario, obedeciendo
+# Es importante haber creado, desde el programa principal, el subdirectorio temporal con los datos del usuario, obedeciendo
 # a esta estructura:
 # /tmp
 #    -- /temp-workdir

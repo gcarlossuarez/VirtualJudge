@@ -35,3 +35,14 @@ echo
 docker --version
 docker compose version
 
+
+# 1️⃣ Descargar la versión más reciente estable
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" \
+  -o /usr/local/bin/docker-compose
+
+# 2️⃣ Dar permisos de ejecución
+sudo chmod +x /usr/local/bin/docker-compose
+
+# 3️⃣ Verificar
+docker-compose version
+

@@ -210,7 +210,7 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
     if (int.TryParse(timeLimitStr, out var tl)) timeLimit = Math.Clamp(tl, 1, 30);
 
     var rootTmp = Path.Combine(Path.GetTempPath(), "cs_api");
-    //var rootTmp = Path.Combine("/home/vboxuser/VirtualJudge/work", "cs_api");
+    //var rootTmp = Path.Combine("/home/virtualbox/VirtualJudge/work", "cs_api");
     //var rootTmp = Path.Combine("/var/tmp", "cs_api");
 
     Directory.CreateDirectory(rootTmp);
