@@ -726,6 +726,34 @@ app.MapGet("/problems/{id}/input/{archivo}", (int id, string archivo) =>
     return Results.Text(contenido, "text/plain");
 });
 
+// Listar outputs esperados de un problema
+app.MapGet("/problems/{id}/expected", (int id) =>
+{
+    string dir = Path.Combine(PathDirectories.PROBLEMS_PATH, id.ToString(), "OUT");
+    if (!Directory.Exists(dir))
+        return Results.NotFound("No hay outputs esperados para este problema");
+
+    var archivos = Directory.GetFiles(dir, "*.txt")
+                            .Select(f => Path.GetFileName(f))
+                            .OrderBy(f => Path.GetFileName(f))
+                            .ToList();
+
+    return Results.Json(archivos);
+});
+
+// Obtener contenido de un output esperado
+app.MapGet("/problems/{id}/expected/{archivo}", (int id, string archivo) =>
+{
+    string dir = Path.Combine(PathDirectories.PROBLEMS_PATH, id.ToString(), "OUT");
+    string path = Path.Combine(dir, archivo);
+
+    if (!System.IO.File.Exists(path))
+        return Results.NotFound("Archivo no encontrado");
+
+    string contenido = System.IO.File.ReadAllText(path);
+    return Results.Text(contenido, "text/plain");
+});
+
 // Estructura de directorios
 app.MapGet("/utils/tree", () =>
 {

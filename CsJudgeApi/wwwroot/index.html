@@ -378,6 +378,7 @@
 
 
   <script>
+    // BOOKMARK: Configuración de lenguajes (C#, C++)
     // ⚡ Mapear lenguaje elegido → configuración de editores + Judge0
     const LANG_CONFIG = {
       csharp: {
@@ -456,7 +457,7 @@ class Program
         showCodeParamInConsole(code);
     }
 
-    
+    // BOOKMARK: Cambio entre editores CodeMirror y Mónaco
     // === Función switchEditor (debe estar disponible globalmente) ===
     function switchEditor(type) {
       // Depurar, en la consola, el código actual
@@ -558,6 +559,7 @@ class Program
       }
     }
 
+    // BOOKMARK: Ejecución en Judge0 (juez de prueba)
     async function runJudge0() {
       const code = getCurrentCode();
       
@@ -616,6 +618,7 @@ class Program
       }
     }
 
+    // BOOKMARK: Ejecución en servidor oficial (calificable)
     async function runOfficial() {
       const problemId = document.getElementById('txtProblemId').value;
       const studentId = document.getElementById('txtStudentId').value;
@@ -696,10 +699,533 @@ class Program
   <button type="button" onclick="runJudge0()">Ejecutar (En Juez de<br>Prueba)</button>
   <button type="button" onclick="runOfficial()">Enviar (En Juez Oficial,<br> <strong>es calificable para el contest</strong>)</button>
 
+  <div style="margin-top: 10px;">
+    <button id="btnSandbox" onclick="runLocalCode()" disabled title="Verificando sandbox...">🧪 Probar en Sandbox</button>
+    <button id="btnValidation" onclick="runOfflineValidation()" disabled title="Verificando sandbox...">📂 Validar con DataSet local</button>
+    <button id="btnDownloadSandbox" onclick="downloadSandbox()" style="background-color: #ff9800;">📥 Descargar Sandbox</button>
+  </div>
+
+  <pre id="validationLog"></pre>
   <div id="output" class="result"></div>
 
   
   <script>
+    // BOOKMARK: Configuración de URLs del servidor y sandbox
+    // Constantes de configuración
+    // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
+    const SERVER_BASE_URL = "https://dad3e9d38487.ngrok-free.app";
+    const SANDBOX_BASE = "http://localhost:1100";
+    const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
+    const SANDBOX_DOWNLOAD_URL = `${SERVER_BASE_URL}/assets/DotNetInteractiveServer.zip`;
+
+    // Estado del sandbox
+    let sandboxAvailable = false;
+    let checkInterval = null;
+
+    // BOOKMARK: Inicialización del sandbox al cargar página
+    // Verificar si el sandbox está disponible al cargar la página
+    window.addEventListener('DOMContentLoaded', async () => {
+      console.log('🚀 Página cargada, iniciando verificación del sandbox...');
+      await checkAndPromptSandbox();
+      console.log('✅ Verificación inicial del sandbox completada');
+    });
+
+    // Verificar si el sandbox responde (sin UI)
+    async function pingSandbox() {
+      try {
+        console.log(`📡 Intentando ping a: ${SANDBOX_BASE}/ping`);
+        const res = await fetch(`${SANDBOX_BASE}/ping`, {
+          method: 'GET',
+          signal: AbortSignal.timeout(2000)
+        });
+        
+        console.log(`📡 Respuesta ping: status=${res.status}, ok=${res.ok}`);
+        if (!res.ok) return false;
+        
+        // Verificar que responda con el mensaje esperado
+        const text = await res.text();
+        console.log(`📡 Texto respuesta ping: "${text}"`);
+        const isValid = text.includes('Sandbox activo') || text.includes('✅');
+        console.log(`📡 Ping válido: ${isValid}`);
+        return isValid;
+      } catch (err) {
+        console.log(`❌ Error en ping: ${err.message}`);
+        return false;
+      }
+    }
+
+    // Habilitar botones del sandbox
+    function enableSandboxButtons() {
+      const btnSandbox = document.getElementById('btnSandbox');
+      const btnValidation = document.getElementById('btnValidation');
+      
+      sandboxAvailable = true;
+      btnSandbox.disabled = false;
+      btnValidation.disabled = false;
+      btnSandbox.title = 'Sandbox local disponible';
+      btnValidation.title = 'Sandbox local disponible';
+      btnSandbox.textContent = '🧪 Probar en Sandbox';
+      btnValidation.textContent = '📂 Validar con DataSet local';
+      
+      console.log('✅ Sandbox local disponible');
+      
+      // Detener el chequeo periódico
+      if (checkInterval) {
+        clearInterval(checkInterval);
+        checkInterval = null;
+      }
+    }
+
+    // Deshabilitar botones del sandbox
+    function disableSandboxButtons(message) {
+      const btnSandbox = document.getElementById('btnSandbox');
+      const btnValidation = document.getElementById('btnValidation');
+      
+      sandboxAvailable = false;
+      btnSandbox.disabled = true;
+      btnValidation.disabled = true;
+      btnSandbox.title = message;
+      btnValidation.title = message;
+      btnSandbox.textContent = message;
+      btnValidation.textContent = message;
+      
+      console.log(`🔒 Botones deshabilitados: ${message}`);
+    }
+
+    // BOOKMARK: Monitoreo periódico del sandbox cada 5 segundos
+    // Iniciar verificación periódica del sandbox
+    function startSandboxMonitoring() {
+      if (checkInterval) return; // Ya está monitoreando
+      
+      console.log('🔄 Iniciando monitoreo del sandbox (cada 5 segundos)...');
+      
+      checkInterval = setInterval(async () => {
+        const isAlive = await pingSandbox();
+        if (isAlive) {
+          console.log('✅ Sandbox detectado corriendo!');
+          enableSandboxButtons();
+        }
+      }, 5000); // Verificar cada 5 segundos
+    }
+
+    // BOOKMARK: Verificación inicial y descarga del sandbox
+    // Verificar sandbox y ofrecer descarga si no está
+    async function checkAndPromptSandbox() {
+      console.log('🔍 Iniciando verificación del sandbox...');
+      const btnSandbox = document.getElementById('btnSandbox');
+      const btnValidation = document.getElementById('btnValidation');
+      
+      // SIEMPRE verificar primero si el sandbox está corriendo (ping)
+      console.log('📡 Haciendo ping al sandbox...');
+      const isAlive = await pingSandbox();
+      
+      if (isAlive) {
+        console.log('✅ Sandbox detectado activo!');
+        enableSandboxButtons();
+        return;
+      }
+
+      console.log('❌ Sandbox NO responde al ping');
+
+      // Si no está activo, verificar si ya se descargó previamente
+      const alreadyDownloaded = localStorage.getItem('sandboxDownloaded');
+      console.log('💾 LocalStorage sandboxDownloaded:', alreadyDownloaded);
+      
+      if (alreadyDownloaded) {
+        // Ya se descargó, solo esperar que se ejecute
+        console.log('⏳ Sandbox ya fue descargado, esperando que se ejecute...');
+        btnSandbox.title = 'Esperando que ejecutes el sandbox local...';
+        btnValidation.title = 'Esperando que ejecutes el sandbox local...';
+        startSandboxMonitoring(); // Iniciar monitoreo automático
+        return;
+      }
+
+      // Sandbox no disponible y no descargado, preguntar al usuario
+      console.log('💬 Mostrando prompt de descarga al usuario...');
+      const download = confirm(
+        '🔧 El Sandbox local no está disponible.\n\n' +
+        '¿Deseas descargar DotNetInteractiveServer.zip para ejecutar código localmente?\n\n' +
+        '(La descarga comenzará automáticamente si aceptas)'
+      );
+
+      if (download) {
+        console.log('✅ Usuario aceptó descargar el sandbox');
+        await downloadSandbox();
+      } else {
+        console.log('❌ Usuario rechazó la descarga');
+        btnSandbox.title = 'Sandbox no disponible. Usa el botón "📥 Descargar Sandbox" si cambias de opinión.';
+        btnValidation.title = 'Sandbox no disponible. Usa el botón "📥 Descargar Sandbox" si cambias de opinión.';
+      }
+    }
+
+    // Descargar el sandbox
+    async function downloadSandbox() {
+      const btnSandbox = document.getElementById('btnSandbox');
+      const btnValidation = document.getElementById('btnValidation');
+      
+      btnSandbox.textContent = '⏳ Descargando sandbox...';
+      btnValidation.textContent = '⏳ Descargando sandbox...';
+
+      try {
+        // Crear enlace de descarga
+        const a = document.createElement('a');
+        a.href = SANDBOX_DOWNLOAD_URL;
+        a.download = 'DotNetInteractiveServer.zip';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        // Marcar como descargado en localStorage
+        localStorage.setItem('sandboxDownloaded', 'true');
+
+        // Mostrar instrucciones
+        alert(
+          '✅ Descarga iniciada: DotNetInteractiveServer.zip\n\n' +
+          '📝 Instrucciones:\n' +
+          '1. Extrae el archivo ZIP\n' +
+          '2. Ejecuta DotNetInteractiveServer.exe (Windows) o el equivalente en tu sistema\n' +
+          '3. Los botones se habilitarán automáticamente cuando detecte el sandbox corriendo\n\n' +
+          '💡 Esta página verificará cada 5 segundos si el sandbox está disponible.'
+        );
+
+        btnSandbox.textContent = '🧪 Probar en Sandbox';
+        btnValidation.textContent = '📂 Validar con DataSet local';
+        btnSandbox.title = 'Esperando que ejecutes el sandbox local...';
+        btnValidation.title = 'Esperando que ejecutes el sandbox local...';
+
+        // Iniciar monitoreo automático
+        startSandboxMonitoring();
+
+      } catch (err) {
+        console.error('Error al descargar sandbox:', err);
+        alert('❌ Error al descargar el sandbox. Verifica la conexión e intenta nuevamente.');
+        btnSandbox.textContent = '🧪 Probar en Sandbox';
+        btnValidation.textContent = '📂 Validar con DataSet local';
+      }
+    }
+
+    // BOOKMARK: Gestión de datasets - sincronización incremental
+    // Obtiene del sandbox lo ya instalado
+    async function getInstalledDataset(problemId) {
+      const res = await fetch(`${SANDBOX_BASE}/datasets/${encodeURIComponent(problemId)}`);
+      if (!res.ok) throw new Error(`Sandbox no responde datasets (${res.status})`);
+      return await res.json(); // { installed, inputs[], expected[] }
+    }
+
+    // Obtiene del servidor las listas oficiales
+    async function getServerLists(problemId) {
+      console.log(`📋 Obteniendo listas del servidor para problema ${problemId}...`);
+      try {
+        const [ri, re] = await Promise.all([
+          fetch(`/problems/${problemId}/inputs`),
+          fetch(`/problems/${problemId}/expected`)
+        ]);
+        
+        if (!ri.ok) throw new Error(`No se pudieron listar inputs (status ${ri.status})`);
+        
+        const inputs = await ri.json();
+        console.log(`📥 Inputs encontrados:`, inputs);
+        
+        let expected = [];
+        if (re.ok) {
+          expected = await re.json();
+          console.log(`📥 Expected encontrados:`, expected);
+        } else {
+          console.log(`⚠️ No hay outputs esperados (status ${re.status})`);
+        }
+        
+        return { inputs, expected };
+      } catch (err) {
+        console.error('❌ Error obteniendo listas del servidor:', err);
+        throw err;
+      }
+    }
+
+    // Descarga contenido de un archivo del servidor
+    async function fetchServerFile(problemId, kind /* "input"|"expected" */, fileName) {
+      const route = kind === "input" 
+        ? `/problems/${problemId}/input/${fileName}`
+        : `/problems/${problemId}/expected/${fileName}`;
+      
+      console.log(`📥 Descargando archivo: ${route}`);
+      const res = await fetch(route);
+      if (!res.ok) throw new Error(`No se pudo descargar ${fileName} (status ${res.status})`);
+      return await res.text();
+    }
+
+    // Sube SOLO lo que falta
+    async function syncDataset(problemId) {
+      console.log(`🔄 Iniciando sincronización para problema ${problemId}...`);
+      
+      // Deshabilitar botones del sandbox durante la sincronización
+      disableSandboxButtons("⏳ Sincronizando...");
+      
+      // Obtener referencia al área de output
+      const outputDiv = document.getElementById('output');
+      if (outputDiv) {
+        outputDiv.innerHTML = '<div style="color: #007bff; font-weight: bold;">🔄 Iniciando sincronización del dataset...</div>';
+      }
+      
+      try {
+        // 1) Preguntar al sandbox qué ya tiene
+        console.log(`📡 Consultando al sandbox qué archivos ya tiene...`);
+        if (outputDiv) outputDiv.innerHTML = '<div>📡 Verificando archivos instalados en sandbox...</div>';
+        const installed = await getInstalledDataset(problemId);
+        console.log(`📦 Sandbox tiene:`, installed);
+
+        // 2) Preguntar al servidor qué debería tener
+        console.log(`📡 Consultando al servidor qué archivos debería tener...`);
+        if (outputDiv) outputDiv.innerHTML = '<div>📡 Consultando archivos disponibles en servidor...</div>';
+        const server = await getServerLists(problemId);
+
+        // 3) Calcular faltantes
+        const installedInputs   = new Set(installed.inputs ?? []);
+        const installedExpected = new Set(installed.expected ?? []);
+        const missingInputs   = server.inputs.filter(f => !installedInputs.has(f));
+        const missingExpected = server.expected.filter(f => !installedExpected.has(f));
+
+        console.log(`📊 Archivos faltantes - Inputs: ${missingInputs.length}, Expected: ${missingExpected.length}`);
+
+        if (missingInputs.length === 0 && missingExpected.length === 0) {
+          console.log(`✅ ${problemId}: DataSet ya está completo`);
+          if (outputDiv) outputDiv.innerHTML = '<div style="color: #28a745; font-weight: bold;">✅ Dataset ya está completo</div>';
+          return { uploaded: 0 };
+        }
+
+        // 4) Descargar solo faltantes y armar payload
+        const files = [];
+        const totalFiles = missingInputs.length + missingExpected.length;
+        let downloadedCount = 0;
+
+        if (outputDiv) outputDiv.innerHTML = `<div style="color: #17a2b8;">⬇️ Descargando archivos... (0/${totalFiles})</div>`;
+        
+        console.log(`⬇️ Descargando ${missingInputs.length} inputs faltantes...`);
+        for (const f of missingInputs) {
+          downloadedCount++;
+          if (outputDiv) outputDiv.innerHTML = `<div style="color: #17a2b8;">📥 Descargando archivo ${downloadedCount}/${totalFiles}: ${f}</div>`;
+          const content = await fetchServerFile(problemId, "input", f);
+          files.push({ path: `DataSet/${f}`, content });
+        }
+        
+        console.log(`⬇️ Descargando ${missingExpected.length} expected faltantes...`);
+        for (const f of missingExpected) {
+          downloadedCount++;
+          if (outputDiv) outputDiv.innerHTML = `<div style="color: #17a2b8;">📥 Descargando archivo ${downloadedCount}/${totalFiles}: ${f}</div>`;
+          const content = await fetchServerFile(problemId, "expected", f);
+          files.push({ path: `.Expected/${f}`, content });
+        }
+
+        // 5) Enviar al sandbox
+        console.log(`📤 Enviando ${files.length} archivos al sandbox...`);
+        if (outputDiv) outputDiv.innerHTML = `<div style="color: #17a2b8;">📤 Enviando ${files.length} archivos al sandbox...</div>`;
+        await sendDatasetToSandbox(problemId, files);
+        console.log(`✅ Sincronización completada: ${files.length} archivos subidos`);
+        if (outputDiv) outputDiv.innerHTML = `<div style="color: #28a745; font-weight: bold;">✅ Sincronización completada: ${files.length} archivos sincronizados</div>`;
+        return { uploaded: files.length };
+      } catch (err) {
+        console.error(`❌ Error en syncDataset para ${problemId}:`, err);
+        if (outputDiv) outputDiv.innerHTML = `<div style="color: #dc3545; font-weight: bold;">❌ Error: ${err.message}</div>`;
+        throw err;
+      } finally {
+        // Siempre rehabilitar botones al terminar (éxito o error)
+        enableSandboxButtons();
+      }
+    }
+
+    // “Ensure”: si no está completo, sincroniza; si está, no hace nada
+    async function ensureDatasetInstalled(problemId) {
+      try {
+        const res = await syncDataset(problemId);
+        if (res.uploaded === 0) {
+          console.log(`✅ ${problemId}: ya estaba instalado`);
+        }
+      } catch (err) {
+        console.error("Error al asegurar dataset:", err);
+        alert("❌ No se pudo asegurar el DataSet en el sandbox.");
+      }
+    }
+
+    // BOOKMARK: Ejecución de código en sandbox local
+    // 🔹 Ejecutar el código en el sandbox local
+    async function runLocalCode() {
+      const output = document.getElementById("output");
+      output.textContent = "⏳ Ejecutando código en el sandbox local...\n";
+
+      const raw = getCurrentCode();
+      const code = normalizeCodeForKernel(raw);
+      console.log("Código enviado =>", code);
+
+      if (!code.trim()) {
+        output.textContent = "⚠️ No hay código para ejecutar.";
+        return;
+      }
+
+      try {
+        // NOTA: El endpoint /execute del sandbox NO acepta stdin
+        // El código debe leer desde Console.ReadLine() en el mismo código
+        const res = await fetch(`${SANDBOX_URL}/execute`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            code: code
+          }),
+        });
+
+        if (!res.ok) throw new Error(`Error HTTP ${res.status}`);
+
+        const data = await res.json();
+        console.log("Respuesta del sandbox:", data);
+
+        // El servidor devuelve { output: "..." }
+        const outputText = data.output || "";
+
+        output.textContent =
+          "🖥️ Salida del programa:\n\n" +
+          (outputText.trim() || "(sin salida)");
+      } catch (err) {
+        console.error(err);
+        output.textContent =
+          "❌ No se pudo conectar al sandbox local.\n" +
+          "Asegúrate de haber ejecutado DotNetInteractiveServer.exe.\n\n" +
+          err.message;
+      }
+    }
+
+    // BOOKMARK: Normalización de código para .NET Interactive Kernel
+    // Normaliza el código para enviarlo al kernel (elimina clase Program y Main)
+    function normalizeCodeForKernel(sourceCode) {
+      return sourceCode
+        // Elimina “class Program” o “public class Program”
+        .replace(/\b(public\s+)?class\s+Program\s*/g, "")
+        // Elimina “static void Main()”, “public static void Main()” o con args
+        .replace(/\b(public\s+)?static\s+void\s+Main\s*\([^)]*\)\s*/g, "")
+        .trim();
+    }
+
+
+    // BOOKMARK: Validación offline con datasets locales
+    // 🔹 Validar el código con datasets del sandbox
+    async function runOfflineValidation() {
+      const log = document.getElementById("validationLog");
+      const output = document.getElementById("output");
+      
+      // Obtener el problema actual
+      const problemId = document.getElementById("txtProblemId").value;
+      
+      if (!problemId) {
+        output.textContent = "⚠️ Selecciona un problema primero.";
+        output.className = "result warn";
+        return;
+      }
+
+      const code = getCurrentCode();
+      if (!code.trim()) {
+        output.textContent = "⚠️ No hay código para validar.";
+        output.className = "result warn";
+        return;
+      }
+
+      log.textContent = "📂 Ejecutando validación con DataSet local del sandbox...\n";
+      output.textContent = "⏳ Validando...";
+      output.className = "result warn";
+
+      try {
+        console.log(`🧪 Validando problema ${problemId} con sandbox...`);
+        
+        // Usar el endpoint /validate-dataset del sandbox
+        const res = await fetch(`${SANDBOX_URL}/validate-dataset`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            code: normalizeCodeForKernel(code),
+            problem: problemId,
+            timeoutMs: 5000
+          }),
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`Error HTTP ${res.status}: ${errorText}`);
+        }
+
+        const results = await res.json();
+        console.log("Resultados de validación:", results);
+
+        // Mostrar resultados
+        log.textContent = "📊 Resultados de la validación:\n\n";
+        
+        let allAccepted = true;
+        let acceptedCount = 0;
+        let totalCount = results.length;
+
+        results.forEach(r => {
+          const icon = r.result === "Accepted" ? "✅" : "❌";
+          const timeInfo = r.timeMs !== undefined ? ` (${r.timeMs}ms)` : "";
+          log.textContent += `${icon} ${r.case}: ${r.result}${timeInfo}\n`;
+
+          if (r.result === "Accepted") {
+            acceptedCount++;
+          } else {
+            allAccepted = false;
+            if (r.Diff) {
+              log.textContent += `   ${r.Diff}\n`;
+            }
+          }
+        });
+
+        log.textContent += `\n🏁 Resultado final: ${acceptedCount}/${totalCount} casos aceptados\n`;
+
+        // Actualizar output con resumen
+        if (allAccepted) {
+          output.textContent = `✅ ¡Todos los casos pasaron! (${totalCount}/${totalCount})`;
+          output.className = "result ok";
+        } else {
+          output.textContent = `❌ Algunos casos fallaron (${acceptedCount}/${totalCount} aceptados)`;
+          output.className = "result err";
+        }
+
+      } catch (err) {
+        console.error("Error en validación:", err);
+        log.textContent += `\n❌ Error: ${err.message}\n`;
+        output.textContent = 
+          "❌ No se pudo validar con el sandbox.\n" +
+          "Asegúrate de:\n" +
+          "1. Tener el sandbox ejecutándose\n" +
+          "2. Haber sincronizado los datasets del problema\n\n" +
+          err.message;
+        output.className = "result err";
+      }
+    }
+
+    // BOOKMARK: Envío de datasets al sandbox
+    // ----------------------------------------------------------------------
+    //  Enviar dataset al sandbox local
+    // ----------------------------------------------------------------------
+    async function sendDatasetToSandbox(problemId, files) {
+      try {
+        const res = await fetch(SANDBOX_BASE + "/upload-dataset", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ problemId, files }),
+        });
+
+        if (!res.ok) throw new Error(`Error HTTP ${res.status}`);
+        const data = await res.json();
+        console.log("Sandbox respondió:", data);
+
+        if (data.ok) {
+          alert(`✅ DataSet ${data.problem} instalado (${data.saved} archivos).`);
+        } else {
+          alert("⚠️ No se pudo instalar el DataSet.");
+        }
+      } catch (err) {
+        console.error("Error enviando DataSet:", err);
+        alert("❌ No se pudo enviar el DataSet al sandbox local.");
+      }
+    }
+
+    // BOOKMARK: Carga de estudiantes y notificación de login
+    // === Cargar estudiantes en el select ===
     async function loadStudents() {
       try {
         const response = await fetch("/students");
@@ -788,6 +1314,7 @@ class Program
   </script>
   
   <script>
+    // BOOKMARK: Carga de problemas y sincronización automática de datasets
     async function loadProblems() {
       try {
         const response = await fetch("/contest/questions");
@@ -822,6 +1349,23 @@ class Program
               
               // 2) 👇 Aquí se cargan datasets (inputs) de ese problema
               await loadInputs(id);
+              
+              // 3) 🔄 Si el sandbox está disponible, sincronizar datasets automáticamente
+              if (sandboxAvailable) {
+                try {
+                  console.log(`🔄 Sincronizando dataset para problema ${id}...`);
+                  const result = await syncDataset(id);
+                  if (result.uploaded > 0) {
+                    console.log(`✅ Sincronizados ${result.uploaded} archivos para problema ${id}`);
+                    showToast(`✅ Dataset sincronizado (${result.uploaded} archivos)`, "success");
+                  } else {
+                    console.log(`✅ Dataset ya estaba completo para problema ${id}`);
+                  }
+                } catch (err) {
+                  console.error("Error sincronizando dataset:", err);
+                  showToast("⚠️ No se pudo sincronizar el dataset", "warn");
+                }
+              }
                       
             } catch (err) {
               console.error("Error cargando enunciado:", err);

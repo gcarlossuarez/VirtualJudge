@@ -98,8 +98,13 @@ echo "🌍 URL pública de ngrok: $URL"
 
 # 5) Actualizar index.html para apuntar al backend correcto
 if [ -f "$INDEX_HTML" ]; then
+  # Reemplaza la URL base del servidor (funciona aunque ya haya sido reemplazada antes)
+  sed -i "s|const SERVER_BASE_URL = \"http[s]*://[^\"]*\"|const SERVER_BASE_URL = \"$URL\"|g" "$INDEX_HTML"
+  
+  # Reemplaza la URL de compile-run (si existe el patrón viejo)
   sed -i "s|http://localhost:$PUERTO/compile-run|$URL/compile-run|g" "$INDEX_HTML"
-  echo "✅ index.html actualizado con la URL pública"
+  
+  echo "✅ index.html actualizado con la URL pública: $URL"
 else
   echo "⚠️ No se encontró $INDEX_HTML, omitiendo actualización."
 fi
