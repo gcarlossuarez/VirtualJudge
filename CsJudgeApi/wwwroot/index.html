@@ -696,8 +696,8 @@ class Program
   <label for="stdin">Entrada (stdin):</label><br>
   <textarea id="stdin" rows="15" cols="80" style="width: 100%;"></textarea>
 
-  <button type="button" onclick="runJudge0()">Ejecutar (En Juez de<br>Prueba)</button>
-  <button type="button" onclick="runOfficial()">Enviar (En Juez Oficial,<br> <strong>es calificable para el contest</strong>)</button>
+  <button id="btnJudge0" type="button" onclick="runJudge0()">Ejecutar (En Juez de<br>Prueba)</button>
+  <button id="btnOfficial" type="button" onclick="runOfficial()">Enviar (En Juez Oficial,<br> <strong>es calificable para el contest</strong>)</button>
 
   <div style="margin-top: 10px;">
     <button id="btnSandbox" onclick="runLocalCode()" disabled title="Verificando sandbox...">🧪 Probar en Sandbox</button>
@@ -713,7 +713,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://dad3e9d38487.ngrok-free.app";
+    const SERVER_BASE_URL = "https://8cd82cf5fd87.ngrok-free.app";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     const SANDBOX_DOWNLOAD_URL = `${SERVER_BASE_URL}/assets/DotNetInteractiveServer.zip`;
@@ -754,20 +754,26 @@ class Program
       }
     }
 
-    // Habilitar botones del sandbox
+    // Habilitar botones del sandbox (y también Judge0 y Oficial)
     function enableSandboxButtons() {
       const btnSandbox = document.getElementById('btnSandbox');
       const btnValidation = document.getElementById('btnValidation');
+      const btnJudge0 = document.getElementById('btnJudge0');
+      const btnOfficial = document.getElementById('btnOfficial');
       
       sandboxAvailable = true;
       btnSandbox.disabled = false;
       btnValidation.disabled = false;
+      btnJudge0.disabled = false;
+      btnOfficial.disabled = false;
       btnSandbox.title = 'Sandbox local disponible';
       btnValidation.title = 'Sandbox local disponible';
+      btnJudge0.title = '';
+      btnOfficial.title = '';
       btnSandbox.textContent = '🧪 Probar en Sandbox';
       btnValidation.textContent = '📂 Validar con DataSet local';
       
-      console.log('✅ Sandbox local disponible');
+      console.log('✅ Sandbox local disponible - Todos los botones habilitados');
       
       // Detener el chequeo periódico
       if (checkInterval) {
@@ -776,20 +782,26 @@ class Program
       }
     }
 
-    // Deshabilitar botones del sandbox
+    // Deshabilitar botones del sandbox (y también Judge0 y Oficial durante validación)
     function disableSandboxButtons(message) {
       const btnSandbox = document.getElementById('btnSandbox');
       const btnValidation = document.getElementById('btnValidation');
+      const btnJudge0 = document.getElementById('btnJudge0');
+      const btnOfficial = document.getElementById('btnOfficial');
       
       sandboxAvailable = false;
       btnSandbox.disabled = true;
       btnValidation.disabled = true;
+      btnJudge0.disabled = true;
+      btnOfficial.disabled = true;
       btnSandbox.title = message;
       btnValidation.title = message;
+      btnJudge0.title = message;
+      btnOfficial.title = message;
       btnSandbox.textContent = message;
       btnValidation.textContent = message;
       
-      console.log(`🔒 Botones deshabilitados: ${message}`);
+      console.log(`🔒 Todos los botones deshabilitados: ${message}`);
     }
 
     // BOOKMARK: Monitoreo periódico del sandbox cada 5 segundos
@@ -1060,16 +1072,24 @@ class Program
         return;
       }
 
+      // Obtener el stdin del textarea
+      const stdin = document.getElementById('stdin').value;
+
       try {
-        // NOTA: El endpoint /execute del sandbox NO acepta stdin
-        // El código debe leer desde Console.ReadLine() en el mismo código
+        // BOOKMARK: Ejecutar execute con código y stdin en el sandbox
+        const log = document.getElementById("validationLog");
+        log.textContent = "✅ Código ejecutado, esperando respuesta...\n";
+        
         const res = await fetch(`${SANDBOX_URL}/execute`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            code: code
+            code: code,
+            stdin: stdin  // ✨ El sandbox acepta stdin
           }),
         });
+
+        log.textContent = "";
 
         if (!res.ok) throw new Error(`Error HTTP ${res.status}`);
 
@@ -1129,60 +1149,163 @@ class Program
       output.textContent = "⏳ Validando...";
       output.className = "result warn";
 
+      // Deshabilitar botones del sandbox durante la validación
+      disableSandboxButtons("⏳ Validando...");
+
       try {
         console.log(`🧪 Validando problema ${problemId} con sandbox...`);
-        
-        // Usar el endpoint /validate-dataset del sandbox
-        const res = await fetch(`${SANDBOX_URL}/validate-dataset`, {
+
+        // ═══════════════════════════════════════════════════════════════════════════
+        // BOOKMARK: STREAMING CON SERVER-SENT EVENTS (SSE)
+        // ═══════════════════════════════════════════════════════════════════════════
+        // Enviamos la petición al sandbox para validar el código.
+        // El servidor NO envía una respuesta única, sino un STREAM continuo
+        // de eventos (como un río de datos que va llegando de a poco).
+        // ═══════════════════════════════════════════════════════════════════════════
+        fetch(`${SANDBOX_URL}/validate-dataset`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            'Accept': 'text/event-stream'  // ✨ Le decimos al servidor: "quiero streaming SSE"
+          },
           body: JSON.stringify({
             code: normalizeCodeForKernel(code),
             problem: problemId,
             timeoutMs: 5000
-          }),
-        });
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`Error HTTP ${res.status}: ${errorText}`);
-        }
-
-        const results = await res.json();
-        console.log("Resultados de validación:", results);
-
-        // Mostrar resultados
-        log.textContent = "📊 Resultados de la validación:\n\n";
-        
-        let allAccepted = true;
-        let acceptedCount = 0;
-        let totalCount = results.length;
-
-        results.forEach(r => {
-          const icon = r.result === "Accepted" ? "✅" : "❌";
-          const timeInfo = r.timeMs !== undefined ? ` (${r.timeMs}ms)` : "";
-          log.textContent += `${icon} ${r.case}: ${r.result}${timeInfo}\n`;
-
-          if (r.result === "Accepted") {
-            acceptedCount++;
-          } else {
-            allAccepted = false;
-            if (r.Diff) {
-              log.textContent += `   ${r.Diff}\n`;
-            }
+          })
+        }).then(response => {
+          // Verificar que el servidor respondió correctamente
+          if (!response.ok) {
+            throw new Error(`Error HTTP ${response.status}`);
           }
-        });
-
-        log.textContent += `\n🏁 Resultado final: ${acceptedCount}/${totalCount} casos aceptados\n`;
-
-        // Actualizar output con resumen
-        if (allAccepted) {
-          output.textContent = `✅ ¡Todos los casos pasaron! (${totalCount}/${totalCount})`;
-          output.className = "result ok";
-        } else {
-          output.textContent = `❌ Algunos casos fallaron (${acceptedCount}/${totalCount} aceptados)`;
+          
+          // ─────────────────────────────────────────────────────────────────────────
+          // CONFIGURACIÓN DEL LECTOR DE STREAM
+          // ─────────────────────────────────────────────────────────────────────────
+          // reader: Objeto que nos permite leer el stream de datos "chunk por chunk"
+          //         (chunk = pedazo de datos que llega cada vez)
+          const reader = response.body.getReader();
+          
+          // decoder: Convierte bytes (números) a texto legible
+          const decoder = new TextDecoder();
+          
+          // buffer: Almacena texto incompleto entre chunks
+          //         A veces un mensaje llega partido en 2 chunks, el buffer lo guarda
+          let buffer = '';
+          
+          // ─────────────────────────────────────────────────────────────────────────
+          // FUNCIÓN RECURSIVA: processStream()
+          // ─────────────────────────────────────────────────────────────────────────
+          // Esta función se llama a sí misma para leer chunk tras chunk
+          // hasta que el servidor termine de enviar datos.
+          //
+          // ¿Por qué recursiva y no un loop?
+          // Porque reader.read() es ASÍNCRONA (devuelve una promesa).
+          // No podemos hacer: while(!done) { read(); } ← esto no funciona con async
+          // En cambio: read().then(() => processStream()) ← esto SÍ funciona
+          // ─────────────────────────────────────────────────────────────────────────
+          function processStream() {
+            // Leer el siguiente chunk del stream
+            reader.read().then(({ done, value }) => {
+              // ═════════════════════════════════════════════════════════════════════
+              // CASO 1: El stream terminó (done = true)
+              // ═════════════════════════════════════════════════════════════════════
+              if (done) {
+                console.log('✅ Stream completado - No hay más datos del servidor');
+                enableSandboxButtons();  // ✅ Rehabilitar botones al terminar exitosamente
+                return;  // 🛑 FIN DE LA RECURSIÓN - La función no se vuelve a llamar
+              }
+              
+              // ═════════════════════════════════════════════════════════════════════
+              // CASO 2: Llegó un chunk de datos (value contiene bytes)
+              // ═════════════════════════════════════════════════════════════════════
+              
+              // 1️⃣ Convertir bytes a texto y agregarlo al buffer
+              //    { stream: true } = "puede haber más datos después"
+              buffer += decoder.decode(value, { stream: true });
+              
+              // 2️⃣ Separar el buffer en líneas (los eventos SSE vienen línea por línea)
+              const lines = buffer.split('\n');
+              
+              // 3️⃣ Guardar la última línea (puede estar incompleta)
+              //    lines.pop() saca y devuelve el último elemento del array
+              //    Si está vacío, usamos '' (cadena vacía)
+              buffer = lines.pop() || '';
+              
+              // 4️⃣ Procesar cada línea completa
+              //    Formato SSE:
+              //    event: start
+              //    data: {"totalCases": 5}
+              //
+              //    event: case-result
+              //    data: {"caseNumber": 1, "result": "Accepted"}
+              for (const line of lines) {
+                // ¿La línea comienza con "event:"?
+                if (line.startsWith('event:')) {
+                  // Extraer el tipo de evento (ejemplo: "start", "case-result", "complete")
+                  const eventType = line.substring(6).trim();  // substring(6) = omite "event:"
+                  
+                  // Buscar la siguiente línea que debe tener los datos (data:)
+                  const dataLineIndex = lines.indexOf(line) + 1;
+                  
+                  // Verificar que existe la línea de datos
+                  if (dataLineIndex < lines.length && lines[dataLineIndex].startsWith('data:')) {
+                    // Extraer el JSON (omitiendo "data: ")
+                    const jsonText = lines[dataLineIndex].substring(5).trim();
+                    
+                    // Convertir el texto JSON a un objeto JavaScript
+                    const data = JSON.parse(jsonText);
+                    
+                    // 🎯 Llamar a la función que maneja el evento
+                    //    (esta función muestra los resultados en la UI)
+                    handleSSEEvent(eventType, data);
+                  }
+                }
+              }
+              
+              // ═════════════════════════════════════════════════════════════════════
+              // 🔄 RECURSIÓN: Llamarse a sí misma para leer el siguiente chunk
+              // ═════════════════════════════════════════════════════════════════════
+              // Esta es la clave del streaming:
+              // 1. Leemos un chunk
+              // 2. Lo procesamos
+              // 3. Llamamos a processStream() de nuevo para leer el siguiente
+              // 4. Repetimos hasta que done=true
+              //
+              // Flujo visual:
+              // Server → [chunk1] → processStream() → procesa → llama processStream()
+              //                                                           ↓
+              // Server → [chunk2] → processStream() → procesa → llama processStream()
+              //                                                           ↓
+              // Server → [chunk3] → processStream() → procesa → llama processStream()
+              //                                                           ↓
+              // Server → [done=true] → processStream() → return (fin)
+              processStream();
+              
+            }).catch(streamErr => {
+              // Si hay un error leyendo el stream, mostrarlo
+              console.error('❌ Error en stream:', streamErr);
+              log.textContent += `\n❌ Error en stream: ${streamErr.message}\n`;
+              output.textContent = `❌ Error procesando resultados: ${streamErr.message}`;
+              output.className = "result err";
+              enableSandboxButtons();  // ✅ Rehabilitar botones si hay error en el stream
+            });
+          }
+          
+          // 🚀 Primera llamada a processStream() para iniciar la lectura
+          processStream();
+        }).catch(err => {
+          console.error('❌ Error en validación:', err);
+          log.textContent += `\n❌ Error: ${err.message}\n`;
+          output.textContent = 
+            "❌ No se pudo validar con el sandbox.\n" +
+            "Asegúrate de:\n" +
+            "1. Tener el sandbox ejecutándose\n" +
+            "2. Haber sincronizado los datasets del problema\n\n" +
+            err.message;
           output.className = "result err";
-        }
+          enableSandboxButtons();  // ✅ Rehabilitar botones si hay error en la petición
+        });
 
       } catch (err) {
         console.error("Error en validación:", err);
@@ -1194,7 +1317,47 @@ class Program
           "2. Haber sincronizado los datasets del problema\n\n" +
           err.message;
         output.className = "result err";
+        enableSandboxButtons();  // ✅ Rehabilitar botones si hay error en el try-catch
       }
+    }
+
+    // BOOKMARK: Manejo de eventos SSE del sandbox durante la validación
+    function handleSSEEvent(eventType, data) {
+        const log = document.getElementById('validationLog');
+        const output = document.getElementById('output');
+        
+        if (eventType === 'start') {
+            log.textContent = `🚀 Iniciando validación de ${data.totalCases} casos para problema ${data.problem}...\n\n`;
+            output.className = 'result';
+            output.textContent = '';
+        }
+        else if (eventType === 'case-result') {
+            const percent = Math.round((data.caseNumber / data.totalCases) * 100);
+            
+            // Actualizar output con progreso
+            output.textContent = `⏳ Procesando caso ${data.caseNumber}/${data.totalCases} (${percent}%): ${data.caseName}`;
+            
+            // Agregar resultado al log
+            const resultIcon = data.result === 'Accepted' ? '✅' : 
+                              data.result === 'Wrong Answer' ? '❌' : 
+                              data.result === 'Error' ? '⚠️' : '❓';
+            
+            let resultLine = `${resultIcon} Caso ${data.caseNumber}/${data.totalCases}: ${data.caseName} → ${data.result} (${data.timeMs}ms)\n`;
+            
+            if (data.diff) {
+                resultLine += `   Diferencia:\n${data.diff}\n`;
+            }
+            
+            log.textContent += resultLine;
+            
+            // Auto-scroll al final del log
+            log.scrollTop = log.scrollHeight;
+        }
+        else if (eventType === 'complete') {
+            output.textContent = `✅ Validación completada - ${data.totalCases} casos procesados`;
+            output.className = 'result ok';
+            log.textContent += `\n✅ Validación completada - ${data.totalCases} casos procesados\n`;
+        }
     }
 
     // BOOKMARK: Envío de datasets al sandbox
