@@ -105,12 +105,54 @@ class Program
 
 ---
 
-## 📋 6. Resumen para Memorizar
+## �️ 6. Sandbox Local (Recomendado)
+
+El **Sandbox Local** es una herramienta opcional que te permite probar y validar tu código en tu propia máquina, sin depender del servidor remoto.
+
+### ¿Qué es el Sandbox?
+- Es un entorno de ejecución local que corre en tu computadora
+- Permite ejecutar código C# y validar con los datasets del problema
+- Funciona sin conexión a internet una vez instalado
+- **Solo disponible para Windows 64 bits**
+
+### Ventajas del Sandbox
+- ✅ **Reduce la carga del servidor:** Especialmente útil cuando hay muchos estudiantes conectados
+- ✅ **Funciona con red inestable:** No necesitas conexión constante al servidor
+- ✅ **Validación instantánea:** Prueba tu código con todos los casos de prueba en segundos
+- ✅ **Sin límite de intentos:** Puedes probar tantas veces como quieras sin afectar al servidor
+
+### ¿Cómo usar el Sandbox?
+
+**Requisitos:**
+1. Windows 64 bits
+2. .NET SDK 10 instalado (puedes descargarlo desde el botón en la interfaz)
+3. Descargar y ejecutar el Sandbox (DotNetInteractiveServer.exe)
+
+**Pasos:**
+1. Haz clic en "📥 Descargar Sandbox" (solo la primera vez)
+2. Extrae el archivo ZIP
+3. Ejecuta `DotNetInteractiveServer.exe`
+4. Los botones del sandbox se habilitarán automáticamente
+5. Usa "🧪 Probar en Sandbox" para ejecutar tu código
+6. Usa "📂 Validar con DataSet local" para probar todos los casos
+
+### ⚠️ Importante sobre Calificaciones
+
+- **Calificación Oficial:** Solo se considera válida la **entrega al Juez Oficial** (botón "Enviar en Juez Oficial")
+- **Sandbox como respaldo:** En exámenes o evaluaciones calificadas, si hay **fuerte inestabilidad de internet**, el docente puede considerar las validaciones del sandbox local como calificación oficial, previo chequeo
+- **Recomendación:** Usa el sandbox para practicar y reducir la carga del servidor, pero siempre envía tu solución final al Juez Oficial cuando sea posible
+
+---
+
+## �📋 7. Resumen para Memorizar
 
 1. Escribo el código.
-2. Lo pruebo en Judge (simulador).
-3. Lo envío al Juez Virtual.
-4. El Juez Virtual compara mi salida exacta con la salida oficial.
-5. Si coinciden → **ACCEPTED**. Si no → **WRONG ANSWER**.
+2. **[RECOMENDADO] Lo pruebo en Sandbox Local** (si está disponible).
+3. Lo pruebo en Judge de Prueba (simulador).
+4. Lo envío al Juez Virtual (Oficial).
+5. El Juez Virtual compara mi salida exacta con la salida oficial.
+6. Si coinciden → **ACCEPTED**. Si no → **WRONG ANSWER**.
 
 ✨ **Consejo final:** Asegúrate de que tu salida sea **idéntica** a la esperada, sin espacios, líneas o caracteres adicionales.
+
+💡 **Consejo extra:** Usa el Sandbox Local siempre que puedas para reducir la carga del servidor y trabajar más rápido, especialmente en condiciones de red inestable.

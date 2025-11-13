@@ -565,6 +565,9 @@ class Program
       
       let stdin = document.getElementById('stdin').value;
 
+      const log = document.getElementById("validationLog");
+      log.textContent = "";
+
       if (!code.trim()) {
         showMessage("⚠️ El código está vacío, no se puede enviar a Judge0.", "err");
         return;
@@ -624,6 +627,9 @@ class Program
       const studentId = document.getElementById('txtStudentId').value;
       const code = getCurrentCode();
       const stdin = document.getElementById('stdin').value;
+
+      const log = document.getElementById("validationLog");
+      log.textContent = "";
 
       if (!problemId) { alert("Por favor, introduce el identificador de la pregunta."); return; }
       if (!studentId) { alert("Por favor, introduce el identificador del estudiante."); return; }
@@ -687,6 +693,10 @@ class Program
 
     function showMessage(msg, type) {
       const out = document.getElementById("output");
+      if (!out) {
+        console.error("⚠️ Elemento 'output' no encontrado en el DOM");
+        return;
+      }
       out.className = "result " + type;
       out.textContent = msg;
     }
@@ -703,6 +713,8 @@ class Program
     <button id="btnSandbox" onclick="runLocalCode()" disabled title="Verificando sandbox...">🧪 Probar en Sandbox</button>
     <button id="btnValidation" onclick="runOfflineValidation()" disabled title="Verificando sandbox...">📂 Validar con DataSet local</button>
     <button id="btnDownloadSandbox" onclick="downloadSandbox()" style="background-color: #ff9800;">📥 Descargar Sandbox</button>
+    <button id="btnDownloadDotnet" onclick="downloadDotnetSDK()" style="background-color: #512bd4; color: white;" 
+            title="⚠️ Solo Windows x64 - No necesario si ya tienes .NET SDK 10 instalado">⬇️ Descargar .NET 10 SDK</button>
   </div>
 
   <pre id="validationLog"></pre>
@@ -713,7 +725,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://8cd82cf5fd87.ngrok-free.app";
+    const SERVER_BASE_URL = "https://b5e4c6abb5bd.ngrok-free.app";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     const SANDBOX_DOWNLOAD_URL = `${SERVER_BASE_URL}/assets/DotNetInteractiveServer.zip`;
@@ -721,16 +733,118 @@ class Program
     // Estado del sandbox
     let sandboxAvailable = false;
     let checkInterval = null;
+    let isWindows64 = false;
+
+    // BOOKMARK:Detectar sistema operativo
+    function detectOS() {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const platform = navigator.platform.toLowerCase();
+      
+      // Detectar Windows
+      const isWindows = userAgent.includes('win') || platform.includes('win');
+      
+      // Detectar 64 bits
+      // WOW64 = Windows 32-bit on Windows 64-bit
+      // Win64 = Windows 64-bit nativo
+      const is64bit = userAgent.includes('win64') || 
+                      userAgent.includes('wow64') || 
+                      platform.includes('win64') ||
+                      navigator.userAgentData?.platform === 'Windows';
+      
+      return {
+        isWindows: isWindows,
+        is64bit: is64bit,
+        isWindows64: isWindows && is64bit,
+        osName: isWindows ? 'Windows' : 
+                userAgent.includes('mac') ? 'macOS' : 
+                userAgent.includes('linux') ? 'Linux' : 'Desconocido'
+      };
+    }
+
+    // BOOKMARK: Verificación de configuración del servidor para sandbox
+    // Deshabilitar sandbox si está deshabilitado por configuración del servidor
+    function disableSandboxByConfiguration() {
+      console.log('⚠️ Sandbox deshabilitado por configuración del servidor');
+      
+      const btnSandbox = document.getElementById('btnSandbox');
+      const btnValidation = document.getElementById('btnValidation');
+      const btnDownloadSandbox = document.getElementById('btnDownloadSandbox');
+      const btnDownloadSDK = document.getElementById('btnDownloadSDK');
+      
+      if (btnSandbox) {
+        btnSandbox.disabled = true;
+        btnSandbox.title = '⚠️ Sandbox deshabilitado por configuración del servidor';
+      }
+      
+      if (btnValidation) {
+        btnValidation.disabled = true;
+        btnValidation.title = '⚠️ Sandbox deshabilitado por configuración del servidor';
+      }
+      
+      if (btnDownloadSandbox) {
+        btnDownloadSandbox.disabled = true;
+        btnDownloadSandbox.title = '⚠️ Sandbox deshabilitado por configuración del servidor';
+      }
+      
+      if (btnDownloadSDK) {
+        btnDownloadSDK.disabled = true;
+        btnDownloadSDK.title = '⚠️ Sandbox deshabilitado por configuración del servidor';
+      }
+      
+      alert('⚠️ El Sandbox Local está deshabilitado por configuración del servidor.\n\n' +
+            'Por favor, utiliza las opciones "Enviar en Judge0" o "Enviar en Juez Oficial".');
+    }
 
     // BOOKMARK: Inicialización del sandbox al cargar página
     // Verificar si el sandbox está disponible al cargar la página
     window.addEventListener('DOMContentLoaded', async () => {
       console.log('🚀 Página cargada, iniciando verificación del sandbox...');
+      
+      // 1. PRIMERO: Verificar si el sandbox está habilitado en la configuración del servidor
+      try {
+        console.log('🔍 Verificando configuración del servidor...');
+        const configRes = await fetch('/api/sandbox-enabled');
+        
+        if (!configRes.ok) {
+          console.error('❌ Error al obtener configuración del servidor:', configRes.status);
+          disableSandboxByConfiguration();
+          return;
+        }
+        
+        const configData = await configRes.json();
+        console.log('📋 Configuración del servidor:', configData);
+        
+        if (!configData.enabled) {
+          console.log('⚠️ Sandbox deshabilitado por configuración:', configData.message);
+          disableSandboxByConfiguration();
+          return;
+        }
+        
+        console.log('✅ Sandbox habilitado en configuración del servidor');
+      } catch (error) {
+        console.error('❌ Error al verificar configuración del servidor:', error);
+        disableSandboxByConfiguration();
+        return;
+      }
+      
+      // 2. SEGUNDO: Detectar sistema operativo
+      const os = detectOS();
+      isWindows64 = os.isWindows64;
+      console.log(`💻 Sistema detectado: ${os.osName} ${os.is64bit ? '64-bit' : '32-bit'}`);
+      
+      // Si no es Windows 64 bits, deshabilitar sandbox y mostrar mensaje
+      if (!isWindows64) {
+        console.log('⚠️ Sistema NO compatible con el sandbox local (requiere Windows x64)');
+        disableSandboxForIncompatibleOS(os.osName);
+        return;
+      }
+      
+      // 3. TERCERO: Verificar disponibilidad del sandbox (ping)
       await checkAndPromptSandbox();
       console.log('✅ Verificación inicial del sandbox completada');
     });
 
-    // Verificar si el sandbox responde (sin UI)
+    // BOOKMARK: Verificar si el sandbox responde (sin UI)
     async function pingSandbox() {
       try {
         console.log(`📡 Intentando ping a: ${SANDBOX_BASE}/ping`);
@@ -780,6 +894,51 @@ class Program
         clearInterval(checkInterval);
         checkInterval = null;
       }
+    }
+
+    // BOOKMARK: Deshabilitar sandbox por sistema operativo incompatible
+    function disableSandboxForIncompatibleOS(osName) {
+      const btnSandbox = document.getElementById('btnSandbox');
+      const btnValidation = document.getElementById('btnValidation');
+      const btnDownloadSandbox = document.getElementById('btnDownloadSandbox');
+      const btnDownloadDotnet = document.getElementById('btnDownloadDotnet');
+      
+      const message = `❌ No disponible en ${osName}`;
+      const tooltip = `El sandbox local solo funciona en Windows 64 bits. Tu sistema: ${osName}`;
+      
+      // Deshabilitar botones del sandbox
+      btnSandbox.disabled = true;
+      btnValidation.disabled = true;
+      btnDownloadSandbox.disabled = true;
+      btnDownloadDotnet.disabled = true;
+      
+      btnSandbox.textContent = message;
+      btnValidation.textContent = message;
+      btnSandbox.title = tooltip;
+      btnValidation.title = tooltip;
+      btnDownloadSandbox.title = tooltip;
+      btnDownloadDotnet.title = tooltip;
+      
+      // Cambiar color a gris para indicar deshabilitado
+      btnDownloadSandbox.style.backgroundColor = '#cccccc';
+      btnDownloadDotnet.style.backgroundColor = '#cccccc';
+      
+      sandboxAvailable = false;
+      
+      console.log(`🚫 Sandbox deshabilitado: Sistema incompatible (${osName})`);
+      
+      // Mostrar mensaje informativo al usuario
+      setTimeout(() => {
+        alert(
+          `⚠️ SANDBOX LOCAL NO DISPONIBLE\n\n` +
+          `Tu sistema operativo: ${osName}\n` +
+          `Requerido: Windows 64 bits\n\n` +
+          `📝 Puedes seguir usando:\n` +
+          `• Juez de Prueba (Judge0)\n` +
+          `• Juez Oficial (para calificación)\n\n` +
+          `💡 El sandbox local es opcional y solo está disponible en Windows x64.`
+        );
+      }, 1000);
     }
 
     // Deshabilitar botones del sandbox (y también Judge0 y Oficial durante validación)
@@ -913,6 +1072,43 @@ class Program
         alert('❌ Error al descargar el sandbox. Verifica la conexión e intenta nuevamente.');
         btnSandbox.textContent = '🧪 Probar en Sandbox';
         btnValidation.textContent = '📂 Validar con DataSet local';
+      }
+    }
+
+    // Descargar .NET 10 SDK desde Google Drive
+    function downloadDotnetSDK() {
+      try {
+        // ID del archivo en Google Drive: 1vN_ar2z86uIItYH4WJjeLdgKrPBl_2Nq
+        // URL directa de descarga
+        const fileId = '1vN_ar2z86uIItYH4WJjeLdgKrPBl_2Nq';
+        const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+        
+        // Crear enlace de descarga
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.target = '_blank';  // Abrir en nueva pestaña por si Google Drive pide confirmación
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        // Mostrar instrucciones
+        alert(
+          '✅ Descarga iniciada: .NET 10 SDK (Windows x64)\n\n' +
+          '⚠️ IMPORTANTE:\n' +
+          '• Este instalador es SOLO para Windows 64 bits\n' +
+          '• NO es necesario si ya tienes .NET SDK 10 instalado\n' +
+          '• Verifica con: dotnet --version (debe ser 10.x.x)\n\n' +
+          '📝 Si necesitas instalarlo:\n' +
+          '1. Ejecuta el instalador descargado\n' +
+          '2. Reinicia tu terminal o IDE si es necesario\n' +
+          '3. Verifica con: dotnet --version\n\n' +
+          '💡 El sandbox local requiere .NET SDK 10 o superior.\n' +
+          '🔗 Para otros sistemas operativos: https://dotnet.microsoft.com/download'
+        );
+
+      } catch (err) {
+        console.error('Error al descargar .NET SDK:', err);
+        alert('❌ Error al iniciar la descarga. Intenta nuevamente o descarga desde:\nhttps://drive.google.com/file/d/1vN_ar2z86uIItYH4WJjeLdgKrPBl_2Nq/view');
       }
     }
 
@@ -1114,12 +1310,20 @@ class Program
     // BOOKMARK: Normalización de código para .NET Interactive Kernel
     // Normaliza el código para enviarlo al kernel (elimina clase Program y Main)
     function normalizeCodeForKernel(sourceCode) {
-      return sourceCode
+      const hasNamespace = /\bnamespace\s+[\w.]+/.test(sourceCode);
+      let normalizedCode = sourceCode
+        // Elimina namespace y su nombre (ej: "namespace MiNamespace" o "namespace MiNamespace {")
+        .replace(/\bnamespace\s+[\w.]+\s*\{?/g, "")
         // Elimina “class Program” o “public class Program”
         .replace(/\b(public\s+)?class\s+Program\s*/g, "")
         // Elimina “static void Main()”, “public static void Main()” o con args
         .replace(/\b(public\s+)?static\s+void\s+Main\s*\([^)]*\)\s*/g, "")
         .trim();
+        if(hasNamespace){
+          // Elimina llaves sobrantes al final si había namespace
+          normalizedCode = normalizedCode.replace(/\}\s*$/g, "").trim();
+        }
+        return normalizedCode;
     }
 
 

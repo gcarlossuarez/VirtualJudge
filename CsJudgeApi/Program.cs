@@ -673,6 +673,42 @@ app.MapGet("/contest/questions", async (AppDbContext db) =>
     return Results.Json(preguntas);
 });
 
+// BOOKMARK: Verificar si el sandbox local está habilitado
+// Endpoint para verificar la configuración del sandbox local
+app.MapGet("/api/sandbox-enabled", async (AppDbContext db) =>
+{
+    try
+    {
+        // Buscar la configuración LocalSandboxEnabled en la tabla Configurations
+        var config = await db.Configurations
+            .FirstOrDefaultAsync(c => c.Key == "LocalSandboxEnabled");
+
+        // Si no existe la tupla, se considera deshabilitado
+        if (config == null)
+        {
+            return Results.Json(new { enabled = false, reason = "Configuration not found" });
+        }
+
+        // Verificar si el valor es "1" o "true" (case insensitive)
+        bool isEnabled = config.Value == "1" || 
+                        config.Value.Equals("true", StringComparison.OrdinalIgnoreCase);
+
+        return Results.Json(new 
+        { 
+            enabled = isEnabled,
+            value = config.Value,
+            message = isEnabled ? "Sandbox local habilitado" : "Sandbox local deshabilitado"
+        });
+    }
+    catch (Exception ex)
+    {
+        return Results.Json(new 
+        { 
+            enabled = false, 
+            error = ex.Message 
+        });
+    }
+});
 
 // Obtiene el enunciado de una determinada pregunta
 app.MapGet("/questions/{id}/desc", (int id) =>
