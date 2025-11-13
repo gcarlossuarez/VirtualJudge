@@ -1,0 +1,11 @@
+Accidente;Dr Móñez;1
+Accidente;Dra Torres;5
+Accidente;Dr Vega;2
+Dr Móñez;Dra Torres;4
+Dr Móñez;Dr Vega;5
+Dr Móñez;Alta Médica Total;30
+Dra Torres;Dr Móñez;4
+Dra Torres;Dr Vega;6
+Dra Torres;Alta Médica Total;15
+Dr Vega;Dra Torres;2
+Dr Vega;Alta Médica Total;20

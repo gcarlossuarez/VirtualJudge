@@ -725,7 +725,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://b5e4c6abb5bd.ngrok-free.app";
+    const SERVER_BASE_URL = "https://f680d38c10d6.ngrok-free.app";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     const SANDBOX_DOWNLOAD_URL = `${SERVER_BASE_URL}/assets/DotNetInteractiveServer.zip`;
@@ -1257,6 +1257,15 @@ class Program
     // 🔹 Ejecutar el código en el sandbox local
     async function runLocalCode() {
       const output = document.getElementById("output");
+      
+      // Verificar si el lenguaje es C++
+      const selectedLang = document.getElementById("selectLanguage").value;
+      if (selectedLang === "cpp") {
+        output.textContent = "⚠️ El sandbox local no soporta C++ por el momento.\n\nPor favor, utiliza:\n• Juez de Prueba (Judge0)\n• Juez Oficial";
+        output.className = "result warn";
+        return;
+      }
+      
       output.textContent = "⏳ Ejecutando código en el sandbox local...\n";
 
       const raw = getCurrentCode();
@@ -1332,6 +1341,15 @@ class Program
     async function runOfflineValidation() {
       const log = document.getElementById("validationLog");
       const output = document.getElementById("output");
+      
+      // Verificar si el lenguaje es C++
+      const selectedLang = document.getElementById("selectLanguage").value;
+      if (selectedLang === "cpp") {
+        output.textContent = "⚠️ La validación con sandbox local no soporta C++ por el momento.\n\nPor favor, utiliza:\n• Juez de Prueba (Judge0)\n• Juez Oficial";
+        output.className = "result warn";
+        log.textContent = "";
+        return;
+      }
       
       // Obtener el problema actual
       const problemId = document.getElementById("txtProblemId").value;

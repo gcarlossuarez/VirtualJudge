@@ -1,0 +1,79 @@
+Accidente;Dr. Ramírez;3
+Accidente;Dra. López;5
+Accidente;Dr. Gómez;4
+Accidente;Dra. Martínez;3
+Accidente;Dr. Sánchez;3
+Dr. Ramírez;Dr. Gómez;6
+Dr. Ramírez;Dr. Vargas;6
+Dr. Ramírez;Dr. Morales;2
+Dr. Ramírez;Dra. Fernández;5
+Dr. Ramírez;Alta Médica Total;22
+Dra. López;Dra. Martínez;3
+Dra. López;Dra. Romero;4
+Dra. López;Dr. Sánchez;5
+Dra. López;Alta Médica Total;34
+Dr. Gómez;Dra. Ruiz;6
+Dr. Gómez;Dr. Ramírez;3
+Dr. Gómez;Dra. Silva;8
+Dra. Martínez;Dr. Pérez;9
+Dra. Martínez;Dr. Sánchez;3
+Dra. Martínez;Dra. Silva;4
+Dra. Martínez;Dra. Romero;8
+Dra. Martínez;Dr. Ortiz;6
+Dr. Sánchez;Dr. Ortiz;5
+Dr. Sánchez;Dr. Pérez;7
+Dr. Sánchez;Dra. Romero;5
+Dr. Sánchez;Dra. Fernández;3
+Dr. Sánchez;Dra. López;5
+Dra. Fernández;Dr. Morales;3
+Dra. Fernández;Dr. Vargas;6
+Dra. Fernández;Dra. López;5
+Dra. Fernández;Alta Médica Total;35
+Dr. Pérez;Dr. Vargas;3
+Dr. Pérez;Dra. López;5
+Dr. Pérez;Dr. Gómez;4
+Dr. Pérez;Dr. Morales;6
+Dr. Pérez;Dra. Castro;7
+Dra. Ruiz;Dra. Castro;4
+Dra. Ruiz;Dra. Martínez;7
+Dra. Ruiz;Dra. López;8
+Dra. Ruiz;Dr. Morales;3
+Dr. Morales;Dr. Pérez;8
+Dr. Morales;Dra. Fernández;9
+Dr. Morales;Dra. Ruiz;7
+Dra. Castro;Dra. Ruiz;5
+Dra. Castro;Dr. Gómez;6
+Dra. Castro;Dr. Morales;4
+Dr. Ortiz;Dr. Pérez;9
+Dr. Ortiz;Dra. Romero;5
+Dr. Ortiz;Dra. Ruiz;3
+Dra. Silva;Dr. Pérez;7
+Dra. Silva;Dr. Herrera;6
+Dra. Silva;Dra. Martínez;7
+Dra. Silva;Dra. Fernández;2
+Dra. Silva;Dr. Morales;5
+Dr. Vargas;Dr. Ortiz;3
+Dr. Vargas;Dr. Herrera;2
+Dr. Vargas;Dra. Castro;5
+Dr. Vargas;Dra. Ruiz;7
+Dr. Vargas;Dra. Romero;3
+Dra. Romero;Dr. Sánchez;2
+Dra. Romero;Dra. López;9
+Dra. Romero;Dr. Morales;7
+Dra. Romero;Alta Médica Total;37
+Dr. Herrera;Dra. Fernández;3
+Dr. Herrera;Dr. Sánchez;6
+Dr. Herrera;Dra. Silva;5
+Dr. Herrera;Dra. Castro;8
+Dr. Ramírez;Terapia Física Ramírez;1
+Terapia Física Ramírez;Alta Médica Total;17
+Dra. López;Terapia Física López;3
+Terapia Física López;Alta Médica Total;14
+Dr. Gómez;Terapia Física Gómez;1
+Terapia Física Gómez;Alta Médica Total;16
+Dra. Martínez;Terapia Física Martínez;1
+Terapia Física Martínez;Alta Médica Total;17
+Dr. Sánchez;Terapia Física Sánchez;1
+Terapia Física Sánchez;Alta Médica Total;12
+Dra. Ruiz;Terapia Física Ruiz;3
+Terapia Física Ruiz;Alta Médica Total;15

@@ -1,0 +1,79 @@
+Accidente;Dr. Ramírez;4
+Accidente;Dra. López;3
+Accidente;Dr. Gómez;1
+Accidente;Dra. Martínez;2
+Accidente;Dr. Sánchez;2
+Dr. Ramírez;Dr. Gómez;6
+Dr. Ramírez;Dra. Romero;7
+Dr. Ramírez;Dr. Pérez;4
+Dra. López;Dra. Ruiz;8
+Dra. López;Dr. Sánchez;8
+Dra. López;Dra. Martínez;8
+Dra. López;Dra. Romero;2
+Dra. López;Alta Médica Total;34
+Dr. Gómez;Dr. Ortiz;7
+Dr. Gómez;Dra. Fernández;3
+Dr. Gómez;Dra. Martínez;9
+Dr. Gómez;Dra. Ruiz;6
+Dr. Gómez;Alta Médica Total;37
+Dra. Martínez;Dr. Herrera;9
+Dra. Martínez;Dr. Pérez;2
+Dra. Martínez;Dra. Romero;5
+Dr. Sánchez;Dra. López;2
+Dr. Sánchez;Dr. Morales;4
+Dr. Sánchez;Dra. Castro;8
+Dr. Sánchez;Dra. Fernández;9
+Dr. Sánchez;Dr. Pérez;5
+Dra. Fernández;Dr. Ortiz;4
+Dra. Fernández;Dra. López;7
+Dra. Fernández;Dr. Morales;3
+Dra. Fernández;Dra. Martínez;9
+Dra. Fernández;Dra. Romero;8
+Dra. Fernández;Alta Médica Total;21
+Dr. Pérez;Dr. Ortiz;3
+Dr. Pérez;Dr. Gómez;3
+Dr. Pérez;Dr. Morales;4
+Dra. Ruiz;Dra. Fernández;9
+Dra. Ruiz;Dra. Romero;5
+Dra. Ruiz;Dra. Martínez;6
+Dra. Ruiz;Dra. López;4
+Dra. Ruiz;Dr. Gómez;4
+Dr. Morales;Dr. Pérez;6
+Dr. Morales;Dr. Vargas;4
+Dr. Morales;Dra. Fernández;6
+Dr. Morales;Dra. Romero;4
+Dra. Castro;Dra. López;3
+Dra. Castro;Dra. Martínez;8
+Dra. Castro;Dr. Sánchez;6
+Dr. Ortiz;Dra. Silva;6
+Dr. Ortiz;Dra. Ruiz;2
+Dr. Ortiz;Dra. Fernández;4
+Dr. Ortiz;Dr. Gómez;3
+Dr. Ortiz;Dra. Castro;6
+Dr. Ortiz;Alta Médica Total;36
+Dra. Silva;Dr. Gómez;3
+Dra. Silva;Dra. López;3
+Dra. Silva;Dra. Fernández;9
+Dra. Silva;Dr. Ramírez;3
+Dra. Silva;Dra. Martínez;8
+Dr. Vargas;Dra. Castro;3
+Dr. Vargas;Dr. Sánchez;9
+Dr. Vargas;Dra. Silva;6
+Dra. Romero;Dra. Castro;5
+Dra. Romero;Dr. Herrera;5
+Dra. Romero;Dra. López;7
+Dra. Romero;Dr. Ortiz;5
+Dra. Romero;Alta Médica Total;33
+Dr. Herrera;Dr. Pérez;2
+Dr. Herrera;Dra. Fernández;3
+Dr. Herrera;Dr. Gómez;2
+Dr. Herrera;Dr. Vargas;4
+Dr. Herrera;Dra. López;4
+Dr. Ramírez;Terapia Física Ramírez;1
+Terapia Física Ramírez;Alta Médica Total;17
+Dra. López;Terapia Física López;2
+Terapia Física López;Alta Médica Total;14
+Dr. Gómez;Terapia Física Gómez;3
+Terapia Física Gómez;Alta Médica Total;12
+Dra. Martínez;Terapia Física Martínez;2
+Terapia Física Martínez;Alta Médica Total;12
