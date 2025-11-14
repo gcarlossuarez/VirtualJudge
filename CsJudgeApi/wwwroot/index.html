@@ -712,6 +712,7 @@ class Program
   <div style="margin-top: 10px;">
     <button id="btnSandbox" onclick="runLocalCode()" disabled title="Verificando sandbox...">🧪 Probar en Sandbox</button>
     <button id="btnValidation" onclick="runOfflineValidation()" disabled title="Verificando sandbox...">📂 Validar con DataSet local</button>
+    <button id="btnCancelValidation" onclick="cancelValidation()" style="display: none; background-color: #dc3545; color: white;">🛑 Cancelar Validación</button>
     <button id="btnDownloadSandbox" onclick="downloadSandbox()" style="background-color: #ff9800;">📥 Descargar Sandbox</button>
     <button id="btnDownloadDotnet" onclick="downloadDotnetSDK()" style="background-color: #512bd4; color: white;" 
             title="⚠️ Solo Windows x64 - No necesario si ya tienes .NET SDK 10 instalado">⬇️ Descargar .NET 10 SDK</button>
@@ -725,7 +726,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://centres-warrior-adam-rack.trycloudflare.com";
+    const SERVER_BASE_URL = "https://categories-dir-special-preview.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     const SANDBOX_DOWNLOAD_URL = `${SERVER_BASE_URL}/assets/DotNetInteractiveServer.zip`;
@@ -734,6 +735,47 @@ class Program
     let sandboxAvailable = false;
     let checkInterval = null;
     let isWindows64 = false;
+    
+    // Control de cancelación de validación
+    let validationAbortController = null;
+    let validationReader = null;
+
+    // BOOKMARK: Función para cancelar validación
+    function cancelValidation() {
+      console.log('🛑 Cancelando validación...');
+      
+      // Cancelar el fetch con AbortController
+      if (validationAbortController) {
+        validationAbortController.abort();
+        validationAbortController = null;
+      }
+      
+      // Cancelar el reader del stream
+      if (validationReader) {
+        validationReader.cancel();
+        validationReader = null;
+      }
+      
+      // Ocultar botón de cancelar
+      const btnCancel = document.getElementById('btnCancelValidation');
+      if (btnCancel) btnCancel.style.display = 'none';
+      
+      // Mostrar mensaje de cancelación
+      const output = document.getElementById('output');
+      const log = document.getElementById('validationLog');
+      if (output) {
+        output.textContent = '🛑 Validación cancelada por el usuario';
+        output.className = 'result warn';
+      }
+      if (log) {
+        log.textContent += '\n🛑 Validación cancelada por el usuario\n';
+      }
+      
+      // Rehabilitar botones
+      enableSandboxButtons();
+      
+      console.log('✅ Validación cancelada exitosamente');
+    }
 
     // BOOKMARK:Detectar sistema operativo
     function detectOS() {
@@ -1373,6 +1415,13 @@ class Program
 
       // Deshabilitar botones del sandbox durante la validación
       disableSandboxButtons("⏳ Validando...");
+      
+      // Mostrar botón de cancelar
+      const btnCancel = document.getElementById('btnCancelValidation');
+      if (btnCancel) btnCancel.style.display = 'inline-block';
+      
+      // Crear AbortController para poder cancelar
+      validationAbortController = new AbortController();
 
       try {
         console.log(`🧪 Validando problema ${problemId} con sandbox...`);
@@ -1394,7 +1443,8 @@ class Program
             code: normalizeCodeForKernel(code),
             problem: problemId,
             timeoutMs: 5000
-          })
+          }),
+          signal: validationAbortController.signal  // ✨ Permitir cancelación
         }).then(response => {
           // Verificar que el servidor respondió correctamente
           if (!response.ok) {
@@ -1407,6 +1457,7 @@ class Program
           // reader: Objeto que nos permite leer el stream de datos "chunk por chunk"
           //         (chunk = pedazo de datos que llega cada vez)
           const reader = response.body.getReader();
+          validationReader = reader;  // ✨ Guardar para poder cancelar
           
           // decoder: Convierte bytes (números) a texto legible
           const decoder = new TextDecoder();
@@ -1434,6 +1485,15 @@ class Program
               // ═════════════════════════════════════════════════════════════════════
               if (done) {
                 console.log('✅ Stream completado - No hay más datos del servidor');
+                
+                // Ocultar botón de cancelar
+                const btnCancel = document.getElementById('btnCancelValidation');
+                if (btnCancel) btnCancel.style.display = 'none';
+                
+                // Limpiar referencias
+                validationAbortController = null;
+                validationReader = null;
+                
                 enableSandboxButtons();  // ✅ Rehabilitar botones al terminar exitosamente
                 return;  // 🛑 FIN DE LA RECURSIÓN - La función no se vuelve a llamar
               }
@@ -1507,6 +1567,21 @@ class Program
             }).catch(streamErr => {
               // Si hay un error leyendo el stream, mostrarlo
               console.error('❌ Error en stream:', streamErr);
+              
+              // Ocultar botón de cancelar
+              const btnCancel = document.getElementById('btnCancelValidation');
+              if (btnCancel) btnCancel.style.display = 'none';
+              
+              // Limpiar referencias
+              validationAbortController = null;
+              validationReader = null;
+              
+              // Verificar si fue cancelado por el usuario
+              if (streamErr.name === 'AbortError') {
+                console.log('✅ Stream cancelado correctamente');
+                return;
+              }
+              
               log.textContent += `\n❌ Error en stream: ${streamErr.message}\n`;
               output.textContent = `❌ Error procesando resultados: ${streamErr.message}`;
               output.className = "result err";
@@ -1531,6 +1606,15 @@ class Program
 
       } catch (err) {
         console.error("Error en validación:", err);
+        
+        // Ocultar botón de cancelar
+        const btnCancel = document.getElementById('btnCancelValidation');
+        if (btnCancel) btnCancel.style.display = 'none';
+        
+        // Limpiar referencias
+        validationAbortController = null;
+        validationReader = null;
+        
         log.textContent += `\n❌ Error: ${err.message}\n`;
         output.textContent = 
           "❌ No se pudo validar con el sandbox.\n" +
