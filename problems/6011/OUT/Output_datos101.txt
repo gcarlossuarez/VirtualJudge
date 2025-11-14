@@ -1,0 +1,5 @@
+Distancia desde 0 a 0: 0
+Distancia desde 0 a 1: 3
+Distancia desde 0 a 2: 1
+Distancia desde 0 a 3: 4
+Distancia desde 0 a 4: 7

@@ -15,6 +15,21 @@
     .warn { background: #fff5cc; border: 1px solid #cc0; }
     .err { background: #ffe0e0; border: 1px solid #c00; }
     
+    /* Estilo para agrupar botones del sandbox local */
+    .sandbox-group {
+      margin-top: 15px;
+      padding: 15px;
+      border: 2px solid #3498db;
+      border-radius: 8px;
+      background-color: #ecf8ff;
+      box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
+    }
+    .sandbox-group-title {
+      font-weight: bold;
+      color: #2980b9;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
     
     #stdin {
       resize: both;         /* permite agrandar con el mouse */
@@ -709,13 +724,20 @@ class Program
   <button id="btnJudge0" type="button" onclick="runJudge0()">Ejecutar (En Juez de<br>Prueba)</button>
   <button id="btnOfficial" type="button" onclick="runOfficial()">Enviar (En Juez Oficial,<br> <strong>es calificable para el contest</strong>)</button>
 
-  <div style="margin-top: 10px;">
-    <button id="btnSandbox" onclick="runLocalCode()" disabled title="Verificando sandbox...">🧪 Probar en Sandbox</button>
-    <button id="btnValidation" onclick="runOfflineValidation()" disabled title="Verificando sandbox...">📂 Validar con DataSet local</button>
-    <button id="btnCancelValidation" onclick="cancelValidation()" style="display: none; background-color: #dc3545; color: white;">🛑 Cancelar Validación</button>
-    <button id="btnDownloadSandbox" onclick="downloadSandbox()" style="background-color: #ff9800;">📥 Descargar Sandbox</button>
-    <button id="btnDownloadDotnet" onclick="downloadDotnetSDK()" style="background-color: #512bd4; color: white;" 
-            title="⚠️ Solo Windows x64 - No necesario si ya tienes .NET SDK 10 instalado">⬇️ Descargar .NET 10 SDK</button>
+  <!-- Grupo de Sandbox Local -->
+  <div class="sandbox-group">
+    <div class="sandbox-group-title">🖥️ SANDBOX LOCAL (Solo Windows x64)</div>
+    <div>
+      <button id="btnSandbox" onclick="runLocalCode()" disabled title="Verificando sandbox...">🧪 Probar en Sandbox</button>
+      <button id="btnValidation" onclick="runOfflineValidation()" disabled title="Verificando sandbox...">📂 Validar con DataSet local</button>
+      <button id="btnCancelValidation" onclick="cancelValidation()" style="display: none; background-color: #dc3545; color: white;">🛑 Cancelar Validación</button>
+      <button id="btnClearDataset" onclick="clearDataset()" disabled title="Limpiar el dataset del problema actual" style="background-color: #e74c3c; color: white;">🗑️ Limpiar Dataset</button>
+    </div>
+    <div style="margin-top: 8px;">
+      <button id="btnDownloadSandbox" onclick="downloadSandbox()" style="background-color: #ff9800;">📥 Descargar Sandbox</button>
+      <button id="btnDownloadDotnet" onclick="downloadDotnetSDK()" style="background-color: #512bd4; color: white;" 
+              title="⚠️ Solo Windows x64 - No necesario si ya tienes .NET SDK 10 instalado">⬇️ Descargar .NET 10 SDK</button>
+    </div>
   </div>
 
   <pre id="validationLog"></pre>
@@ -726,13 +748,17 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://categories-dir-special-preview.trycloudflare.com";
+    const SERVER_BASE_URL = "https://marie-res-nearby-dishes.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
-    const SANDBOX_DOWNLOAD_URL = `${SERVER_BASE_URL}/assets/DotNetInteractiveServer.zip`;
+    
+    // Descargar desde Google Drive (no consume ancho de banda del servidor)
+    const SANDBOX_GOOGLE_DRIVE_ID = "1b5szh1Ld852C6MU7qoqhEBweZg92BKZY";
+    const SANDBOX_DOWNLOAD_URL = `https://drive.google.com/uc?export=download&id=${SANDBOX_GOOGLE_DRIVE_ID}`;
 
     // Estado del sandbox
     let sandboxAvailable = false;
+    let isValidating = false; // Bandera para saber si estamos validando
     let checkInterval = null;
     let isWindows64 = false;
     
@@ -771,10 +797,84 @@ class Program
         log.textContent += '\n🛑 Validación cancelada por el usuario\n';
       }
       
-      // Rehabilitar botones
+      // Marcar que ya no estamos validando y rehabilitar botones
+      isValidating = false;
       enableSandboxButtons();
       
       console.log('✅ Validación cancelada exitosamente');
+    }
+
+    // BOOKMARK: Función para limpiar el dataset de un problema
+    async function clearDataset() {
+      if(isValidating) {
+        alert('⚠️ No se puede limpiar el dataset mientras una validación está en curso. Por favor, cancela la validación primero.');
+        return;
+      }
+      const problemId = document.getElementById('txtProblemId').value;
+      
+      if (!problemId) {
+        alert('⚠️ Por favor, selecciona un problema primero.');
+        return;
+      }
+
+      const confirmClear = confirm(
+        `🗑️ ¿Estás seguro de que deseas limpiar el dataset del problema ${problemId}?\n\n` +
+        `Esto eliminará todos los archivos de entrada y salida esperada descargados.\n\n` +
+        `Útil cuando el profesor ha actualizado el dataset y necesitas descargarlo de nuevo.`
+      );
+
+      if (!confirmClear) {
+        console.log('❌ Usuario canceló la limpieza del dataset');
+        return;
+      }
+
+      const btnClear = document.getElementById('btnClearDataset');
+      const originalText = btnClear.textContent;
+      
+      try {
+        btnClear.disabled = true;
+        btnClear.textContent = '⏳ Limpiando...';
+        
+        console.log(`🗑️ Limpiando dataset del problema ${problemId}...`);
+        
+        const response = await fetch(`${SANDBOX_BASE}/datasets/${encodeURIComponent(problemId)}`, {
+          method: 'DELETE'
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        
+        console.log('✅ Dataset limpiado:', result);
+        
+        alert(
+          `✅ ${result.message}\n\n` +
+          `Problema: ${result.problemId}\n\n` +
+          `La próxima vez que ejecutes una validación, el dataset se descargará automáticamente de nuevo.`
+        );
+        
+      } catch (error) {
+        console.error('❌ Error al limpiar dataset:', error);
+        
+        let errorMsg = '❌ Error al limpiar el dataset:\n\n';
+        
+        if (error.message.includes('Failed to fetch')) {
+          errorMsg += '🔌 No se puede conectar con el sandbox local.\n' +
+                      'Asegúrate de que DotNetInteractiveServer.exe esté ejecutándose en localhost:1100';
+        } else if (error.message.includes('404')) {
+          errorMsg += `📂 El dataset del problema ${problemId} no existe o ya fue eliminado.`;
+        } else {
+          errorMsg += error.message;
+        }
+        
+        alert(errorMsg);
+        
+      } finally {
+        btnClear.disabled = false;
+        btnClear.textContent = originalText;
+      }
     }
 
     // BOOKMARK:Detectar sistema operativo
@@ -810,6 +910,7 @@ class Program
       
       const btnSandbox = document.getElementById('btnSandbox');
       const btnValidation = document.getElementById('btnValidation');
+      const btnClearDataset = document.getElementById('btnClearDataset');
       const btnDownloadSandbox = document.getElementById('btnDownloadSandbox');
       const btnDownloadSDK = document.getElementById('btnDownloadSDK');
       
@@ -821,6 +922,11 @@ class Program
       if (btnValidation) {
         btnValidation.disabled = true;
         btnValidation.title = '⚠️ Sandbox deshabilitado por configuración del servidor';
+      }
+      
+      if (btnClearDataset) {
+        btnClearDataset.disabled = true;
+        btnClearDataset.title = '⚠️ Sandbox deshabilitado por configuración del servidor';
       }
       
       if (btnDownloadSandbox) {
@@ -914,16 +1020,19 @@ class Program
     function enableSandboxButtons() {
       const btnSandbox = document.getElementById('btnSandbox');
       const btnValidation = document.getElementById('btnValidation');
+      const btnClearDataset = document.getElementById('btnClearDataset');
       const btnJudge0 = document.getElementById('btnJudge0');
       const btnOfficial = document.getElementById('btnOfficial');
       
       sandboxAvailable = true;
       btnSandbox.disabled = false;
       btnValidation.disabled = false;
+      btnClearDataset.disabled = false;
       btnJudge0.disabled = false;
       btnOfficial.disabled = false;
       btnSandbox.title = 'Sandbox local disponible';
       btnValidation.title = 'Sandbox local disponible';
+      btnClearDataset.title = 'Limpiar el dataset del problema actual';
       btnJudge0.title = '';
       btnOfficial.title = '';
       btnSandbox.textContent = '🧪 Probar en Sandbox';
@@ -987,12 +1096,14 @@ class Program
     function disableSandboxButtons(message) {
       const btnSandbox = document.getElementById('btnSandbox');
       const btnValidation = document.getElementById('btnValidation');
+      const btnClearDataset = document.getElementById('btnClearDataset');
       const btnJudge0 = document.getElementById('btnJudge0');
       const btnOfficial = document.getElementById('btnOfficial');
       
       sandboxAvailable = false;
       btnSandbox.disabled = true;
       btnValidation.disabled = true;
+      btnClearDataset.disabled = true;
       btnJudge0.disabled = true;
       btnOfficial.disabled = true;
       btnSandbox.title = message;
@@ -1057,7 +1168,9 @@ class Program
       console.log('💬 Mostrando prompt de descarga al usuario...');
       const download = confirm(
         '🔧 El Sandbox local no está disponible.\n\n' +
-        '¿Deseas descargar DotNetInteractiveServer.zip para ejecutar código localmente?\n\n' +
+        '¿Deseas descargar DotNetInteractiveServer.zip desde Google Drive?\n\n' +
+        '📦 Se descargará desde Google Drive (no consume ancho de banda del servidor)\n' +
+        '⚠️ Solo para Windows x64 con .NET SDK 10\n\n' +
         '(La descarga comenzará automáticamente si aceptas)'
       );
 
@@ -1071,7 +1184,7 @@ class Program
       }
     }
 
-    // Descargar el sandbox
+    // Descargar el sandbox desde Google Drive
     async function downloadSandbox() {
       const btnSandbox = document.getElementById('btnSandbox');
       const btnValidation = document.getElementById('btnValidation');
@@ -1080,10 +1193,10 @@ class Program
       btnValidation.textContent = '⏳ Descargando sandbox...';
 
       try {
-        // Crear enlace de descarga
+        // Crear enlace de descarga desde Google Drive
         const a = document.createElement('a');
         a.href = SANDBOX_DOWNLOAD_URL;
-        a.download = 'DotNetInteractiveServer.zip';
+        a.target = '_blank';  // Abrir en nueva pestaña por si Google Drive pide confirmación
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1093,12 +1206,14 @@ class Program
 
         // Mostrar instrucciones
         alert(
-          '✅ Descarga iniciada: DotNetInteractiveServer.zip\n\n' +
+          '✅ Descarga iniciada: DotNetInteractiveServer.zip (desde Google Drive)\n\n' +
           '📝 Instrucciones:\n' +
-          '1. Extrae el archivo ZIP\n' +
-          '2. Ejecuta DotNetInteractiveServer.exe (Windows) o el equivalente en tu sistema\n' +
-          '3. Los botones se habilitarán automáticamente cuando detecte el sandbox corriendo\n\n' +
-          '💡 Esta página verificará cada 5 segundos si el sandbox está disponible.'
+          '1. Si Google Drive pide confirmación, haz clic en "Descargar de todas formas"\n' +
+          '2. Extrae el archivo ZIP descargado\n' +
+          '3. Ejecuta DotNetInteractiveServer.exe (solo Windows x64)\n' +
+          '4. Los botones se habilitarán automáticamente cuando detecte el sandbox\n\n' +
+          '💡 Esta página verificará cada 5 segundos si el sandbox está disponible.\n' +
+          '⚠️ Requiere .NET SDK 10 instalado (usa el botón de descarga si no lo tienes).'
         );
 
         btnSandbox.textContent = '🧪 Probar en Sandbox';
@@ -1111,7 +1226,11 @@ class Program
 
       } catch (err) {
         console.error('Error al descargar sandbox:', err);
-        alert('❌ Error al descargar el sandbox. Verifica la conexión e intenta nuevamente.');
+        alert(
+          '❌ Error al iniciar la descarga del sandbox.\n\n' +
+          'Intenta descargar manualmente desde:\n' +
+          `https://drive.google.com/file/d/${SANDBOX_GOOGLE_DRIVE_ID}/view`
+        );
         btnSandbox.textContent = '🧪 Probar en Sandbox';
         btnValidation.textContent = '📂 Validar con DataSet local';
       }
@@ -1277,8 +1396,10 @@ class Program
         if (outputDiv) outputDiv.innerHTML = `<div style="color: #dc3545; font-weight: bold;">❌ Error: ${err.message}</div>`;
         throw err;
       } finally {
-        // Siempre rehabilitar botones al terminar (éxito o error)
-        enableSandboxButtons();
+        // Solo rehabilitar botones si NO estamos en medio de una validación
+        if (!isValidating) {
+          enableSandboxButtons();
+        }
       }
     }
 
@@ -1380,6 +1501,12 @@ class Program
 
     // BOOKMARK: Validación offline con datasets locales
     // 🔹 Validar el código con datasets del sandbox
+    // Usuario hace clic en "Validar" 
+    //    → Se deshabilitan TODOS los botones (excepto Cancelar)
+    //    → Se verifica/sincroniza dataset (sin habilitar botones)
+    //    → Se ejecuta validación
+    //    → Al terminar/error → Se habilitan todos los botones
+    //    → Se oculta botón "Cancelar"
     async function runOfflineValidation() {
       const log = document.getElementById("validationLog");
       const output = document.getElementById("output");
@@ -1409,12 +1536,13 @@ class Program
         return;
       }
 
-      log.textContent = "📂 Ejecutando validación con DataSet local del sandbox...\n";
+      log.textContent = "📂 Preparando validación con DataSet local del sandbox...\n";
       output.textContent = "⏳ Validando...";
       output.className = "result warn";
 
       // Deshabilitar botones del sandbox durante la validación
       disableSandboxButtons("⏳ Validando...");
+      isValidating = true;
       
       // Mostrar botón de cancelar
       const btnCancel = document.getElementById('btnCancelValidation');
@@ -1425,9 +1553,51 @@ class Program
 
       try {
         console.log(`🧪 Validando problema ${problemId} con sandbox...`);
+        
+        // ═══════════════════════════════════════════════════════════════════════════
+        // PASO 1: Verificar si el dataset existe, si no, sincronizarlo automáticamente
+        // ═══════════════════════════════════════════════════════════════════════════
+        log.textContent += "🔍 Verificando dataset...\n";
+        console.log(`🔍 Verificando dataset del problema ${problemId}...`);
+        
+        try {
+          const installed = await getInstalledDataset(problemId);
+          const hasInputs = installed.inputs && installed.inputs.length > 0;
+          const hasExpected = installed.expected && installed.expected.length > 0;
+          
+          if (!hasInputs || !hasExpected) {
+            console.log(`📦 Dataset no encontrado o incompleto, sincronizando...`);
+            log.textContent += "📦 Dataset no encontrado o incompleto\n";
+            log.textContent += "🔄 Sincronizando dataset desde el servidor...\n";
+            
+            const syncResult = await syncDataset(problemId);
+            
+            if (syncResult.uploaded > 0) {
+              log.textContent += `✅ Dataset sincronizado: ${syncResult.uploaded} archivos descargados\n`;
+              console.log(`✅ Dataset sincronizado: ${syncResult.uploaded} archivos`);
+            } else {
+              log.textContent += "✅ Dataset ya estaba completo\n";
+            }
+          } else {
+            console.log(`✅ Dataset ya disponible en sandbox`);
+            log.textContent += "✅ Dataset disponible\n";
+          }
+
+        } catch (syncError) {
+          console.error('❌ Error al verificar/sincronizar dataset:', syncError);
+          log.textContent += `❌ Error al preparar dataset: ${syncError.message}\n`;
+          output.textContent = `❌ No se pudo preparar el dataset:\n${syncError.message}`;
+          output.className = "result err";
+          isValidating = false;  // ✅ Ya terminamos de validar (error en sincronización)
+          enableSandboxButtons();
+          if (btnCancel) btnCancel.style.display = 'none';
+          return;
+        }
+        
+        log.textContent += "\n📂 Iniciando validación...\n";
 
         // ═══════════════════════════════════════════════════════════════════════════
-        // BOOKMARK: STREAMING CON SERVER-SENT EVENTS (SSE)
+        // BOOKMARK: STREAMING CON SERVER-SENTZ EVENTS (SSE)
         // ═══════════════════════════════════════════════════════════════════════════
         // Enviamos la petición al sandbox para validar el código.
         // El servidor NO envía una respuesta única, sino un STREAM continuo
@@ -1486,14 +1656,14 @@ class Program
               if (done) {
                 console.log('✅ Stream completado - No hay más datos del servidor');
                 
-                // Ocultar botón de cancelar
-                const btnCancel = document.getElementById('btnCancelValidation');
+                // Ocultar botón de cancelar (reutilizar variable del scope superior)
                 if (btnCancel) btnCancel.style.display = 'none';
                 
                 // Limpiar referencias
                 validationAbortController = null;
                 validationReader = null;
                 
+                isValidating = false;  // ✅ Ya terminamos de validar
                 enableSandboxButtons();  // ✅ Rehabilitar botones al terminar exitosamente
                 return;  // 🛑 FIN DE LA RECURSIÓN - La función no se vuelve a llamar
               }
@@ -1585,6 +1755,10 @@ class Program
               log.textContent += `\n❌ Error en stream: ${streamErr.message}\n`;
               output.textContent = `❌ Error procesando resultados: ${streamErr.message}`;
               output.className = "result err";
+              
+              // Ocultar botón de cancelar y rehabilitar botones
+              if (btnCancel) btnCancel.style.display = 'none';
+              isValidating = false;  // ✅ Ya terminamos de validar (con error)
               enableSandboxButtons();  // ✅ Rehabilitar botones si hay error en el stream
             });
           }
@@ -1601,14 +1775,17 @@ class Program
             "2. Haber sincronizado los datasets del problema\n\n" +
             err.message;
           output.className = "result err";
+          
+          // Ocultar botón de cancelar y rehabilitar botones
+          if (btnCancel) btnCancel.style.display = 'none';
+          isValidating = false;  // ✅ Ya terminamos de validar (con error)
           enableSandboxButtons();  // ✅ Rehabilitar botones si hay error en la petición
         });
 
       } catch (err) {
         console.error("Error en validación:", err);
         
-        // Ocultar botón de cancelar
-        const btnCancel = document.getElementById('btnCancelValidation');
+        // Ocultar botón de cancelar (reutilizar variable del scope superior)
         if (btnCancel) btnCancel.style.display = 'none';
         
         // Limpiar referencias
@@ -1623,6 +1800,7 @@ class Program
           "2. Haber sincronizado los datasets del problema\n\n" +
           err.message;
         output.className = "result err";
+        isValidating = false;  // ✅ Ya terminamos de validar (con error)
         enableSandboxButtons();  // ✅ Rehabilitar botones si hay error en el try-catch
       }
     }

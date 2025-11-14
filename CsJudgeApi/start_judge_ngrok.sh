@@ -96,15 +96,15 @@ fi
 echo "🌍 URL pública de ngrok: $URL"
 
 
-# 5) Actualizar index.html para apuntar al backend correcto
+# 5) Actualizar index.html para apuntar al backend correcto (excepto SANDBOX_DOWNLOAD_URL)
 if [ -f "$INDEX_HTML" ]; then
-  # Reemplaza la URL base del servidor (funciona aunque ya haya sido reemplazada antes)
-  sed -i "s|const SERVER_BASE_URL = \"http[s]*://[^\"]*\"|const SERVER_BASE_URL = \"$URL\"|g" "$INDEX_HTML"
+  # Reemplaza la URL base del servidor pero NO la línea que contiene SANDBOX_DOWNLOAD_URL (Google Drive)
+  sed -i "/SANDBOX_DOWNLOAD_URL/!s|const SERVER_BASE_URL = \"http[s]*://[^\"]*\"|const SERVER_BASE_URL = \"$URL\"|g" "$INDEX_HTML"
   
   # Reemplaza la URL de compile-run (si existe el patrón viejo)
   sed -i "s|http://localhost:$PUERTO/compile-run|$URL/compile-run|g" "$INDEX_HTML"
   
-  echo "✅ index.html actualizado con la URL pública: $URL"
+  echo "✅ index.html actualizado con la URL pública: $URL (SANDBOX_DOWNLOAD_URL preservado - Google Drive)"
 else
   echo "⚠️ No se encontró $INDEX_HTML, omitiendo actualización."
 fi

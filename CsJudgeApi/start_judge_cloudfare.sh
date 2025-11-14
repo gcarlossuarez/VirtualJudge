@@ -52,14 +52,15 @@ if [[ -z "$URL" ]]; then
     exit 1
 fi
 
-# 5) Actualizar index.html
+# 5) Actualizar index.html (excepto SANDBOX_DOWNLOAD_URL que es de Google Drive)
 if [[ -f "$INDEX_HTML" ]]; then
     echo "🔧 Actualizando index.html con: $URL"
 
-    sudo sed -i "s|const SERVER_BASE_URL = \"http[s]*://[^\"]*\"|const SERVER_BASE_URL = \"$URL\"|g" "$INDEX_HTML"
+    # Reemplazar SERVER_BASE_URL pero NO la línea que contiene SANDBOX_DOWNLOAD_URL (Google Drive)
+    sudo sed -i "/SANDBOX_DOWNLOAD_URL/!s|const SERVER_BASE_URL = \"http[s]*://[^\"]*\"|const SERVER_BASE_URL = \"$URL\"|g" "$INDEX_HTML"
     sudo sed -i "s|http://localhost:$PUERTO/compile-run|$URL/compile-run|g" "$INDEX_HTML"
 
-    echo "✅ index.html actualizado."
+    echo "✅ index.html actualizado (SANDBOX_DOWNLOAD_URL preservado - Google Drive)."
 fi
 
 # 6) Mostrar URL final
