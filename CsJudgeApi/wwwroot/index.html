@@ -15,6 +15,20 @@
     .warn { background: #fff5cc; border: 1px solid #cc0; }
     .err { background: #ffe0e0; border: 1px solid #c00; }
     
+    /* Estilo para el log de validación */
+    #validationLog {
+      background-color: #f8f9fa;
+      color: #212529;
+      padding: 15px;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    
     /* Estilo para agrupar botones del sandbox local */
     .sandbox-group {
       margin-top: 15px;
@@ -232,6 +246,13 @@
       background: #444;
     }
 
+    /* Modo oscuro para el log de validación */
+    body.dark-mode #validationLog {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-color: #3c3c3c;
+    }
+
   </style>
   
   <!-- CodeMirror -->
@@ -344,6 +365,11 @@
     <select id="selectProblem">
       <option value="">-- Seleccione --</option>
     </select>
+    <button id="btnRefreshProblems" onclick="refreshProblems()" 
+            style="margin-left: 10px; background-color: #17a2b8; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;"
+            title="Actualizar enunciados desde el servidor">
+      🔄 Actualizar Problemas
+    </button>
   </span>
   <span>
     <label for="selectInput">Seleccione dataset:</label>
@@ -748,7 +774,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://marie-res-nearby-dishes.trycloudflare.com";
+    const SERVER_BASE_URL = "https://bands-texas-orleans-vampire.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
@@ -1016,7 +1042,7 @@ class Program
       }
     }
 
-    // Habilitar botones del sandbox (y también Judge0 y Oficial)
+    // bookamark: Habilitar botones del sandbox (y también Judge0 y Oficial)
     function enableSandboxButtons() {
       const btnSandbox = document.getElementById('btnSandbox');
       const btnValidation = document.getElementById('btnValidation');
@@ -1092,7 +1118,7 @@ class Program
       }, 1000);
     }
 
-    // Deshabilitar botones del sandbox (y también Judge0 y Oficial durante validación)
+    // BOOKMARK: Deshabilitar botones del sandbox (y también Judge0 y Oficial durante validación)
     function disableSandboxButtons(message) {
       const btnSandbox = document.getElementById('btnSandbox');
       const btnValidation = document.getElementById('btnValidation');
@@ -1239,9 +1265,9 @@ class Program
     // Descargar .NET 10 SDK desde Google Drive
     function downloadDotnetSDK() {
       try {
-        // ID del archivo en Google Drive: 1vN_ar2z86uIItYH4WJjeLdgKrPBl_2Nq
+        // ID del archivo en Google Drive: 1Rc1bcBnXDuv15x1MjDNhGZgwz4Byg5es
         // URL directa de descarga
-        const fileId = '1vN_ar2z86uIItYH4WJjeLdgKrPBl_2Nq';
+        const fileId = '1Rc1bcBnXDuv15x1MjDNhGZgwz4Byg5es';
         const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
         
         // Crear enlace de descarga
@@ -1269,7 +1295,7 @@ class Program
 
       } catch (err) {
         console.error('Error al descargar .NET SDK:', err);
-        alert('❌ Error al iniciar la descarga. Intenta nuevamente o descarga desde:\nhttps://drive.google.com/file/d/1vN_ar2z86uIItYH4WJjeLdgKrPBl_2Nq/view');
+        alert('❌ Error al iniciar la descarga. Intenta nuevamente o descarga desde:\nhttps://drive.google.com/file/d/1Rc1bcBnXDuv15x1MjDNhGZgwz4Byg5es/view');
       }
     }
 
@@ -1322,7 +1348,7 @@ class Program
       return await res.text();
     }
 
-    // Sube SOLO lo que falta
+    // BOOKMARK: Sincronizar DataSet. Sube SOLO lo que falta
     async function syncDataset(problemId) {
       console.log(`🔄 Iniciando sincronización para problema ${problemId}...`);
       
@@ -1961,11 +1987,94 @@ class Program
   </script>
   
   <script>
+    // ═══════════════════════════════════════════════════════════════════════════════
     // BOOKMARK: Carga de problemas y sincronización automática de datasets
+    // ═══════════════════════════════════════════════════════════════════════════════
+    //
+    // 🎯 OPTIMIZACIÓN PARA REDUCIR CARGA EN EL SERVIDOR (Internet inestable)
+    //    + DETECCIÓN AUTOMÁTICA DE CAMBIOS EN ENUNCIADOS
+    //
+    // ┌─────────────────────────────────────────────────────────────────────────────┐
+    // │ FLUJO ANTERIOR (❌ Múltiples peticiones + sin detección de cambios):       │
+    // ├─────────────────────────────────────────────────────────────────────────────┤
+    // │  1. Al cargar página: GET /contest/questions → { id, titulo }              │
+    // │  2. Usuario selecciona problema A: GET /questions/A/desc → { id, text }    │
+    // │  3. Usuario selecciona problema B: GET /questions/B/desc → { id, text }    │
+    // │  4. Usuario vuelve a problema A: GET /questions/A/desc → { id, text }      │
+    // │                                                                             │
+    // │  ⚠️ Problema 1: Cada cambio de problema requiere petición al servidor      │
+    // │  ⚠️ Problema 2: Si el profesor modifica un enunciado, nadie se entera      │
+    // │  ⚠️ Problema 3: Con internet inestable, la experiencia es lenta            │
+    // └─────────────────────────────────────────────────────────────────────────────┘
+    //
+    // ┌─────────────────────────────────────────────────────────────────────────────┐
+    // │ FLUJO NUEVO (✅ Cache + Detección de cambios + Sync de datasets):          │
+    // ├─────────────────────────────────────────────────────────────────────────────┤
+    // │  1. Al cargar página: GET /contest/questions → { id, titulo, text,         │
+    // │                                                   lastModified }            │
+    // │     └─→ Se guardan TODOS los problemas con descripciones + timestamps      │
+    // │                                                                             │
+    // │  2. Usuario selecciona problema A:                                          │
+    // │     a) Verifica timestamp con servidor (¿cambió el enunciado?)             │
+    // │     b) Si cambió → actualiza cache + notifica usuario + limpia dataset     │
+    // │     c) Carga desde cache actualizado → Instantáneo                          │
+    // │     d) Si sandbox activo → sincroniza dataset automáticamente               │
+    // │                                                                             │
+    // │  3. Usuario selecciona problema B:                                          │
+    // │     a) Verifica timestamp con servidor                                      │
+    // │     b) Carga desde cache (actualizado si cambió)                            │
+    // │     c) Sincroniza dataset si sandbox activo                                 │
+    // │                                                                             │
+    // │  4. Botón "🔄 Actualizar Problemas":                                        │
+    // │     a) Usuario hace clic (cuando profesor avisa de cambios)                 │
+    // │     b) Refresca todos los problemas desde servidor                          │
+    // │     c) Actualiza problema seleccionado si hay uno                           │
+    // │     d) Sincroniza dataset en sandbox si está activo                         │
+    // │                                                                             │
+    // │  ✅ Beneficios:                                                             │
+    // │     • Reduce peticiones de (1 + N) a solo 1 petición inicial               │
+    // │     • Cambio de problema es instantáneo (no depende de la red)              │
+    // │     • Detección automática de cambios en enunciados (por timestamp)         │
+    // │     • Refresco manual disponible (botón visible)                            │
+    // │     • Datasets sincronizados automáticamente si hay cambios                 │
+    // │     • Funciona offline una vez cargada la página                            │
+    // │     • Menor carga en servidor con internet inestable                        │
+    // └─────────────────────────────────────────────────────────────────────────────┘
+    //
+    // 🔑 DETECCIÓN DE CAMBIOS:
+    //    • Backend: Lee timestamp de modificación del archivo .docx
+    //    • Frontend: Compara timestamp cache vs servidor al seleccionar problema
+    //    • Si timestamp servidor > timestamp cache → ¡Enunciado actualizado!
+    //    • Acción: Actualiza cache + notifica usuario + limpia/resincroniza dataset
+    //
+    // 📝 Nota: loadInputs() y syncDataset() siguen haciendo sus peticiones normales
+    //          Solo se optimizó la carga de descripciones + detección de cambios
+    //
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    // 🚀 Cache global de problemas (se carga UNA SOLA VEZ al inicio)
+    let problemsCache = {};
+    
+    // 💾 Cache de inputs (datasets) por problema
+    // Estructura: { problemId: { inputs: ['input1.txt', 'input2.txt'], files: { 'input1.txt': 'contenido...' } } }
+    let inputsCache = {};
+
     async function loadProblems() {
       try {
+        // 📥 Obtener TODOS los problemas con descripciones en UNA sola petición
         const response = await fetch("/contest/questions");
         const problemas = await response.json();
+
+        // 💾 Guardar en cache para uso offline
+        problemas.forEach(p => {
+          problemsCache[p.id] = {
+            id: p.id,
+            titulo: p.titulo,
+            text: p.text
+          };
+        });
+
+        console.log(`✅ Cargados ${problemas.length} problemas con descripciones en cache`);
 
         const select = document.getElementById("selectProblem");
         problemas.forEach(p => {
@@ -1975,7 +2084,7 @@ class Program
           select.appendChild(opt);
         });
 
-        // Cuando selecciona un problema, obtener enunciado
+        // 🎯 Cuando selecciona un problema, usar datos del CACHE (sin petición al servidor)
         select.addEventListener("change", async () => {
             const id = select.value;
             if (!id) {
@@ -1984,17 +2093,19 @@ class Program
             }
 
             try {
-              //const response = await fetch(`/questions/${id}/desc`);
-              //const data = await response.json();
-              //document.getElementById("txtProblemDesc").value = data.text;
-              const response = await fetch(`/questions/${id}/desc`);
-              const data = await response.json();
-
-              // 1) 👇 Aquí se usa, directamente, el objeto que devuelve el backend
-              document.getElementById("txtProblemId").value = data.id;  // Con este nombre  ("id"), se definio en el backend
-              document.getElementById("txtProblemDesc").value = data.text;  // Con este nombre  ("id"), se definio en el backend
+              // 🔥 SIN PETICIÓN AL SERVIDOR - Usar cache local
+              const problemData = problemsCache[id];
               
-              // 2) 👇 Aquí se cargan datasets (inputs) de ese problema
+              if (!problemData) {
+                console.error(`Problema ${id} no encontrado en cache`);
+                return;
+              }
+
+              // 1) 👇 Cargar datos desde cache (INSTANTÁNEO, sin red)
+              document.getElementById("txtProblemId").value = problemData.id;
+              document.getElementById("txtProblemDesc").value = problemData.text;
+              
+              // 2) 👇 Cargar datasets (inputs) de ese problema
               await loadInputs(id);
               
               // 3) 🔄 Si el sandbox está disponible, sincronizar datasets automáticamente
@@ -2015,11 +2126,98 @@ class Program
               }
                       
             } catch (err) {
-              console.error("Error cargando enunciado:", err);
+              console.error("Error cargando problema:", err);
             }
           });
         } catch (err) {
           console.error("Error cargando problemas:", err);
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // BOOKAMR: FUNCIÓN: refreshProblems (Actualizar problemas desde el servidor)
+    // ═══════════════════════════════════════════════════════════════════════════════
+    async function refreshProblems() {
+      const btn = document.getElementById('btnRefreshProblems');
+      const originalText = btn.textContent;
+      
+      try {
+        btn.disabled = true;
+        btn.textContent = '⏳ Actualizando...';
+        
+        console.log('🔄 Refrescando problemas desde el servidor...');
+        
+        // Obtener problemas actualizados del servidor
+        const response = await fetch("/contest/questions");
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const problemas = await response.json();
+        
+        // Actualizar cache con los datos nuevos
+        problemas.forEach(p => {
+          problemsCache[p.id] = {
+            id: p.id,
+            titulo: p.titulo,
+            text: p.text
+          };
+        });
+        
+        console.log(`✅ Cache actualizado con ${problemas.length} problemas`);
+        
+        // Si hay un problema seleccionado, recargarlo desde el cache actualizado
+        const selectedId = document.getElementById('selectProblem').value;
+        if (selectedId) {
+          const problemData = problemsCache[selectedId];
+          
+          if (problemData) {
+            console.log(`🔄 Recargando problema seleccionado: ${selectedId}`);
+            
+            // Actualizar enunciado en pantalla
+            document.getElementById("txtProblemId").value = problemData.id;
+            document.getElementById("txtProblemDesc").value = problemData.text;
+            
+            // Recargar datasets (inputs)
+            await loadInputs(selectedId);
+            
+            // Si sandbox está disponible, sincronizar dataset
+            if (sandboxAvailable) {
+              try {
+                console.log(`🔄 Sincronizando dataset para problema ${selectedId}...`);
+                const result = await syncDataset(selectedId);
+                if (result.uploaded > 0) {
+                  console.log(`✅ Sincronizados ${result.uploaded} archivos`);
+                  showToast(`✅ Dataset actualizado (${result.uploaded} archivos)`, "success");
+                }
+              } catch (err) {
+                console.error("Error sincronizando dataset:", err);
+                showToast("⚠️ No se pudo sincronizar el dataset", "warn");
+              }
+            }
+            
+            showToast('✅ Enunciado y datos actualizados', 'success');
+          }
+        } else {
+          showToast('✅ Problemas actualizados', 'success');
+        }
+        
+      } catch (err) {
+        console.error('❌ Error refrescando problemas:', err);
+        
+        let errorMsg = '❌ Error al actualizar problemas';
+        if (err.message.includes('Failed to fetch')) {
+          errorMsg = '⚠️ No se puede conectar con el servidor';
+        } else if (err.message.includes('530')) {
+          errorMsg = '⚠️ El servidor no está disponible (530)';
+        }
+        
+        showToast(errorMsg, 'error');
+        alert(`${errorMsg}\n\nDetalle: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
       }
     }
 
@@ -2028,17 +2226,45 @@ class Program
   </script>
 
   <script>
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // BOOKMARK: Carga de inputs (datasets) para el problema seleccionado
+    // ═══════════════════════════════════════════════════════════════════════════════
     async function loadInputs(problemId) {
       const select = document.getElementById("selectInput");
       select.innerHTML = "<option value=''>-- Seleccione un dataset --</option>";
 
       try {
         const response = await fetch(`/problems/${problemId}/inputs`);
+        
         if (!response.ok) {
-          console.error("Error cargando inputs:", await response.text());
+          // Detectar si es un error de Cloudflare o del servidor
+          const contentType = response.headers.get('content-type');
+          
+          if (contentType && contentType.includes('text/html')) {
+            // Es HTML (página de error de Cloudflare), no JSON
+            console.warn(`⚠️ Servidor no disponible al cargar inputs del problema ${problemId} (HTML recibido)`);
+            select.innerHTML = "<option value=''>⚠️ Servidor no disponible</option>";
+            return;
+          }
+          
+          // Otro tipo de error
+          const errorText = await response.text();
+          console.error(`❌ Error cargando inputs (${response.status}):`, errorText);
+          select.innerHTML = "<option value=''>❌ Error al cargar datasets</option>";
           return;
         }
-        const archivos = await response.json();
+        
+        // Intentar parsear JSON
+        let archivos;
+        try {
+          archivos = await response.json();
+        } catch (parseErr) {
+          console.error("❌ Respuesta no es JSON válido:", parseErr);
+          select.innerHTML = "<option value=''>⚠️ Respuesta inválida del servidor</option>";
+          return;
+        }
+        
+        // Cargar archivos en el select
         archivos.forEach(a => {
           const opt = document.createElement("option");
           opt.value = a;
@@ -2053,15 +2279,31 @@ class Program
 
           try {
             const r = await fetch(`/problems/${problemId}/input/${archivo}`);
+            
+            if (!r.ok) {
+              console.warn(`⚠️ No se pudo cargar el archivo ${archivo}`);
+              alert(`⚠️ No se pudo cargar el archivo ${archivo}\n\nEl servidor puede estar temporalmente no disponible. Si el sandbox local está habilitado, se intentará cargar de él.`);
+              return;
+            }
+            
             const contenido = await r.text();
             document.getElementById("stdin").value = contenido;
           } catch (err) {
-            console.error("Error cargando contenido:", err);
+            console.error("Error cargando contenido del dataset:", err);
+            alert(`⚠️ Error al cargar el dataset\n\n${err.message}`);
           }
         });
 
       } catch (err) {
-        console.error("Error:", err);
+        console.error("❌ Error en loadInputs:", err);
+        
+        // Verificar si es error de red
+        if (err.message.includes('Failed to fetch') || err.name === 'TypeError') {
+          console.warn("⚠️ No se puede conectar con el servidor");
+          select.innerHTML = "<option value=''>⚠️ Sin conexión al servidor</option>";
+        } else {
+          select.innerHTML = "<option value=''>❌ Error desconocido</option>";
+        }
       }
     }
     </script>

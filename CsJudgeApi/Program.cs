@@ -651,7 +651,7 @@ app.MapGet("/students", async (AppDbContext db) =>
     return Results.Json(estudiantes);
 });
 
-// Obtiene todas las preguntas de un contest
+// BOOKMARK: Obtiene todas las preguntas de un contest
 app.MapGet("/contest/questions", async (AppDbContext db) =>
 {
     // Validar que haya un contest activo
@@ -660,15 +660,43 @@ app.MapGet("/contest/questions", async (AppDbContext db) =>
     if (contest == null)
         return Results.BadRequest("No hay contest activo");
 
-    var preguntas = await db.Questions
+    var questions = await db.Questions
         .Where(q => q.ContestId == contest.ContestId)
         .OrderBy(q => q.QuestionId)
-        .Select(q => new
+        .ToListAsync();
+
+    // Cargar descripciones completas para cada problema
+    var preguntas = questions.Select(q =>
+    {
+        string descripcion = "";
+        long lastModified = 0; // Unix timestamp (milisegundos)
+        try
+        {
+            string baseDir = PathDirectories.PROBLEMS_PATH;
+            string path = Directory.GetFiles(Path.Combine(baseDir, q.QuestionId.ToString()), "*.docx").FirstOrDefault() ?? "";
+            if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
+            {
+                using var doc = DocX.Load(path);
+                descripcion = string.Join("\n", doc.Paragraphs.Select(p => p.Text));
+                
+                // Obtener timestamp de última modificación del archivo
+                var fileInfo = new FileInfo(path);
+                lastModified = ((DateTimeOffset)fileInfo.LastWriteTime).ToUnixTimeMilliseconds();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error cargando descripción para problema {q.QuestionId}: {ex.Message}");
+        }
+
+        return new
         {
             id = q.QuestionId,
-            titulo = q.Review
-        })
-        .ToListAsync();
+            titulo = q.Review,
+            text = descripcion,
+            lastModified = lastModified // Timestamp para detectar cambios
+        };
+    }).ToList();
 
     return Results.Json(preguntas);
 });
