@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
     public DbSet<Submission> Submissions => Set<Submission>();
     // 🔹 Otras tablas ya existentes
     public DbSet<Configuration> Configurations => Set<Configuration>();
+    public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
 
 
     public AppDbContext(DbContextOptions<AppDbContext> options)

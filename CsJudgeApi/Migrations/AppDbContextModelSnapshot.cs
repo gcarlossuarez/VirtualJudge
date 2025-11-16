@@ -17,6 +17,51 @@ namespace CsJudgeApi.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
+            modelBuilder.Entity("CsJudgeApi.Models.ActivityLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ContestId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Metadata")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("QuestionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("StudentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Action");
+
+                    b.HasIndex("ContestId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("Timestamp");
+
+                    b.ToTable("ActivityLogs");
+                });
+
             modelBuilder.Entity("CsJudgeApi.Models.Configuration", b =>
                 {
                     b.Property<string>("Key")
@@ -183,6 +228,30 @@ namespace CsJudgeApi.Migrations
                     b.HasKey("SubmissionId");
 
                     b.ToTable("Submissions");
+                });
+
+            modelBuilder.Entity("CsJudgeApi.Models.ActivityLog", b =>
+                {
+                    b.HasOne("CsJudgeApi.Models.Contest", "Contest")
+                        .WithMany()
+                        .HasForeignKey("ContestId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CsJudgeApi.Models.Question", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CsJudgeApi.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Contest");
+
+                    b.Navigation("Question");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("CsJudgeApi.Models.ContestLanguage", b =>

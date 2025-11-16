@@ -93,7 +93,6 @@ using (var scope = app.Services.CreateScope())
 // 2. En cada request, ASP.NET Core crea una instancia nueva de AppDbContext (scoped).
 // 3. Esa instancia vive solo durante el request y se libera al terminar.
 // No se puede usar db fuera de un endpoint → no existe como variable global, solo se obtiene por parámetro.
-
 // === ENDPOINT SUBMIT (registra envío y compara con expected) ===
 app.MapPost("/submit", async (AppDbContext db, HttpContext ctx) =>
 {
@@ -116,6 +115,25 @@ app.MapPost("/submit", async (AppDbContext db, HttpContext ctx) =>
     };
 
     db.Submissions.Add(submission);
+    
+    // 📊 Log de actividad
+    int.TryParse(problemId.Split('-').LastOrDefault(), out int questionId);
+    var activityLog = new ActivityLog
+    {
+        Action = EActivityAction.SubmissionSent,
+        StudentId = studentId > 0 ? studentId : null,
+        QuestionId = questionId > 0 ? questionId : null,
+        Metadata = JsonSerializer.Serialize(new 
+        { 
+            language, 
+            isCorrect = submission.IsCorrect,
+            codeLength = source.Length
+        }),
+        IpAddress = GetClientIp(ctx.Request),
+        UserAgent = ctx.Request.Headers.UserAgent.ToString()
+    };
+    db.ActivityLogs.Add(activityLog);
+    
     await db.SaveChangesAsync();
 
     return Results.Json(submission);
@@ -652,7 +670,7 @@ app.MapGet("/students", async (AppDbContext db) =>
 });
 
 // BOOKMARK: Obtiene todas las preguntas de un contest
-app.MapGet("/contest/questions", async (AppDbContext db) =>
+app.MapGet("/contest/questions", async (AppDbContext db, HttpContext ctx) =>
 {
     // Validar que haya un contest activo
     var contest = currentContest;
@@ -698,6 +716,29 @@ app.MapGet("/contest/questions", async (AppDbContext db) =>
         };
     }).ToList();
 
+    // 📊 Log de actividad - Contest cargado (async, sin bloquear respuesta)
+    try
+    {
+        var activityLog = new ActivityLog
+        {
+            Action = EActivityAction.ContestLoaded,
+            ContestId = contest.ContestId,
+            Metadata = JsonSerializer.Serialize(new 
+            { 
+                questionCount = questions.Count
+            }),
+            IpAddress = GetClientIp(ctx.Request),
+            UserAgent = ctx.Request.Headers.UserAgent.ToString()
+        };
+        db.ActivityLogs.Add(activityLog);
+        await db.SaveChangesAsync();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"⚠️ Error guardando log de actividad: {ex.Message}");
+        // No fallar si el log falla
+    }
+    
     return Results.Json(preguntas);
 });
 
@@ -738,8 +779,8 @@ app.MapGet("/api/sandbox-enabled", async (AppDbContext db) =>
     }
 });
 
-// Obtiene el enunciado de una determinada pregunta
-app.MapGet("/questions/{id}/desc", (int id) =>
+// BOOKMARK: Obtiene el enunciado de una determinada pregunta
+app.MapGet("/questions/{id}/desc", async (int id, HttpContext ctx, AppDbContext db) =>
 {
     try
     {
@@ -752,6 +793,17 @@ app.MapGet("/questions/{id}/desc", (int id) =>
 
         // Extraer párrafos respetando saltos de línea
         var plainText = string.Join("\n", doc.Paragraphs.Select(p => p.Text));
+
+        // 📊 Log de actividad - Problema visualizado
+        var activityLog = new ActivityLog
+        {
+            Action = EActivityAction.ProblemViewed,
+            QuestionId = id,
+            IpAddress = GetClientIp(ctx.Request),
+            UserAgent = ctx.Request.Headers.UserAgent.ToString()
+        };
+        db.ActivityLogs.Add(activityLog);
+        await db.SaveChangesAsync();
 
         return Results.Json(new { id, text = plainText });
     }
@@ -777,7 +829,7 @@ app.MapGet("/problems/{id}/inputs", (int id) =>
     return Results.Json(archivos);
 });
 
-// Obtener contenido de un dataset
+// BOOKMARK: Obtener contenido de un dataset
 app.MapGet("/problems/{id}/input/{archivo}", (int id, string archivo) =>
 {
     string dir = Path.Combine(PathDirectories.PROBLEMS_PATH, id.ToString(), "IN");
@@ -960,9 +1012,13 @@ app.MapPost("/api/student-login", async (HttpRequest request, AppDbContext db) =
 {
     try
     {
+        Console.WriteLine("🔍 DEBUG: Endpoint /api/student-login llamado");
+        
         // Leer el JSON del body
         using var reader = new StreamReader(request.Body);
         var json = await reader.ReadToEndAsync();
+        
+        Console.WriteLine($"🔍 DEBUG: JSON recibido: {json}");
         
         var loginData = JsonSerializer.Deserialize<JsonElement>(json);
         
@@ -971,17 +1027,25 @@ app.MapPost("/api/student-login", async (HttpRequest request, AppDbContext db) =
         var timestamp = loginData.GetProperty("timestamp").GetString();
         var action = loginData.GetProperty("action").GetString();
         
+        Console.WriteLine($"🔍 DEBUG: StudentId string: {studentIdStr}");
+        
         if (!long.TryParse(studentIdStr, out long studentId))
         {
+            Console.WriteLine($"❌ DEBUG: Parse falló para studentId: {studentIdStr}");
             return Results.BadRequest(new { error = "StudentId inválido" });
         }
 
+        Console.WriteLine($"🔍 DEBUG: Buscando estudiante con ID: {studentId}");
+        
         // Verificar que el estudiante existe
         var student = await db.Students.FirstOrDefaultAsync(s => s.StudentId == studentId);
         if (student == null)
         {
+            Console.WriteLine($"❌ DEBUG: Estudiante {studentId} NO encontrado en la BD");
             return Results.NotFound(new { error = $"Estudiante {studentId} no encontrado" });
         }
+        
+        Console.WriteLine($"✅ DEBUG: Estudiante encontrado: {student.Name}");
 
         // Verificar que hay un contest activo
         if (currentContest == null)
@@ -1021,6 +1085,22 @@ app.MapPost("/api/student-login", async (HttpRequest request, AppDbContext db) =
             db.ContestStudents.Add(cs);
             isNewRegistration = true;
             Console.WriteLine($"✅ NUEVO: Inscribiendo estudiante {studentId} ({student.Name}) en contest {currentContest.ContestId} desde IP {ip}");
+            
+            // 📊 Log de actividad - Estudiante agregado al contest
+            var activityLog = new ActivityLog
+            {
+                Action = EActivityAction.StudentAdded,
+                StudentId = studentId,
+                ContestId = currentContest.ContestId,
+                Metadata = JsonSerializer.Serialize(new 
+                { 
+                    studentName = student.Name,
+                    registrationIp = ip
+                }),
+                IpAddress = ip,
+                UserAgent = request.Headers.UserAgent.ToString()
+            };
+            db.ActivityLogs.Add(activityLog);
         }
         else
         {
@@ -1052,8 +1132,28 @@ app.MapPost("/api/student-login", async (HttpRequest request, AppDbContext db) =
             }
         }
 
+        // 📊 Log de actividad - Registro de entrada SIEMPRE (para estadísticas de uso)
+        Console.WriteLine($"🔍 DEBUG: Creando ActivityLog para StudentLogin");
+        var loginLog = new ActivityLog
+        {
+            Action = EActivityAction.StudentLogin,
+            StudentId = studentId,
+            ContestId = currentContest.ContestId,
+            Metadata = JsonSerializer.Serialize(new 
+            { 
+                studentName = student.Name,
+                action = action,
+                isNewRegistration = isNewRegistration
+            }),
+            IpAddress = ip,
+            UserAgent = request.Headers.UserAgent.ToString()
+        };
+        db.ActivityLogs.Add(loginLog);
+        Console.WriteLine($"🔍 DEBUG: ActivityLog agregado, guardando en BD...");
+
         // Guardar cambios en la base de datos
         await db.SaveChangesAsync();
+        Console.WriteLine($"✅ DEBUG: Cambios guardados en BD exitosamente");
 
         return Results.Ok(new 
         { 
@@ -1075,6 +1175,111 @@ app.MapPost("/api/student-login", async (HttpRequest request, AppDbContext db) =
     catch (Exception ex)
     {
         Console.WriteLine($"❌ Error en /api/student-login: {ex.Message}");
+        Console.WriteLine($"❌ Stack trace: {ex.StackTrace}");
+        return Results.StatusCode(500);
+    }
+});
+
+// BOOKMARK: Endpoints administrativos con logging de actividad
+// === Endpoint para crear un nuevo contest (Admin) ===
+app.MapPost("/api/admin/contests", async (HttpRequest request, AppDbContext db) =>
+{
+    try
+    {
+        using var reader = new StreamReader(request.Body);
+        var json = await reader.ReadToEndAsync();
+        var contestData = JsonSerializer.Deserialize<JsonElement>(json);
+        
+        var dateStr = contestData.GetProperty("date").GetString();
+        if (!DateTime.TryParse(dateStr, out DateTime contestDate))
+        {
+            return Results.BadRequest(new { error = "Fecha inválida" });
+        }
+
+        var newContest = new Contest
+        {
+            Date = contestDate
+        };
+        
+        db.Contests.Add(newContest);
+        await db.SaveChangesAsync();
+        
+        // 📊 Log de actividad - Contest creado
+        var activityLog = new ActivityLog
+        {
+            Action = EActivityAction.ContestCreated,
+            ContestId = newContest.ContestId,
+            Metadata = JsonSerializer.Serialize(new 
+            { 
+                date = contestDate.ToString("yyyy-MM-dd HH:mm:ss")
+            }),
+            IpAddress = GetClientIp(request),
+            UserAgent = request.Headers.UserAgent.ToString()
+        };
+        db.ActivityLogs.Add(activityLog);
+        await db.SaveChangesAsync();
+
+        Console.WriteLine($"✅ CONTEST CREADO: ID={newContest.ContestId}, Fecha={contestDate}");
+        
+        return Results.Ok(new 
+        { 
+            success = true, 
+            contestId = newContest.ContestId,
+            date = contestDate,
+            message = $"Contest {newContest.ContestId} creado exitosamente"
+        });
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Error en /api/admin/contests: {ex.Message}");
+        return Results.StatusCode(500);
+    }
+});
+
+// === Endpoint para obtener estadísticas de uso ===
+app.MapGet("/api/admin/activity-stats", async (AppDbContext db, HttpContext ctx) =>
+{
+    try
+    {
+        var fromDate = DateTime.UtcNow.AddDays(-30); // Últimos 30 días por defecto
+        
+        if (ctx.Request.Query.TryGetValue("days", out var daysStr) && int.TryParse(daysStr, out int days))
+        {
+            fromDate = DateTime.UtcNow.AddDays(-days);
+        }
+
+        var stats = await db.ActivityLogs
+            .Where(log => log.Timestamp >= fromDate)
+            .GroupBy(log => log.Action)
+            .Select(g => new 
+            { 
+                action = g.Key.ToString(),
+                actionId = (int)g.Key,
+                count = g.Count(),
+                lastActivity = g.Max(x => x.Timestamp)
+            })
+            .OrderByDescending(x => x.count)
+            .ToListAsync();
+
+        var totalActivities = stats.Sum(s => s.count);
+        var uniqueStudents = await db.ActivityLogs
+            .Where(log => log.Timestamp >= fromDate && log.StudentId != null)
+            .Select(log => log.StudentId)
+            .Distinct()
+            .CountAsync();
+
+        return Results.Json(new 
+        { 
+            period = $"Últimos {(int)(DateTime.UtcNow - fromDate).TotalDays} días",
+            fromDate,
+            totalActivities,
+            uniqueStudents,
+            activityByType = stats
+        });
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Error en /api/admin/activity-stats: {ex.Message}");
         return Results.StatusCode(500);
     }
 });
