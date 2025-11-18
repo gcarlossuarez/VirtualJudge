@@ -1,100 +1,102 @@
-
 using System;
 using System.Collections.Generic;
 
-// ConectarAmigos
+// Conectar amigos
 class Program
 {
     static void Main()
     {
-		string? val;
-		List<string> lines = new List<string>();
-        while (!string.IsNullOrEmpty(val = Console.ReadLine()))
+        var lines = new List<string>();
+        string? input;
+        while (!string.IsNullOrEmpty(input = Console.ReadLine()))
         {
-			if(!string.IsNullOrEmpty(val))
-			{
-				lines.Add(val);
-			}
+            lines.Add(input);
         }
-        
-		// Representación de la red social
-		var socialNetwork = new Dictionary<string, List<string>>();
-	
-		if (lines.Count() == 0)
-		{
-			Console.WriteLine($"Datos de entrada vacíos.");
-			return;
-		}
 
-		// Leer el origen y destino de la primera línea del archivo de entrada
-		string[] targetFriends = lines[0].Split(';');
-		
-		string source = targetFriends[0].Trim();
-		string destiny = targetFriends[1].Trim();
-		//lines.Skip(1).Dump();
-		foreach(var line in lines.Skip(1))
-		{
-			string[] fields = line.Split(';');
-			List<string> friends = new List<string>();
-			for(int i = 1; i < fields.Length; ++i)
-			{
-				friends.Add(fields[i].Trim());
-			}
-			socialNetwork.Add(fields[0], friends);
-		}
+        if (lines.Count == 0)
+        {
+            Console.WriteLine("Datos de entrada vacíos.");
+            return;
+        }
 
-		// Encontrar el camino más corto
-		List<string> path = FindShortestPath(socialNetwork, source, destiny);
+        // Primera línea: origen;destino
+        string[] targets = lines[0].Split(';', StringSplitOptions.RemoveEmptyEntries);
+        if (targets.Length < 2)
+        {
+            Console.WriteLine("Formato inválido en la primera línea.");
+            return;
+        }
+        string source = targets[0].Trim();
+        string destiny = targets[1].Trim();
 
-		// Mostrar el resultado en el archivo de salida		
-		if (path.Count() > 0)
-		{
-			//Console.WriteLine($"El camino más corto de {source} a {destiny} es: {string.Join(" -> ", path)}");
-			Console.WriteLine($"Número de conexiones: {path.Count - 1}");
-		}
-		else
-		{
-			Console.WriteLine($"No hay conexión entre {source} y {destiny}.");
-		}
+        // Construir grafo no dirigido (amigos mutuos)
+        var graph = new Dictionary<string, HashSet<string>>();
+
+        for (int i = 1; i < lines.Count; i++)
+        {
+            string[] parts = lines[i].Split(';', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length < 1) continue;
+
+            string person = parts[0].Trim();
+            if (!graph.ContainsKey(person))
+                graph[person] = new HashSet<string>();
+
+            for (int j = 1; j < parts.Length; j++)
+            {
+                string friend = parts[j].Trim();
+                graph[person].Add(friend);
+
+                // Añadir conexión en ambos sentidos (grafo no dirigido)
+                if (!graph.ContainsKey(friend))
+                    graph[friend] = new HashSet<string>();
+                graph[friend].Add(person);
+            }
+        }
+
+        // BFS optimizado en memoria
+        int connections = FindShortestDistance(graph, source, destiny);
+
+        if (connections >= 0)
+            Console.WriteLine($"Número de conexiones: {connections}");
+        else
+            Console.WriteLine($"No hay conexión entre {source} y {destiny}.");
     }
 
-    static List<string> FindShortestPath(Dictionary<string, List<string>> graph, string inicio, string objetivo)
+    // Devuelve el número de conexiones (aristas) o -1 si no hay camino
+    static int FindShortestDistance(Dictionary<string, HashSet<string>> graph, string start, string end)
     {
-        var visited = new HashSet<string>();
-        var queue = new Queue<List<string>>();
+        if (start == end) return 0;
 
-        // Iniciar la cola con el nodo de inicio
-        queue.Enqueue(new List<string> { inicio });
-        visited.Add(inicio);
+        var queue = new Queue<string>();
+        var parent = new Dictionary<string, string>(); // Para reconstruir (opcional)
+        var distance = new Dictionary<string, int>(); // Distancia desde start
+
+        queue.Enqueue(start);
+        distance[start] = 0;
 
         while (queue.Count > 0)
         {
-            // Obtener el primer camino de la cola
-            var pathAct = queue.Dequeue();
-            string nodeAct = pathAct[pathAct.Count() - 1];
+            string current = queue.Dequeue();
 
-            // Verificar si hemos llegado al nodo objetivo
-            if (nodeAct == objetivo)
-            {
-                return pathAct;
-            }
+            if (!graph.TryGetValue(current, out var friends))
+                continue;
 
-            // Agregar a la cola los amigos no visitados del nodo actual
-            if (graph.ContainsKey(nodeAct))
+            foreach (string neighbor in friends)
             {
-                foreach (var friend in graph[nodeAct])
+                if (!distance.ContainsKey(neighbor)) // Equivalente a verificar si está visitado
                 {
-                    if (!visited.Contains(friend))
-                    {
-                        visited.Add(friend);
-                        var newPath = new List<string>(pathAct) { friend };
-                        queue.Enqueue(newPath);
-                    }
+                    distance[neighbor] = distance[current] + 1;
+                    parent[neighbor] = current; // Opcional: para reconstruir camino completo
+                    queue.Enqueue(neighbor);
+
+                    if (neighbor == end)
+					{
+						return distance[neighbor]; // ¡Encontrado! Devolvemos la distancia
+					}
                 }
             }
         }
 
-        // Retorna null si no hay conexión
-        return new List<string>();
+        return -1; // No hay camino
     }
 }

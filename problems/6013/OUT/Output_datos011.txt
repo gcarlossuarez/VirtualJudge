@@ -1,1 +1,1 @@
-Número de conexiones: 2
+Número de conexiones: 1

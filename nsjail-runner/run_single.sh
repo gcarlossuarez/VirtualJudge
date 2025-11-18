@@ -109,7 +109,7 @@ if [ "$LANGUAGE" = "dotnet" ]; then
     ( cd "$WORK_DIR/proj" && dotnet build -c Release --nologo --no-restore ) >>"$BUILD_LOG" 2>&1
     BUILD_RC=$?
     echo "Termino de compilar en dotnet con RC=$BUILD_RC" >&2
-    echo "Termino de compilar en dotnet terminada"
+    echo "Termino de compilar en dotnet"
 
 elif [ "$LANGUAGE" = "g++" ]; then
     echo "Compilando en g++"
