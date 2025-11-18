@@ -835,6 +835,7 @@ app.MapGet("/problems/{id}/input/{archivo}", (int id, string archivo) =>
     string dir = Path.Combine(PathDirectories.PROBLEMS_PATH, id.ToString(), "IN");
     string path = Path.Combine(dir, archivo);
 
+    Console.WriteLine($"Buscando archivo de input: {path}. Existe:{System.IO.File.Exists(path)}");
     if (!System.IO.File.Exists(path))
         return Results.NotFound("Archivo no encontrado");
 

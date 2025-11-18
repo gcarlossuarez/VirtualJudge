@@ -1,0 +1,1 @@
+Número de conexiones: 10

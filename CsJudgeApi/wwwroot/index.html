@@ -136,6 +136,17 @@
       transition: background-color 0.3s, color 0.3s;
     }
 
+    /* Animación para el banner de advertencia */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+
+    /* Ajuste del body para dejar espacio al banner */
+    body {
+      padding-top: 65px;
+    }
+
   </style>
   
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -287,6 +298,26 @@
   
   
   <body>
+
+  <!-- Banner de advertencia - Registro obligatorio -->
+  <div id="warning-banner" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 999999;
+    border-bottom: 3px solid #d94452;
+    animation: pulse 2s ease-in-out infinite;
+  ">
+    ⚠️ IMPORTANTE: Antes de comenzar, debes seleccionar tu nombre en la lista de estudiantes. Todas tus actividades quedarán registradas para evaluación.
+  </div>
 
   <!-- Botón flotante -->
   <button class="floating-btn" onclick="openModal()">📘 Reglas</button>
@@ -774,7 +805,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://papers-spirit-innovative-crystal.trycloudflare.com";
+    const SERVER_BASE_URL = "https://celebrate-zoloft-grain-minus.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
@@ -969,6 +1000,158 @@ class Program
             'Por favor, utiliza las opciones "Enviar en Judge0" o "Enviar en Juez Oficial".');
     }
 
+    // BOOKMARK: Control de registro obligatorio de estudiante
+    // Variable global para rastrear si el estudiante se ha registrado
+    let studentRegistered = false;
+
+    // Función para deshabilitar todos los controles al inicio
+    function disableAllControlsForRegistration() {
+      console.log('🔒 Deshabilitando todos los controles - Esperando registro de estudiante');
+      
+      // Deshabilitar selectores de problemas y dataset
+      const selectProblem = document.getElementById('selectProblem');
+      const selectInput = document.getElementById('selectInput');
+      const selectLanguage = document.getElementById('selectLanguage');
+      const btnRefreshProblems = document.getElementById('btnRefreshProblems');
+      
+      if (selectProblem) selectProblem.disabled = true;
+      if (selectInput) selectInput.disabled = true;
+      if (selectLanguage) selectLanguage.disabled = true;
+      if (btnRefreshProblems) btnRefreshProblems.disabled = true;
+      
+      // Deshabilitar editores
+      const codeCm = document.getElementById('code-cm');
+      if (codeCm) codeCm.disabled = true;
+      
+      // Si Monaco está cargado, también deshabilitarlo
+      if (typeof monacoEditor !== 'undefined' && monacoEditor) {
+        monacoEditor.updateOptions({ readOnly: true });
+      }
+      
+      // Deshabilitar todos los botones de ejecución
+      const btnJudge0 = document.getElementById('btnJudge0');
+      const btnOfficial = document.getElementById('btnOfficial');
+      const btnSandbox = document.getElementById('btnSandbox');
+      const btnValidation = document.getElementById('btnValidation');
+      const btnClearDataset = document.getElementById('btnClearDataset');
+      const btnDownloadSandbox = document.getElementById('btnDownloadSandbox');
+      const btnDownloadDotnet = document.getElementById('btnDownloadDotnet');
+      
+      if (btnJudge0) {
+        btnJudge0.disabled = true;
+        btnJudge0.title = 'Primero debes seleccionar tu nombre';
+      }
+      if (btnOfficial) {
+        btnOfficial.disabled = true;
+        btnOfficial.title = 'Primero debes seleccionar tu nombre';
+      }
+      if (btnSandbox) {
+        btnSandbox.disabled = true;
+        btnSandbox.title = 'Primero debes seleccionar tu nombre';
+      }
+      if (btnValidation) {
+        btnValidation.disabled = true;
+        btnValidation.title = 'Primero debes seleccionar tu nombre';
+      }
+      if (btnClearDataset) {
+        btnClearDataset.disabled = true;
+        btnClearDataset.title = 'Primero debes seleccionar tu nombre';
+      }
+      if (btnDownloadSandbox) {
+        btnDownloadSandbox.disabled = true;
+        btnDownloadSandbox.title = 'Primero debes seleccionar tu nombre';
+      }
+      if (btnDownloadDotnet) {
+        btnDownloadDotnet.disabled = true;
+        btnDownloadDotnet.title = 'Primero debes seleccionar tu nombre';
+      }
+      
+      // Deshabilitar tabs de editor
+      const tabCm = document.getElementById('tab-cm');
+      const tabMonaco = document.getElementById('tab-monaco');
+      if (tabCm) tabCm.style.pointerEvents = 'none';
+      if (tabMonaco) tabMonaco.style.pointerEvents = 'none';
+    }
+
+    // Función para habilitar todos los controles después de registro exitoso
+    function enableAllControlsAfterRegistration() {
+      console.log('🔓 Habilitando controles - Estudiante registrado exitosamente');
+      studentRegistered = true;
+      
+      // Ocultar banner de advertencia con animación
+      const banner = document.getElementById('warning-banner');
+      if (banner) {
+        banner.style.transition = 'opacity 0.5s, transform 0.5s';
+        banner.style.opacity = '0';
+        banner.style.transform = 'translateY(-100%)';
+        setTimeout(() => {
+          banner.style.display = 'none';
+          // Ajustar padding del body
+          document.body.style.paddingTop = '20px';
+        }, 500);
+      }
+      
+      // Habilitar selectores
+      const selectProblem = document.getElementById('selectProblem');
+      const selectInput = document.getElementById('selectInput');
+      const selectLanguage = document.getElementById('selectLanguage');
+      const btnRefreshProblems = document.getElementById('btnRefreshProblems');
+      
+      if (selectProblem) selectProblem.disabled = false;
+      if (selectInput) selectInput.disabled = false;
+      if (selectLanguage) selectLanguage.disabled = false;
+      if (btnRefreshProblems) btnRefreshProblems.disabled = false;
+      
+      // Habilitar editores
+      const codeCm = document.getElementById('code-cm');
+      if (codeCm) codeCm.disabled = false;
+      
+      // Si Monaco está cargado, habilitarlo
+      if (typeof monacoEditor !== 'undefined' && monacoEditor) {
+        monacoEditor.updateOptions({ readOnly: false });
+      }
+      
+      // Habilitar botones Judge0 y Oficial (siempre disponibles)
+      const btnJudge0 = document.getElementById('btnJudge0');
+      const btnOfficial = document.getElementById('btnOfficial');
+      
+      if (btnJudge0) {
+        btnJudge0.disabled = false;
+        btnJudge0.title = '';
+      }
+      if (btnOfficial) {
+        btnOfficial.disabled = false;
+        btnOfficial.title = '';
+      }
+      
+      // Para los botones de sandbox, solo habilitar si el sandbox está disponible
+      // (esto lo maneja la lógica existente de checkSandbox)
+      // Los botones de descarga se pueden habilitar siempre
+      const btnDownloadSandbox = document.getElementById('btnDownloadSandbox');
+      const btnDownloadDotnet = document.getElementById('btnDownloadDotnet');
+      
+      if (btnDownloadSandbox) {
+        btnDownloadSandbox.disabled = false;
+        btnDownloadSandbox.title = '📥 Descargar Sandbox';
+      }
+      if (btnDownloadDotnet) {
+        btnDownloadDotnet.disabled = false;
+        btnDownloadDotnet.title = '⬇️ Descargar .NET 10 SDK';
+      }
+      
+      // Nota: btnSandbox, btnValidation y btnClearDataset se habilitarán
+      // automáticamente por la función enableSandboxButtons() si el sandbox está disponible
+      
+      // Habilitar tabs de editor
+      const tabCm = document.getElementById('tab-cm');
+      const tabMonaco = document.getElementById('tab-monaco');
+      if (tabCm) tabCm.style.pointerEvents = 'auto';
+      if (tabMonaco) tabMonaco.style.pointerEvents = 'auto';
+      
+      // Mostrar mensaje de éxito
+      showMessage('✅ ¡Bienvenido! Ya puedes usar todas las funciones del Juez Virtual.', 'ok');
+    }
+
     // BOOKMARK: Inicialización del sandbox al cargar página
     // Verificar si el sandbox está disponible al cargar la página
     window.addEventListener('DOMContentLoaded', async () => {
@@ -1016,6 +1199,10 @@ class Program
       // 3. TERCERO: Verificar disponibilidad del sandbox (ping)
       await checkAndPromptSandbox();
       console.log('✅ Verificación inicial del sandbox completada');
+      
+      // 4. CUARTO: Deshabilitar todos los controles hasta que el estudiante se registre
+      disableAllControlsForRegistration();
+      console.log('🔒 Controles deshabilitados - Esperando selección de estudiante');
     });
 
     // BOOKMARK: Verificar si el sandbox responde (sin UI)
@@ -1932,6 +2119,9 @@ class Program
             if (response.ok) {
               const result = await response.json();
               console.log("✅ Estudiante registrado correctamente:", result);
+              
+              // Habilitar todos los controles después del registro exitoso
+              enableAllControlsAfterRegistration();
               
               // Mostrar mensaje de bienvenida
               showMessage(`✅ ${result.message}`, "ok");
