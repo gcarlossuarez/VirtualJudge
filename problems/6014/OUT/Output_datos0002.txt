@@ -1,0 +1,1 @@
+Camino más corto encontrado con 2 pasos.

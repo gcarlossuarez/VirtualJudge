@@ -98,16 +98,20 @@ BUILD_LOG="$WORK_DIR/build.log"
 BUILD_RC=0
 if [ "$LANGUAGE" = "dotnet" ]; then
     echo "Compilando en dotnet"
-    
+
     # 🔹Restaurar paquetes NuGet primero
     # Ver archivo ./dotnet-restore-explanation.md para una mejor explicacion de por que se necesita dotnet restore
     ( cd "$WORK_DIR/proj" && dotnet restore --no-cache ) >>"$BUILD_LOG" 2>&1
     RESTORE_RC=$?
     echo "DEBUG: dotnet restore terminó con RC=$RESTORE_RC" >&2
     
-    # Luego compilar
+    
+    # Luego compilar (permitir fallo sin matar el script)
+    set +e
     ( cd "$WORK_DIR/proj" && dotnet build -c Release --nologo --no-restore ) >>"$BUILD_LOG" 2>&1
     BUILD_RC=$?
+    set -e
+
     echo "Termino de compilar en dotnet con RC=$BUILD_RC" >&2
     echo "Termino de compilar en dotnet"
 
