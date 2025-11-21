@@ -805,7 +805,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://applying-amend-diffs-cia.trycloudflare.com";
+    const SERVER_BASE_URL = "https://declined-highway-digest-ment.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
@@ -1200,6 +1200,9 @@ class Program
       await checkAndPromptSandbox();
       console.log('✅ Verificación inicial del sandbox completada');
       
+      // 3.1 Mostrar información sobre el sandbox local si está habilitado
+      showSandboxInfoIfEnabled();
+      
       // 4. CUARTO: Deshabilitar todos los controles hasta que el estudiante se registre
       disableAllControlsForRegistration();
       console.log('🔒 Controles deshabilitados - Esperando selección de estudiante');
@@ -1399,6 +1402,82 @@ class Program
       }
     }
 
+    // Mostrar información sobre el sandbox local si está habilitado en configuración
+    async function showSandboxInfoIfEnabled() {
+      try {
+        const configRes = await fetch('/api/sandbox-enabled');
+        if (!configRes.ok) return;
+        
+        const configData = await configRes.json();
+        if (configData.enabled) {
+          // Crear y mostrar mensaje informativo discreto
+          const infoDiv = document.createElement('div');
+          infoDiv.id = 'sandbox-info-banner';
+          infoDiv.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 9999;
+            max-width: 400px;
+            font-size: 13px;
+            line-height: 1.5;
+            animation: slideIn 0.5s ease-out;
+          `;
+          
+          infoDiv.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+              <strong style="font-size: 14px;">ℹ️ Sandbox Local Autorizado para ser utilizado</strong>
+              <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; font-size: 18px; cursor: pointer; padding: 0; margin-left: 10px;">&times;</button>
+            </div>
+            <div style="font-size: 12px; opacity: 0.95;">
+              ⚠️ <strong>Importante:</strong>Si así lo deseas, levanta el Sandbox local y si tu navegador te pide permiso porque "Cloudflare quiere comunicarse con dispositivos de tu red local", debes <strong>ACEPTAR</strong>.<br><br>
+              📋 <strong>Requisitos para usar Sandbox local:</strong><br>
+              • Seleccionar tu nombre de estudiante<br>
+              • Seleccionar un problema<br>
+              • El dataset del problema debe estar descargado<br><br>
+              <small style="opacity: 0.8;">💡 El sistema verifica automáticamente estos requisitos.</small>
+            </div>
+          `;
+          
+          // Agregar al body
+          document.body.appendChild(infoDiv);
+          
+          // Agregar animación
+          const style = document.createElement('style');
+          style.textContent = `
+            @keyframes slideIn {
+              from {
+                transform: translateX(100%);
+                opacity: 0;
+              }
+              to {
+                transform: translateX(0);
+                opacity: 1;
+              }
+            }
+          `;
+          document.head.appendChild(style);
+          
+          // Auto-ocultar después de 15 segundos
+          setTimeout(() => {
+            if (infoDiv.parentElement) {
+              infoDiv.style.transition = 'opacity 0.5s, transform 0.5s';
+              infoDiv.style.opacity = '0';
+              infoDiv.style.transform = 'translateX(100%)';
+              setTimeout(() => infoDiv.remove(), 500);
+            }
+          }, 15000);
+        }
+      } catch (error) {
+        console.log('No se pudo verificar configuración del sandbox:', error);
+      }
+    }
+
     // Descargar el sandbox desde Google Drive
     async function downloadSandbox() {
       const btnSandbox = document.getElementById('btnSandbox');
@@ -1426,7 +1505,8 @@ class Program
           '1. Si Google Drive pide confirmación, haz clic en "Descargar de todas formas"\n' +
           '2. Extrae el archivo ZIP descargado\n' +
           '3. Ejecuta DotNetInteractiveServer.exe (solo Windows x64)\n' +
-          '4. Los botones se habilitarán automáticamente cuando detecte el sandbox\n\n' +
+          '4. ⚠️ IMPORTANTE: Si el navegador pide permiso para que "Cloudflare quiere comunicarse con dispositivos de tu red local", debes ACEPTAR\n' +
+          '5. Los botones se habilitarán automáticamente cuando detecte el sandbox\n\n' +
           '💡 Esta página verificará cada 5 segundos si el sandbox está disponible.\n' +
           '⚠️ Requiere .NET SDK 10 instalado (usa el botón de descarga si no lo tienes).'
         );
@@ -2106,6 +2186,11 @@ class Program
           try {
             console.log(`� Notificando selección de estudiante: ${studentId}`);
             
+            // Obtener el nombre del estudiante del dropdown
+            const selectStudent = document.getElementById("selectStudent");
+            const selectedOption = selectStudent.options[selectStudent.selectedIndex];
+            const studentName = selectedOption ? selectedOption.textContent : "Estudiante";
+            
             const response = await fetch("/api/student-login", {
               method: "POST",
               headers: {
@@ -2122,11 +2207,14 @@ class Program
               const result = await response.json();
               console.log("✅ Estudiante registrado correctamente:", result);
               
+              // Mostrar mensaje de bienvenida prominente con el nombre del estudiante
+              alert(`👋 ¡Bienvenido/a, ${studentName}!\n\n✅ Has sido identificado correctamente.\n\n🎯 ID: ${studentId}\n\nYa puedes usar todas las funciones del Juez Virtual.`);
+              
               // Habilitar todos los controles después del registro exitoso
               enableAllControlsAfterRegistration();
               
-              // Mostrar mensaje de bienvenida
-              showMessage(`✅ ${result.message}`, "ok");
+              // Mostrar mensaje de bienvenida en la interfaz también
+              showMessage(`✅ Bienvenido/a, ${studentName} (ID: ${studentId})`, "ok");
             } else {
               // Error del servidor - manejar bloqueos y otros errores
               const errorData = await response.json();
