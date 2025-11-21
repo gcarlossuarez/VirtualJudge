@@ -805,7 +805,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://casting-computers-wit-construct.trycloudflare.com";
+    const SERVER_BASE_URL = "https://applying-amend-diffs-cia.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
@@ -1394,6 +1394,8 @@ class Program
         console.log('❌ Usuario rechazó la descarga');
         btnSandbox.title = 'Sandbox no disponible. Usa el botón "📥 Descargar Sandbox" si cambias de opinión.';
         btnValidation.title = 'Sandbox no disponible. Usa el botón "📥 Descargar Sandbox" si cambias de opinión.';
+        // Iniciar monitoreo de todas formas por si el usuario lo ejecuta manualmente
+        startSandboxMonitoring();
       }
     }
 
