@@ -805,12 +805,12 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://declined-highway-digest-ment.trycloudflare.com";
+    const SERVER_BASE_URL = "https://blah-particle-continually-likewise.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
     // Descargar desde Google Drive (no consume ancho de banda del servidor)
-    const SANDBOX_GOOGLE_DRIVE_ID = "1b5szh1Ld852C6MU7qoqhEBweZg92BKZY";
+    const SANDBOX_GOOGLE_DRIVE_ID = "1cu8BoPzdM5PKTVGzhrv6l_A3To6qqr8H";
     const SANDBOX_DOWNLOAD_URL = `https://drive.google.com/uc?export=download&id=${SANDBOX_GOOGLE_DRIVE_ID}`;
 
     // Estado del sandbox
@@ -1774,26 +1774,43 @@ class Program
       }
     }
 
-    // BOOKMARK: Normalización de código para .NET Interactive Kernel
-    // Normaliza el código para enviarlo al kernel (elimina clase Program y Main)
+    // Normaliza la declaración de Main para que no tenga espacios ni ENTERs extra
     function normalizeCodeForKernel(sourceCode) {
-      const hasNamespace = /\bnamespace\s+[\w.]+/.test(sourceCode);
-      let normalizedCode = sourceCode
-        // Elimina namespace y su nombre (ej: "namespace MiNamespace" o "namespace MiNamespace {")
-        .replace(/\bnamespace\s+[\w.]+\s*\{?/g, "")
-        // Elimina “class Program” o “public class Program”
-        .replace(/\b(public\s+)?class\s+Program\s*/g, "")
-        // Elimina “static void Main()”, “public static void Main()” o con args
-        .replace(/\b(public\s+)?static\s+void\s+Main\s*\([^)]*\)\s*/g, "")
-        .trim();
-        if(hasNamespace){
-          // Elimina llaves sobrantes al final si había namespace
-          normalizedCode = normalizedCode.replace(/\}\s*$/g, "").trim();
-        }
-        return normalizedCode;
+      // Regex para encontrar variantes de Main en Program
+      // Captura la declaración y la reemplaza por una versión sin espacios extra
+      const mainRegex = /(public\s+)?static\s+(async\s+)?(Task|void)\s+Main\s*\([^)]*\)\s*\{/g;
+      return sourceCode.replace(mainRegex, (match) => {
+        // Quitar todos los ENTERs y reducir espacios múltiples a uno solo
+        let normalized = match.replace(/\s+/g, ' ');
+        // Quitar espacio antes del paréntesis y la llave
+        normalized = normalized.replace(/\s*\(/, '(').replace(/\s*\{/, '{');
+        return normalized;
+      });
+    }
+    
+    // Extrae todas las variantes de Main encontradas (para debug o validación extra)
+    function extractAllMainVariants(sourceCode) {
+      const mainRegex = /(public\s+)?static\s+(async\s+)?(Task|void)\s+Main\s*\([^)]*\)\s*\{/g;
+      let result = [];
+      let match;
+      while ((match = mainRegex.exec(sourceCode)) !== null) {
+        result.push({ index: match.index, declaration: match[0] });
+      }
+      return result;
     }
 
+    // --- VERSIÓN ANTERIOR (comentada, por compatibilidad/histórico) ---
+    /*
+    function normalizeCodeForKernel(sourceCode) {
+      // El Sandbox, ya debería soportar el cpdoigo sin ncesidad de normalizarlo; salvo que
+      // envíen código donde la función Main, no pertenezca a una clase llamada Program
+      return sourceCode;
+      // ...versión anterior eliminando class Program y Main...
+    }
+    */
+  </script>
 
+  <script>
     // BOOKMARK: Validación offline con datasets locales
     // 🔹 Validar el código con datasets del sandbox
     // Usuario hace clic en "Validar" 
@@ -1805,6 +1822,7 @@ class Program
     async function runOfflineValidation() {
       const log = document.getElementById("validationLog");
       const output = document.getElementById("output");
+      
       
       // Verificar si el lenguaje es C++
       const selectedLang = document.getElementById("selectLanguage").value;
@@ -2207,14 +2225,54 @@ class Program
               const result = await response.json();
               console.log("✅ Estudiante registrado correctamente:", result);
               
-              // Mostrar mensaje de bienvenida prominente con el nombre del estudiante
-              alert(`👋 ¡Bienvenido/a, ${studentName}!\n\n✅ Has sido identificado correctamente.\n\n🎯 ID: ${studentId}\n\nYa puedes usar todas las funciones del Juez Virtual.`);
-              
+              // Mostrar banner flotante de bienvenida
+              showWelcomeBanner(studentName, studentId);
               // Habilitar todos los controles después del registro exitoso
               enableAllControlsAfterRegistration();
-              
-              // Mostrar mensaje de bienvenida en la interfaz también
-              showMessage(`✅ Bienvenido/a, ${studentName} (ID: ${studentId})`, "ok");
+                    // Banner flotante de bienvenida para el estudiante
+                    function showWelcomeBanner(studentName, studentId) {
+                      // Eliminar cualquier banner previo
+                      const oldBanner = document.getElementById('welcomeBanner');
+                      if (oldBanner) oldBanner.remove();
+
+                      const banner = document.createElement('div');
+                      banner.id = 'welcomeBanner';
+                      banner.innerHTML = `
+                        <div style="
+                          position: fixed;
+                          top: 0; left: 0; right: 0;
+                          z-index: 9999;
+                          background: linear-gradient(90deg, #ff9800 0%, #ffc107 100%);
+                          color: #222;
+                          font-size: 2.5rem;
+                          font-weight: bold;
+                          text-align: center;
+                          padding: 2.2rem 1rem 1.5rem 1rem;
+                          box-shadow: 0 6px 32px rgba(0,0,0,0.18);
+                          border-bottom: 4px solid #ff5722;
+                          letter-spacing: 1px;
+                          transition: top 0.5s;
+                        ">
+                          👋 ¡Bienvenido/a, <span style='color:#d84315;'>${studentName}</span>!<br>
+                          <span style="font-size:1.5rem; font-weight:normal;">Verifica que tu nombre sea correcto antes de continuar.</span><br>
+                          <span style="font-size:1.2rem; color:#333;">ID: <b>${studentId}</b></span>
+                          <br><br>
+                          <button onclick="this.parentElement.parentElement.remove()" style="
+                            font-size: 1.2rem;
+                            background: #fff3e0;
+                            color: #d84315;
+                            border: 2px solid #ff9800;
+                            border-radius: 8px;
+                            padding: 0.5rem 1.5rem;
+                            cursor: pointer;
+                            font-weight: bold;
+                            margin-top: 0.5rem;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                          ">Cerrar</button>
+                        </div>
+                      `;
+                      document.body.appendChild(banner);
+                    }
             } else {
               // Error del servidor - manejar bloqueos y otros errores
               const errorData = await response.json();

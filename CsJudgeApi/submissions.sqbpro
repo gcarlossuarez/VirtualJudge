@@ -1,4 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/home/virtualbox/VirtualJudge/CsJudgeApi/submissions.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="0"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3094"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,14:mainConfigurations"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="ActivityLogs" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="2" mode="1"/></sort><column_widths><column index="1" value="41"/><column index="2" value="186"/><column index="3" value="46"/><column index="4" value="98"/><column index="5" value="68"/><column index="6" value="77"/><column index="7" value="300"/><column index="8" value="264"/><column index="9" value="300"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Configurations" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="141"/><column index="2" value="41"/><column index="3" value="300"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="ContestStudents" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="73"/><column index="2" value="98"/><column index="3" value="186"/><column index="4" value="263"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Questions" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="77"/><column index="2" value="226"/><column index="3" value="291"/><column index="4" value="68"/><column index="5" value="300"/><column index="6" value="123"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Students" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="2" mode="0"/></sort><column_widths><column index="1" value="98"/><column index="2" value="254"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">--INSERT INTO &quot;main&quot;.&quot;Questions&quot; (&quot;QuestionId&quot;, &quot;Review&quot;, &quot;Path&quot;, &quot;ContestId&quot;, &quot;FullPathValidatorSourceCode&quot;, &quot;TimeLimitSeconds&quot;) VALUES ('6014', '14) El laberitno del político &quot;honrado&quot;', '/home/virtualbox/VirtualJudge/problems/6014', '6', '', '5');
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/home/virtualbox/VirtualJudge/CsJudgeApi/submissions.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3094"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,12:mainActivityLogs"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="ActivityLogs" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="2" mode="1"/></sort><column_widths><column index="1" value="41"/><column index="2" value="186"/><column index="3" value="46"/><column index="4" value="98"/><column index="5" value="68"/><column index="6" value="77"/><column index="7" value="300"/><column index="8" value="264"/><column index="9" value="300"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Configurations" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="141"/><column index="2" value="41"/><column index="3" value="300"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="ContestStudents" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="73"/><column index="2" value="98"/><column index="3" value="186"/><column index="4" value="263"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Contests" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="68"/><column index="2" value="76"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Questions" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="77"/><column index="2" value="226"/><column index="3" value="291"/><column index="4" value="68"/><column index="5" value="300"/><column index="6" value="123"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Students" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="2" mode="0"/></sort><column_widths><column index="1" value="98"/><column index="2" value="254"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Submissions" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="92"/><column index="2" value="98"/><column index="3" value="72"/><column index="4" value="300"/><column index="5" value="110"/><column index="6" value="131"/><column index="7" value="64"/><column index="8" value="61"/><column index="9" value="54"/><column index="10" value="41"/><column index="11" value="54"/><column index="12" value="186"/><column index="13" value="264"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">--INSERT INTO &quot;main&quot;.&quot;Questions&quot; (&quot;QuestionId&quot;, &quot;Review&quot;, &quot;Path&quot;, &quot;ContestId&quot;, &quot;FullPathValidatorSourceCode&quot;, &quot;TimeLimitSeconds&quot;) VALUES ('10002', '2) Optimización de latencia', '/home/virtualbox/VirtualJudge/problems/10002', '6', '', '5');
+
+select *
+from Submissions
+where StudentId = 202360009415
+order by submissionid desc
+
 
 select *
 from Students
@@ -11,8 +17,72 @@ and a.studentid &lt;&gt; 123
 and a.StudentId = s.StudentId
 order by a.TimeStamp desc
 
+
+select time(), st.Name, su.*
+from Submissions su, Students st
+where su.ProblemId in (10001, 10002)
+and st.Name like 'OJEDA%'
+and su.IsCorrect = 1
+and Su.StudentId = st.StudentId
+ORDER BY Su.ProblemId
+
 select *
-from Submissions
-where StudentId = 202460012571
-and ProblemId = 6010
-</sql><current_tab id="0"/></tab_sql></sqlb_project>
+from Submissions su1, Submissions su2
+where su1.ProblemId in (10001, 10002)
+and su1.ProblemId = su2.ProblemId
+and su1.StudentId &lt;&gt; su2.StudentId
+and su1.StudentId NOT IN (111, 123, 333)
+and su2.StudentId NOT IN (111, 123, 333)
+and su1.SourceCode = su2.SourceCode
+
+
+select *
+from Submissions su1
+where su1.ProblemId in (10001)
+and su1.StudentId NOT IN (111, 123, 333)
+and su1.IsCorrect = 1
+
+SELECT DISTINCT
+    st.Name,
+    st.StudentId,
+    (
+        SELECT CASE
+            WHEN q1.IsCorrect = 1 THEN 60
+            ELSE 0
+        END
+        FROM Submissions q1
+        WHERE q1.ProblemId = 10001
+        AND q1.StudentId = st.StudentId
+		AND q1.IsCorrect = 1
+    ) AS ScoreProblem1,
+    (
+        SELECT CASE
+            WHEN q2.IsCorrect = 1 THEN 60
+            ELSE 0
+        END
+        FROM Submissions q2
+        WHERE q2.ProblemId = 10002
+        AND q2.StudentId = st.StudentId
+		AND q2.IsCorrect = 1
+    ) AS ScoreProblem2
+FROM
+    Students st
+WHERE
+    st.StudentId NOT IN (111, 123, 333)
+ORDER BY
+    st.Name, ScoreProblem1, ScoreProblem2;
+
+	
+
+
+SELECT DISTINCT
+    st.Name,
+    st.StudentId, su.ProblemId, su.IsCorrect
+FROM
+    Students st, Submissions su
+WHERE
+    st.StudentId NOT IN (111, 123, 333)
+AND st.StudentId = su.StudentId
+AND su.ProblemId IN (10001, 10002)
+ORDER BY
+    st.Name, su.ProblemId;</sql><current_tab id="0"/></tab_sql></sqlb_project>
