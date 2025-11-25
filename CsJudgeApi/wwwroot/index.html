@@ -805,13 +805,15 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://blah-particle-continually-likewise.trycloudflare.com";
+    const SERVER_BASE_URL = "https://cuisine-blacks-corners-disclosure.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
     // Descargar desde Google Drive (no consume ancho de banda del servidor)
-    const SANDBOX_GOOGLE_DRIVE_ID = "1cu8BoPzdM5PKTVGzhrv6l_A3To6qqr8H";
-    const SANDBOX_DOWNLOAD_URL = `https://drive.google.com/uc?export=download&id=${SANDBOX_GOOGLE_DRIVE_ID}`;
+    // NUEVA URL DE DESCARGA DEL SANDBOX (2025-11-24)
+    const SANDBOX_GOOGLE_DRIVE_ID = "1AkFGBXHf6GuL40uZcrmV_DJrIYdHXaRf";
+    // Google Drive no permite descarga directa para este tipo de enlace, así que se usará el enlace de visualización
+    const SANDBOX_DOWNLOAD_URL = `https://drive.google.com/file/d/${SANDBOX_GOOGLE_DRIVE_ID}/view?usp=sharing`;
 
     // Estado del sandbox
     let sandboxAvailable = false;
@@ -1487,7 +1489,7 @@ class Program
       btnValidation.textContent = '⏳ Descargando sandbox...';
 
       try {
-        // Crear enlace de descarga desde Google Drive
+        // Crear enlace de descarga desde Google Drive (nuevo formato)
         const a = document.createElement('a');
         a.href = SANDBOX_DOWNLOAD_URL;
         a.target = '_blank';  // Abrir en nueva pestaña por si Google Drive pide confirmación
@@ -1524,7 +1526,7 @@ class Program
         alert(
           '❌ Error al iniciar la descarga del sandbox.\n\n' +
           'Intenta descargar manualmente desde:\n' +
-          `https://drive.google.com/file/d/${SANDBOX_GOOGLE_DRIVE_ID}/view`
+          `${SANDBOX_DOWNLOAD_URL}`
         );
         btnSandbox.textContent = '🧪 Probar en Sandbox';
         btnValidation.textContent = '📂 Validar con DataSet local';
