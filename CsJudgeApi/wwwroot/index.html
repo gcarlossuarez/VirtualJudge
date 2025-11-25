@@ -2399,6 +2399,17 @@ class Program
     // Estructura: { problemId: { inputs: ['input1.txt', 'input2.txt'], files: { 'input1.txt': 'contenido...' } } }
     let inputsCache = {};
 
+    // BOOKMARK: Token global para evitar race conditions al cambiar de problema
+    // -------------------------------------------------------------------------
+    // TOKEN GLOBAL para evitar race conditions al cambiar de problema
+    // Cada vez que el usuario selecciona un nuevo problema, este token se incrementa.
+    // Todas las funciones asíncronas que dependen del problema seleccionado reciben
+    // el valor del token al iniciar y lo verifican antes de actualizar la UI.
+    // Si el token cambió, significa que el usuario ya seleccionó otro problema y
+    // la función debe terminar sin hacer nada.
+    // -------------------------------------------------------------------------
+    let problemChangeToken = 0;
+
     async function loadProblems() {
       try {
         // 📥 Obtener TODOS los problemas con descripciones en UNA sola petición
@@ -2424,9 +2435,15 @@ class Program
           select.appendChild(opt);
         });
 
-        // 🎯 Cuando selecciona un problema, usar datos del CACHE (sin petición al servidor)
+        // BOOKMARK: 🎯 Cuando selecciona un problema, usar datos del CACHE (sin petición al servidor)
         select.addEventListener("change", async () => {
             const id = select.value;
+            // -----------------------------------------------------------------
+            // Cada vez que el usuario cambia de problema, incrementamos el token.
+            // Guardamos el valor actual en myToken para todas las funciones asíncronas
+            // que dependan de este problema seleccionado.
+            // -----------------------------------------------------------------
+            const myToken = ++problemChangeToken;
             if (!id) {
               document.getElementById("txtProblemDesc").value = "";
               return;
@@ -2435,24 +2452,29 @@ class Program
             try {
               // 🔥 SIN PETICIÓN AL SERVIDOR - Usar cache local
               const problemData = problemsCache[id];
-              
               if (!problemData) {
                 console.error(`Problema ${id} no encontrado en cache`);
                 return;
               }
 
               // 1) 👇 Cargar datos desde cache (INSTANTÁNEO, sin red)
+              // Antes de actualizar la UI, verificar el token:
+              // Si el usuario ya cambió de problema, no actualizamos la UI.
+              if (myToken !== problemChangeToken) return;
               document.getElementById("txtProblemId").value = problemData.id;
               document.getElementById("txtProblemDesc").value = problemData.text;
-              
-              // 2) 👇 Cargar datasets (inputs) de ese problema
-              await loadInputs(id);
-              
+
+              // 2) 👇 Cargar datasets (inputs) de ese problema, pasando el token
+              // El token se pasa a loadInputs y a los eventos internos de datasets.
+              await loadInputs(id, myToken);
+              if (myToken !== problemChangeToken) return;
+
               // 3) 🔄 Si el sandbox está disponible, sincronizar datasets automáticamente
               if (sandboxAvailable) {
                 try {
                   console.log(`🔄 Sincronizando dataset para problema ${id}...`);
                   const result = await syncDataset(id);
+                  if (myToken !== problemChangeToken) return;
                   if (result.uploaded > 0) {
                     console.log(`✅ Sincronizados ${result.uploaded} archivos para problema ${id}`);
                     showToast(`✅ Dataset sincronizado (${result.uploaded} archivos)`, "success");
@@ -2460,12 +2482,13 @@ class Program
                     console.log(`✅ Dataset ya estaba completo para problema ${id}`);
                   }
                 } catch (err) {
+                  if (myToken !== problemChangeToken) return;
                   console.error("Error sincronizando dataset:", err);
                   showToast("⚠️ No se pudo sincronizar el dataset", "warn");
                 }
               }
-                      
             } catch (err) {
+              if (myToken !== problemChangeToken) return;
               console.error("Error cargando problema:", err);
             }
           });
@@ -2569,9 +2592,15 @@ class Program
     // ═══════════════════════════════════════════════════════════════════════════════
     // BOOKMARK: Carga de inputs (datasets) para el problema seleccionado
     // ═══════════════════════════════════════════════════════════════════════════════
-    async function loadInputs(problemId) {
+    async function loadInputs(problemId, token) {
       const select = document.getElementById("selectInput");
       select.innerHTML = "<option value=''>-- Seleccione un dataset --</option>";
+      // -----------------------------------------------------------------
+      // Usar el token actual si no se pasa (compatibilidad)
+      // Así, si el usuario cambia de problema mientras se cargan los datasets,
+      // cualquier respuesta atrasada será ignorada.
+      // -----------------------------------------------------------------
+      const myToken = typeof token === 'undefined' ? problemChangeToken : token;
 
       try {
         const response = await fetch(`/problems/${problemId}/inputs`);
@@ -2617,18 +2646,25 @@ class Program
           const archivo = select.value;
           if (!archivo) return;
 
+          // -----------------------------------------------------------------
+          // Verificar token antes de cargar el dataset:
+          // Si el usuario ya cambió de problema, no se actualiza el input.
+          // -----------------------------------------------------------------
+          if (myToken !== problemChangeToken) return;
+
           try {
             const r = await fetch(`/problems/${problemId}/input/${archivo}`);
-            
+            if (myToken !== problemChangeToken) return;
             if (!r.ok) {
               console.warn(`⚠️ No se pudo cargar el archivo ${archivo}`);
               alert(`⚠️ No se pudo cargar el archivo ${archivo}\n\nEl servidor puede estar temporalmente no disponible. Si el sandbox local está habilitado, se intentará cargar de él.`);
               return;
             }
-            
             const contenido = await r.text();
+            if (myToken !== problemChangeToken) return;
             document.getElementById("stdin").value = contenido;
           } catch (err) {
+            if (myToken !== problemChangeToken) return;
             console.error("Error cargando contenido del dataset:", err);
             alert(`⚠️ Error al cargar el dataset\n\n${err.message}`);
           }
