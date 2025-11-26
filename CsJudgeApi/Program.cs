@@ -1,3 +1,6 @@
+// BOOKMARK: Endpoint para obtener el validador de un problema
+
+// BOOKMARK: Endpoint para obtener el validador de un problema
 using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
@@ -760,7 +763,7 @@ app.MapGet("/api/sandbox-enabled", async (AppDbContext db) =>
 
         // Verificar si el valor es "1" o "true" (case insensitive)
         bool isEnabled = config.Value == "1" || 
-                        config.Value.Equals("true", StringComparison.OrdinalIgnoreCase);
+                        (config.Value != null && config.Value.Equals("true", StringComparison.OrdinalIgnoreCase));
 
         return Results.Json(new 
         { 
@@ -814,7 +817,7 @@ app.MapGet("/questions/{id}/desc", async (int id, HttpContext ctx, AppDbContext 
 });
 
 
-// Listar datasets disponibles de un problema
+// BOOKMARK: Listar datasets disponibles de un problema
 app.MapGet("/problems/{id}/inputs", (int id) =>
 {
     string dir = Path.Combine(PathDirectories.PROBLEMS_PATH, id.ToString(), "IN");
@@ -1285,6 +1288,40 @@ app.MapGet("/api/admin/activity-stats", async (AppDbContext db, HttpContext ctx)
     }
 });
 
+
+
+// BOOKMARK: Endpoint para obtener el validador de un problema
+app.MapGet("/problems/{id}/validator", async (int id, AppDbContext db) =>
+{
+    // Buscar el problema
+    var question = await db.Questions.FirstOrDefaultAsync(q => q.QuestionId == id);
+    if (question == null)
+        return Results.NotFound(new { error = $"No existe el problema {id}" });
+
+    var validatorPath = question.FullPathValidatorSourceCode;
+    if (string.IsNullOrWhiteSpace(validatorPath) || !System.IO.File.Exists(validatorPath))
+        return Results.NotFound(new { error = "No hay validador para este problema" });
+
+    // Leer el código fuente del validador
+    var content = await System.IO.File.ReadAllTextAsync(validatorPath);
+
+    // Generar un Solution.csproj mínimo
+    var csproj = @"<Project Sdk=""Microsoft.NET.Sdk"">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>";
+
+    return Results.Json(new {
+        fileName = "Validator.cs",
+        content,
+        csprojName = "Solution.csproj",
+        csproj
+    });
+});
 
 // NOTA. - Mejor, si va a al final
 app.Run();

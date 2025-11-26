@@ -805,15 +805,14 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://deaf-til-ide-titans.trycloudflare.com";
+    const SERVER_BASE_URL = "https://tiger-hypothetical-senior-strikes.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
     // Descargar desde Google Drive (no consume ancho de banda del servidor)
     // NUEVA URL DE DESCARGA DEL SANDBOX (2025-11-24)
-    const SANDBOX_GOOGLE_DRIVE_ID = "1AkFGBXHf6GuL40uZcrmV_DJrIYdHXaRf";
-    // Google Drive no permite descarga directa para este tipo de enlace, así que se usará el enlace de visualización
-    const SANDBOX_DOWNLOAD_URL = `https://drive.google.com/file/d/${SANDBOX_GOOGLE_DRIVE_ID}/view?usp=sharing`;
+    // NUEVA URL DE DESCARGA DEL SANDBOX LOCAL (2025-11-26)
+    const SANDBOX_DOWNLOAD_URL = "https://drive.google.com/file/d/1ykvui0j3xqzo2IyIc5r6sKta6QPJT_WP/view?usp=sharing";
 
     // Estado del sandbox
     let sandboxAvailable = false;
@@ -1620,6 +1619,8 @@ class Program
     }
 
     // BOOKMARK: Sincronizar DataSet. Sube SOLO lo que falta
+    // Flag global para saber si el problema tiene validador
+    let problemHasValidator = {};
     async function syncDataset(problemId) {
       console.log(`🔄 Iniciando sincronización para problema ${problemId}...`);
       
@@ -1659,26 +1660,77 @@ class Program
         }
 
         // 4) Descargar solo faltantes y armar payload
+        // -------------------------------------------------------------
+        // Construcción del array 'files' que se enviará al sandbox:
+        //
+        //   files = [
+        //     { path: 'DataSet/input1.txt', content: '...contenido...' },
+        //     { path: 'DataSet/input2.txt', content: '...contenido...' },
+        //     { path: '.Expected/output1.txt', content: '...contenido...' },
+        //     ...
+        //   ]
+        //
+        // Diagrama de flujo:
+        //
+        //   +-------------------+         +-------------------+
+        //   |  missingInputs[]   |         | missingExpected[] |
+        //   +-------------------+         +-------------------+
+        //            |                           |
+        //            v                           v
+        //   for cada input:                for cada expected:
+        //     fetch contenido                fetch contenido
+        //     files.push({                   files.push({
+        //       path: 'DataSet/...'            path: '.Expected/...'
+        //       content: ...                  content: ...
+        //     })                            })
+        //            |                           |
+        //            +-----------+   +-----------+
+        //                        v   v
+        //                  files[] final
+        // -------------------------------------------------------------
         const files = [];
         const totalFiles = missingInputs.length + missingExpected.length;
         let downloadedCount = 0;
 
         if (outputDiv) outputDiv.innerHTML = `<div style="color: #17a2b8;">⬇️ Descargando archivos... (0/${totalFiles})</div>`;
-        
+
+        // --- Inputs ---
         console.log(`⬇️ Descargando ${missingInputs.length} inputs faltantes...`);
         for (const f of missingInputs) {
           downloadedCount++;
           if (outputDiv) outputDiv.innerHTML = `<div style="color: #17a2b8;">📥 Descargando archivo ${downloadedCount}/${totalFiles}: ${f}</div>`;
           const content = await fetchServerFile(problemId, "input", f);
+          // Agrega el archivo al array con su ruta y contenido
           files.push({ path: `DataSet/${f}`, content });
         }
-        
+
+        // --- Expected outputs ---
         console.log(`⬇️ Descargando ${missingExpected.length} expected faltantes...`);
         for (const f of missingExpected) {
           downloadedCount++;
           if (outputDiv) outputDiv.innerHTML = `<div style="color: #17a2b8;">📥 Descargando archivo ${downloadedCount}/${totalFiles}: ${f}</div>`;
           const content = await fetchServerFile(problemId, "expected", f);
+          // Agrega el archivo al array con su ruta y contenido
           files.push({ path: `.Expected/${f}`, content });
+        }
+
+        // 4.5) Intentar agregar validador si existe
+        try {
+          const validatorRes = await fetch(`/problems/${problemId}/validator`);
+          if (validatorRes.ok) {
+            const validator = await validatorRes.json();
+            // Agregar Validator.cs y Solution.csproj en carpeta Validator/
+            files.push({ path: `Validator/${validator.fileName}`, content: validator.content });
+            files.push({ path: `Validator/${validator.csprojName}`, content: validator.csproj });
+            problemHasValidator[problemId] = true;
+            console.log('✅ Validador agregado al dataset');
+          } else {
+            problemHasValidator[problemId] = false;
+            console.log('ℹ️ No hay validador para este problema');
+          }
+        } catch (e) {
+          problemHasValidator[problemId] = false;
+          console.log('⚠️ Error al intentar agregar validador:', e);
         }
 
         // 5) Enviar al sandbox
@@ -2135,39 +2187,43 @@ class Program
         const log = document.getElementById('validationLog');
         const output = document.getElementById('output');
         
+        // Mostrar si se está usando validador (solo al inicio y durante los casos)
+        let usingValidator = false;
+        if (data && data.problem && problemHasValidator[data.problem]) {
+          usingValidator = true;
+        }
         if (eventType === 'start') {
-            log.textContent = `🚀 Iniciando validación de ${data.totalCases} casos para problema ${data.problem}...\n\n`;
-            output.className = 'result';
-            output.textContent = '';
+          log.textContent = `🚀 Iniciando validación de ${data.totalCases} casos para problema ${data.problem}...\n`;
+          if (usingValidator) {
+            log.textContent += '🛡️ Usando validador especial para este problema\n\n';
+          } else {
+            log.textContent += '\n';
+          }
+          output.className = 'result';
+          output.textContent = '';
         }
         else if (eventType === 'case-result') {
-            const percent = Math.round((data.caseNumber / data.totalCases) * 100);
-            
-            // Actualizar output con progreso
-            output.textContent = `⏳ Procesando caso ${data.caseNumber}/${data.totalCases} (${percent}%): ${data.caseName}`;
-            
-            // Agregar resultado al log
-            const resultIcon = data.result === 'Accepted' ? '✅' : 
-                              data.result === 'Wrong Answer' ? '❌' : 
-                              data.result === 'Error' ? '⚠️' : '❓';
-            
-            let resultLine = `${resultIcon} Caso ${data.caseNumber}/${data.totalCases}: ${data.caseName} → ${data.result} (${data.timeMs}ms)\n`;
-            
-            if (data.diff) {
-                resultLine += `   Diferencia:\n${data.diff}\n`;
-            }
-            
-            log.textContent += resultLine;
-            
-            // Auto-scroll al final del log
-            log.scrollTop = log.scrollHeight;
+          const percent = Math.round((data.caseNumber / data.totalCases) * 100);
+          // Actualizar output con progreso
+          output.textContent = `⏳ Procesando caso ${data.caseNumber}/${data.totalCases} (${percent}%): ${data.caseName}`;
+          // Agregar resultado al log
+          const resultIcon = data.result === 'Accepted' ? '✅' : 
+                    data.result === 'Wrong Answer' ? '❌' : 
+                    data.result === 'Error' ? '⚠️' : '❓';
+          let resultLine = `${resultIcon} Caso ${data.caseNumber}/${data.totalCases}: ${data.caseName} → ${data.result} (${data.timeMs}ms)\n`;
+          if (data.diff) {
+            resultLine += `   Diferencia:\n${data.diff}\n`;
+          }
+          log.textContent += resultLine;
+          // Auto-scroll al final del log
+          log.scrollTop = log.scrollHeight;
         }
         else if (eventType === 'complete') {
-            output.textContent = `✅ Validación completada - ${data.totalCases} casos procesados`;
-            output.className = 'result ok';
-            log.textContent += `\n✅ Validación completada - ${data.totalCases} casos procesados\n`;
+          output.textContent = `✅ Validación completada - ${data.totalCases} casos procesados`;
+          output.className = 'result ok';
+          log.textContent += `\n✅ Validación completada - ${data.totalCases} casos procesados\n`;
         }
-    }
+      }
 
     // BOOKMARK: Envío de datasets al sandbox
     // ----------------------------------------------------------------------
