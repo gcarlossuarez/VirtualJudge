@@ -1,0 +1,22 @@
+20
+Fricase Popular;56
+Sándwich de Chola;42
+Chairo Andino;36
+Sajta Paceña;192
+Sopa de Quinua Real;108
+Locro de Zapallo;99
+Silpancho Cochabambino;120
+Plato Andino Especial;194
+Estofado Campestre;57
+Picante Mixto;116
+Api con Pastel;106
+Caldo Blanco;129
+Pique Macho;124
+Sopa de Maní;101
+Enrollado Cruceño;167
+K’alapurka de la Casa;34
+Puchero de Fiesta;159
+Ají de Fideo;182
+Karapecho;191
+Cazuela de Maní;200
+212

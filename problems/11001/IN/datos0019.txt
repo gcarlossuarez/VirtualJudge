@@ -1,0 +1,21 @@
+19
+Silpancho Cochabambino;151
+Api con Pastel;42
+Fricase Popular;149
+K’alapurka de la Casa;69
+Pique Macho;43
+Puchero de Fiesta;110
+Estofado Campestre;36
+Picante Mixto;172
+Caldo de Pollo Criollo;112
+Sajta Paceña;119
+Karapecho;131
+Majadito Tostado;166
+Sándwich de Chola;173
+Caldo Blanco;177
+Anticucho Especial;121
+Sopa de Maní;104
+Locro de Zapallo;109
+Sopa de Quinua Real;129
+Chicharrón Tradicional;152
+417

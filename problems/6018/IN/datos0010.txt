@@ -1,0 +1,20 @@
+18
+Arroz con Queso;106
+Majadito Tostado;169
+Plato Andino Especial;143
+Estofado Campestre;118
+Caldo de Pollo Criollo;152
+Enrollado Cruceño;76
+Sándwich de Chola;39
+Sopa de Maní;185
+Picante Mixto;189
+K’alapurka de la Casa;44
+Puchero de Fiesta;160
+Sopa de Quinua Real;46
+Karapecho;24
+Pique Macho;75
+Locro de Zapallo;139
+Silpancho Cochabambino;66
+Caldo Blanco;121
+Cazuela de Maní;114
+286

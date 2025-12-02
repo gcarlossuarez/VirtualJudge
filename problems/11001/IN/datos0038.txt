@@ -1,0 +1,22 @@
+20
+Api con Pastel;100
+Ají de Fideo;133
+Puchero de Fiesta;117
+Arroz con Queso;131
+Estofado Campestre;74
+K’alapurka de la Casa;190
+Picante Mixto;87
+Sándwich de Chola;26
+Chicharrón Tradicional;24
+Karapecho;88
+Fricase Popular;129
+Cuñapé;119
+Sopa de Quinua Real;59
+Silpancho Cochabambino;77
+Plato Andino Especial;188
+Anticucho Especial;41
+Cazuela de Maní;200
+Caldo Blanco;58
+Enrollado Cruceño;167
+Sopa de Maní;179
+364

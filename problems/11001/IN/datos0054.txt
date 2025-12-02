@@ -1,0 +1,20 @@
+18
+Sándwich de Chola;176
+Estofado Campestre;181
+Locro de Zapallo;194
+Picante Mixto;193
+Puchero de Fiesta;47
+Chairo Andino;60
+Caldo Blanco;156
+Plato Andino Especial;135
+Ají de Fideo;140
+Karapecho;174
+Caldo de Pollo Criollo;145
+Fricase Popular;21
+Api con Pastel;127
+Chicharrón Tradicional;92
+Majadito Tostado;158
+Sajta Paceña;44
+Sopa de Maní;139
+Anticucho Especial;130
+751

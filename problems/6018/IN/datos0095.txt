@@ -1,0 +1,23 @@
+21
+Chicharrón Tradicional;106
+Picante Mixto;108
+Plato Andino Especial;74
+Arroz con Queso;115
+Pique Macho;134
+K’alapurka de la Casa;50
+Estofado Campestre;109
+Enrollado Cruceño;51
+Caldo Blanco;177
+Api con Pastel;95
+Fricase Popular;127
+Majadito Tostado;77
+Locro de Zapallo;102
+Ají de Fideo;199
+Sajta Paceña;166
+Caldo de Pollo Criollo;121
+Sopa de Maní;185
+Puchero de Fiesta;182
+Cazuela de Maní;59
+Karapecho;67
+Anticucho Especial;91
+297

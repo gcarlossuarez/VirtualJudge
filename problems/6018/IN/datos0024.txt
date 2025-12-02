@@ -1,0 +1,26 @@
+24
+Puchero de Fiesta;189
+Enrollado Cruceño;147
+Arroz con Queso;59
+Sajta Paceña;87
+Karapecho;151
+Sándwich de Chola;161
+Ají de Fideo;139
+Cazuela de Maní;38
+Cuñapé;118
+Caldo de Pollo Criollo;45
+Anticucho Especial;170
+Chairo Andino;179
+Chicharrón Tradicional;62
+Plato Andino Especial;35
+Picante Mixto;191
+Locro de Zapallo;43
+Api con Pastel;119
+Sopa de Quinua Real;100
+K’alapurka de la Casa;172
+Fricase Popular;122
+Estofado Campestre;154
+Majadito Tostado;72
+Caldo Blanco;150
+Sopa de Maní;40
+402

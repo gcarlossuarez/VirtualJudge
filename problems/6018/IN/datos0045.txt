@@ -1,0 +1,22 @@
+20
+Cuñapé;125
+Arroz con Queso;94
+Sopa de Maní;120
+Estofado Campestre;136
+Locro de Zapallo;165
+Puchero de Fiesta;177
+Anticucho Especial;59
+Enrollado Cruceño;86
+Sopa de Quinua Real;142
+Api con Pastel;30
+Silpancho Cochabambino;147
+Picante Mixto;139
+Cazuela de Maní;95
+Sajta Paceña;132
+Chairo Andino;42
+Plato Andino Especial;182
+K’alapurka de la Casa;184
+Ají de Fideo;113
+Caldo Blanco;93
+Karapecho;148
+658

@@ -1,0 +1,24 @@
+22
+Majadito Tostado;160
+Chicharrón Tradicional;99
+Cuñapé;181
+Picante Mixto;84
+Puchero de Fiesta;116
+K’alapurka de la Casa;89
+Sopa de Quinua Real;55
+Karapecho;32
+Arroz con Queso;37
+Enrollado Cruceño;194
+Anticucho Especial;129
+Ají de Fideo;130
+Locro de Zapallo;193
+Caldo de Pollo Criollo;102
+Cazuela de Maní;115
+Api con Pastel;104
+Fricase Popular;191
+Plato Andino Especial;187
+Sajta Paceña;174
+Silpancho Cochabambino;108
+Sándwich de Chola;122
+Caldo Blanco;166
+531

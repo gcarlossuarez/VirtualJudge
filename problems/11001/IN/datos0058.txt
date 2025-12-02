@@ -1,0 +1,20 @@
+18
+Caldo Blanco;81
+Caldo de Pollo Criollo;57
+Chairo Andino;131
+Arroz con Queso;115
+Majadito Tostado;119
+Fricase Popular;20
+K’alapurka de la Casa;65
+Cazuela de Maní;179
+Anticucho Especial;171
+Enrollado Cruceño;31
+Cuñapé;198
+Chicharrón Tradicional;116
+Estofado Campestre;83
+Karapecho;29
+Sopa de Quinua Real;133
+Pique Macho;121
+Api con Pastel;85
+Locro de Zapallo;134
+274

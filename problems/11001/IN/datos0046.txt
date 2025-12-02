@@ -1,0 +1,20 @@
+18
+Cazuela de Maní;110
+Plato Andino Especial;85
+Cuñapé;95
+Caldo Blanco;93
+Silpancho Cochabambino;96
+K’alapurka de la Casa;103
+Enrollado Cruceño;124
+Anticucho Especial;90
+Chicharrón Tradicional;141
+Fricase Popular;100
+Arroz con Queso;20
+Picante Mixto;153
+Caldo de Pollo Criollo;29
+Estofado Campestre;192
+Majadito Tostado;119
+Pique Macho;197
+Sándwich de Chola;188
+Karapecho;88
+400

@@ -1,0 +1,20 @@
+18
+Pique Macho;143
+Api con Pastel;34
+Fricase Popular;30
+Ají de Fideo;114
+Chairo Andino;129
+Chicharrón Tradicional;189
+Plato Andino Especial;158
+Anticucho Especial;39
+Arroz con Queso;92
+Cuñapé;135
+Cazuela de Maní;74
+Caldo de Pollo Criollo;50
+Caldo Blanco;187
+Majadito Tostado;87
+Sándwich de Chola;53
+Picante Mixto;167
+Sopa de Maní;171
+Estofado Campestre;175
+362

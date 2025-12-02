@@ -1,0 +1,21 @@
+19
+Sajta Paceña;106
+Sándwich de Chola;64
+Sopa de Quinua Real;74
+Estofado Campestre;192
+Plato Andino Especial;130
+Fricase Popular;150
+Cazuela de Maní;142
+Cuñapé;185
+Caldo de Pollo Criollo;72
+Caldo Blanco;177
+Sopa de Maní;168
+Ají de Fideo;129
+Locro de Zapallo;167
+Chairo Andino;160
+Pique Macho;182
+Puchero de Fiesta;21
+Arroz con Queso;68
+Enrollado Cruceño;191
+Api con Pastel;24
+446

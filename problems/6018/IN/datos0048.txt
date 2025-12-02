@@ -1,0 +1,20 @@
+18
+Locro de Zapallo;74
+Sándwich de Chola;143
+Anticucho Especial;34
+Majadito Tostado;139
+Fricase Popular;124
+Pique Macho;194
+Chicharrón Tradicional;146
+Estofado Campestre;131
+Caldo Blanco;179
+Chairo Andino;63
+Silpancho Cochabambino;167
+Picante Mixto;111
+Sajta Paceña;53
+Ají de Fideo;181
+Api con Pastel;37
+Enrollado Cruceño;89
+Cazuela de Maní;56
+Puchero de Fiesta;42
+406

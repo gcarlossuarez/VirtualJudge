@@ -1,0 +1,21 @@
+19
+Cuñapé;165
+Silpancho Cochabambino;131
+Estofado Campestre;148
+Cazuela de Maní;43
+Sándwich de Chola;116
+Fricase Popular;173
+Ají de Fideo;25
+Anticucho Especial;194
+Caldo Blanco;86
+Sopa de Maní;99
+Arroz con Queso;196
+Chicharrón Tradicional;110
+Sajta Paceña;31
+Api con Pastel;23
+Chairo Andino;193
+Locro de Zapallo;55
+Plato Andino Especial;71
+Puchero de Fiesta;147
+Pique Macho;142
+450

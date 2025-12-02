@@ -1,0 +1,21 @@
+19
+Pique Macho;116
+Caldo Blanco;63
+Api con Pastel;141
+Karapecho;71
+Plato Andino Especial;109
+Arroz con Queso;38
+Enrollado Cruceño;96
+Anticucho Especial;43
+Sándwich de Chola;184
+Locro de Zapallo;126
+Sopa de Quinua Real;140
+Cuñapé;61
+Ají de Fideo;113
+Chairo Andino;36
+Sopa de Maní;137
+Cazuela de Maní;156
+Sajta Paceña;120
+K’alapurka de la Casa;23
+Fricase Popular;82
+411

@@ -1,0 +1,20 @@
+18
+Anticucho Especial;122
+Sajta Paceña;24
+Majadito Tostado;123
+Silpancho Cochabambino;91
+Chicharrón Tradicional;198
+Arroz con Queso;36
+Sopa de Quinua Real;84
+Ají de Fideo;87
+Plato Andino Especial;172
+Caldo Blanco;133
+Enrollado Cruceño;134
+Sándwich de Chola;171
+Sopa de Maní;89
+Chairo Andino;94
+Locro de Zapallo;127
+Cuñapé;186
+Fricase Popular;148
+Picante Mixto;107
+380

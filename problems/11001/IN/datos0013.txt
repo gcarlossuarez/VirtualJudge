@@ -1,0 +1,20 @@
+18
+Fricase Popular;34
+Pique Macho;35
+Arroz con Queso;159
+Karapecho;42
+Silpancho Cochabambino;143
+Sándwich de Chola;146
+Sajta Paceña;59
+Caldo de Pollo Criollo;195
+Sopa de Maní;180
+Puchero de Fiesta;84
+Anticucho Especial;63
+Sopa de Quinua Real;96
+Api con Pastel;95
+Enrollado Cruceño;119
+Majadito Tostado;175
+Picante Mixto;44
+Ají de Fideo;58
+Estofado Campestre;49
+241

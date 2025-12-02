@@ -1,0 +1,23 @@
+21
+Caldo de Pollo Criollo;99
+Cuñapé;147
+Sopa de Maní;170
+Ají de Fideo;62
+Puchero de Fiesta;127
+Karapecho;125
+Pique Macho;50
+Silpancho Cochabambino;49
+Sopa de Quinua Real;64
+Anticucho Especial;135
+Fricase Popular;113
+Picante Mixto;33
+Chicharrón Tradicional;167
+Enrollado Cruceño;169
+Majadito Tostado;95
+Sándwich de Chola;157
+Arroz con Queso;183
+Cazuela de Maní;189
+Estofado Campestre;190
+Caldo Blanco;112
+Locro de Zapallo;171
+249

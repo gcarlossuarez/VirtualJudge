@@ -1,0 +1,21 @@
+19
+Pique Macho;156
+Sándwich de Chola;150
+Arroz con Queso;89
+Sajta Paceña;80
+Silpancho Cochabambino;142
+Cazuela de Maní;131
+Anticucho Especial;120
+Caldo Blanco;155
+Chicharrón Tradicional;62
+Locro de Zapallo;121
+Majadito Tostado;137
+Sopa de Quinua Real;115
+Enrollado Cruceño;74
+Fricase Popular;114
+K’alapurka de la Casa;53
+Api con Pastel;88
+Cuñapé;39
+Caldo de Pollo Criollo;177
+Plato Andino Especial;67
+488

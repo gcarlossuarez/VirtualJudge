@@ -1,0 +1,20 @@
+18
+Enrollado Cruceño;99
+Cuñapé;34
+Locro de Zapallo;58
+Sándwich de Chola;132
+Fricase Popular;95
+Karapecho;32
+Api con Pastel;24
+Ají de Fideo;86
+Sopa de Maní;22
+Chicharrón Tradicional;198
+Silpancho Cochabambino;48
+Arroz con Queso;77
+Picante Mixto;145
+Anticucho Especial;144
+Caldo Blanco;123
+K’alapurka de la Casa;100
+Plato Andino Especial;114
+Puchero de Fiesta;135
+262

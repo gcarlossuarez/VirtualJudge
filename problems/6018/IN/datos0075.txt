@@ -1,0 +1,22 @@
+20
+Karapecho;154
+Plato Andino Especial;104
+Sajta Paceña;157
+Majadito Tostado;77
+Sopa de Maní;102
+Picante Mixto;180
+Anticucho Especial;151
+Puchero de Fiesta;107
+Locro de Zapallo;105
+Cazuela de Maní;70
+Fricase Popular;49
+Caldo Blanco;79
+Ají de Fideo;48
+Chairo Andino;71
+Pique Macho;134
+Arroz con Queso;166
+Chicharrón Tradicional;61
+Enrollado Cruceño;37
+Cuñapé;74
+Silpancho Cochabambino;111
+493

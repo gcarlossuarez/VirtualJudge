@@ -1,0 +1,21 @@
+19
+Sopa de Maní;41
+Cuñapé;195
+K’alapurka de la Casa;44
+Caldo de Pollo Criollo;92
+Estofado Campestre;184
+Sándwich de Chola;86
+Arroz con Queso;198
+Api con Pastel;60
+Ají de Fideo;109
+Majadito Tostado;185
+Locro de Zapallo;148
+Caldo Blanco;142
+Plato Andino Especial;194
+Puchero de Fiesta;144
+Chairo Andino;37
+Fricase Popular;172
+Enrollado Cruceño;177
+Sajta Paceña;101
+Karapecho;151
+572

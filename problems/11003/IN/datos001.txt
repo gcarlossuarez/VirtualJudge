@@ -1,0 +1,7 @@
+Ana;Felipe
+Ana;Beto;Carla
+Beto;Ana;Carla;David
+Carla;Ana;Beto;Elena
+David;Beto;Felipe
+Elena;Carla
+Felipe;David

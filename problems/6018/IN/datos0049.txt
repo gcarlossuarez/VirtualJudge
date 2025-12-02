@@ -1,0 +1,23 @@
+21
+Ají de Fideo;184
+Estofado Campestre;172
+Puchero de Fiesta;62
+K’alapurka de la Casa;68
+Silpancho Cochabambino;50
+Chicharrón Tradicional;91
+Caldo Blanco;102
+Fricase Popular;192
+Pique Macho;29
+Sajta Paceña;56
+Karapecho;95
+Api con Pastel;128
+Sándwich de Chola;125
+Chairo Andino;76
+Anticucho Especial;52
+Majadito Tostado;162
+Cuñapé;195
+Caldo de Pollo Criollo;49
+Arroz con Queso;84
+Sopa de Maní;177
+Plato Andino Especial;27
+437

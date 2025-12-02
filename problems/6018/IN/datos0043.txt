@@ -1,0 +1,20 @@
+18
+Anticucho Especial;87
+Sándwich de Chola;46
+Sopa de Maní;24
+Arroz con Queso;185
+Chairo Andino;174
+Chicharrón Tradicional;130
+Majadito Tostado;42
+Fricase Popular;56
+K’alapurka de la Casa;104
+Caldo de Pollo Criollo;150
+Picante Mixto;51
+Cuñapé;148
+Karapecho;199
+Locro de Zapallo;195
+Api con Pastel;35
+Cazuela de Maní;54
+Silpancho Cochabambino;47
+Sopa de Quinua Real;181
+345

@@ -1,0 +1,23 @@
+21
+Ají de Fideo;22
+K’alapurka de la Casa;131
+Silpancho Cochabambino;47
+Sopa de Maní;43
+Picante Mixto;111
+Enrollado Cruceño;159
+Karapecho;132
+Sopa de Quinua Real;67
+Cuñapé;164
+Fricase Popular;168
+Pique Macho;32
+Estofado Campestre;199
+Anticucho Especial;115
+Majadito Tostado;193
+Chicharrón Tradicional;49
+Puchero de Fiesta;103
+Arroz con Queso;157
+Caldo de Pollo Criollo;51
+Locro de Zapallo;52
+Api con Pastel;42
+Caldo Blanco;33
+250

@@ -1,0 +1,23 @@
+21
+Arroz con Queso;134
+Majadito Tostado;176
+Locro de Zapallo;101
+Pique Macho;136
+Sopa de Maní;34
+Sajta Paceña;93
+Karapecho;39
+Caldo Blanco;163
+Estofado Campestre;22
+Chairo Andino;117
+Sopa de Quinua Real;103
+Cuñapé;152
+Plato Andino Especial;78
+K’alapurka de la Casa;109
+Puchero de Fiesta;148
+Cazuela de Maní;73
+Anticucho Especial;150
+Sándwich de Chola;132
+Fricase Popular;32
+Api con Pastel;76
+Picante Mixto;126
+554

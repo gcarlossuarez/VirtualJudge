@@ -1,0 +1,28 @@
+26
+Pique Macho;65
+Sajta Paceña;150
+Api con Pastel;149
+Sopa de Maní;181
+Cazuela de Maní;122
+Karapecho;81
+K’alapurka de la Casa;71
+Anticucho Especial;198
+Majadito Tostado;94
+Chicharrón Tradicional;132
+Silpancho Cochabambino;95
+Arroz con Queso;99
+Chairo Andino;49
+Sándwich de Chola;157
+Plato Andino Especial;190
+Sopa de Quinua Real;73
+Caldo Blanco;57
+Picante Mixto;182
+Fricase Popular;121
+Enrollado Cruceño;98
+Caldo de Pollo Criollo;147
+Estofado Campestre;126
+Cuñapé;173
+Puchero de Fiesta;152
+Locro de Zapallo;180
+Ají de Fideo;176
+222

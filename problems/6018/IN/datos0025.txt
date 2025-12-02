@@ -1,0 +1,20 @@
+18
+Sándwich de Chola;52
+Pique Macho;27
+Locro de Zapallo;80
+Api con Pastel;94
+Cuñapé;185
+Ají de Fideo;103
+Caldo Blanco;109
+Arroz con Queso;82
+Sopa de Quinua Real;167
+Anticucho Especial;74
+Cazuela de Maní;150
+Fricase Popular;190
+Sopa de Maní;40
+Estofado Campestre;191
+Puchero de Fiesta;183
+Chicharrón Tradicional;42
+Enrollado Cruceño;158
+Chairo Andino;63
+712

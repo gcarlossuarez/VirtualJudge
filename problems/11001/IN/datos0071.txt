@@ -1,0 +1,22 @@
+20
+Silpancho Cochabambino;77
+Majadito Tostado;29
+Cazuela de Maní;34
+Picante Mixto;24
+Arroz con Queso;109
+K’alapurka de la Casa;115
+Anticucho Especial;69
+Chicharrón Tradicional;23
+Locro de Zapallo;52
+Sajta Paceña;148
+Sopa de Quinua Real;66
+Fricase Popular;140
+Ají de Fideo;189
+Sándwich de Chola;76
+Cuñapé;152
+Enrollado Cruceño;99
+Puchero de Fiesta;187
+Pique Macho;175
+Api con Pastel;73
+Karapecho;26
+117
