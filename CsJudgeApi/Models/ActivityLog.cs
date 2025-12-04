@@ -6,7 +6,7 @@ public class ActivityLog
 {
     public int Id { get; set; }
     
-    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+    public DateTime Timestamp { get; set; } = DateTime.Now;
     
     public EActivityAction Action { get; set; }
     

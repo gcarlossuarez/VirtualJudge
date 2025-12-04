@@ -205,14 +205,14 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
     {
         if (lastSubmissionByIp.TryGetValue(ip, out var lastTime))
         {
-            var timeSinceLastSubmission = DateTime.UtcNow - lastTime;
+            var timeSinceLastSubmission = DateTime.Now - lastTime;
             if (timeSinceLastSubmission.TotalSeconds < submissionCooldownSeconds)
             {
                 var waitTime = submissionCooldownSeconds - (int)timeSinceLastSubmission.TotalSeconds;
                 return Results.BadRequest($"Debes esperar {waitTime} segundos antes de enviar otra submission.");
             }
         }
-        lastSubmissionByIp[ip] = DateTime.UtcNow;
+        lastSubmissionByIp[ip] = DateTime.Now;
     }
 
     Console.WriteLine($"Nueva petición desde {ip}");
@@ -493,7 +493,7 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
         string runLog = File.Exists(runLogPath) ? await File.ReadAllTextAsync(runLogPath) : "No se generó salida.";
 
 
-        var finishedAt = DateTimeOffset.UtcNow;
+        var finishedAt = DateTimeOffset.Now;
 
         Console.WriteLine("stdout:" + stdout);
         Console.WriteLine("stderr:" + stderr);
@@ -1245,11 +1245,11 @@ app.MapGet("/api/admin/activity-stats", async (AppDbContext db, HttpContext ctx)
 {
     try
     {
-        var fromDate = DateTime.UtcNow.AddDays(-30); // Últimos 30 días por defecto
+        var fromDate = DateTime.Now.AddDays(-30); // Últimos 30 días por defecto
         
         if (ctx.Request.Query.TryGetValue("days", out var daysStr) && int.TryParse(daysStr, out int days))
         {
-            fromDate = DateTime.UtcNow.AddDays(-days);
+            fromDate = DateTime.Now.AddDays(-days);
         }
 
         var stats = await db.ActivityLogs
@@ -1274,7 +1274,7 @@ app.MapGet("/api/admin/activity-stats", async (AppDbContext db, HttpContext ctx)
 
         return Results.Json(new 
         { 
-            period = $"Últimos {(int)(DateTime.UtcNow - fromDate).TotalDays} días",
+            period = $"Últimos {(int)(DateTime.Now - fromDate).TotalDays} días",
             fromDate,
             totalActivities,
             uniqueStudents,

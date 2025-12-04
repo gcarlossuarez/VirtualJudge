@@ -21,7 +21,7 @@ public class Submission
     public string RunLog { get; set; } = string.Empty;
     public string? Time { get; set; }
     public string? MemKb { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
     public string IP { get; set; } = string.Empty;
 }
 
