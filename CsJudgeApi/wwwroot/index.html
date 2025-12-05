@@ -805,7 +805,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://tahoe-launches-gst-travesti.trycloudflare.com";
+    const SERVER_BASE_URL = "https://highlights-blend-tract-consecutive.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
@@ -1819,7 +1819,7 @@ class Program
         output.textContent =
           "🖥️ Salida del programa:\n\n" +
           (outputText.trim() || "(sin salida)");
-      } catch (err) {
+      } catch ( err) {
         console.error(err);
         output.textContent =
           "❌ No se pudo conectar al sandbox local.\n" +
@@ -1843,7 +1843,10 @@ class Program
         }
       }
       // Normalizar declaración de Main (siempre)
+      //const mainRegex = /(public\s+)?static\s+(async\s+)?(Task|void)\s+Main\s*\[^)]*\)\s*\{/g;
       const mainRegex = /(public\s+)?static\s+(async\s+)?(Task|void)\s+Main\s*\([^)]*\)\s*\{/g;
+
+      
       code = code.replace(mainRegex, (match) => {
         let normalized = match.replace(/\s+/g, ' ');
         normalized = normalized.replace(/\s*\(/, '(').replace(/\s*\{/, '{');
@@ -1854,7 +1857,9 @@ class Program
     
     // Extrae todas las variantes de Main encontradas (para debug o validación extra)
     function extractAllMainVariants(sourceCode) {
+      //const mainRegex = /(public\s+)?static\s+(async\s+)?(Task|void)\s+Main\s*\[^)]*\)\s*\{/g;
       const mainRegex = /(public\s+)?static\s+(async\s+)?(Task|void)\s+Main\s*\([^)]*\)\s*\{/g;
+
       let result = [];
       let match;
       while ((match = mainRegex.exec(sourceCode)) !== null) {
@@ -1932,7 +1937,7 @@ class Program
         console.log(`🧪 Validando problema ${problemId} con sandbox...`);
         
         // ═══════════════════════════════════════════════════════════════════════════
-        // PASO 1: Verificar si el dataset existe, si no, sincronizarlo automáticamente
+        // BOOKMARK: PASO 1: Verificar si el dataset existe, si no, sincronizarlo automáticamente
         // ═══════════════════════════════════════════════════════════════════════════
         log.textContent += "🔍 Verificando dataset...\n";
         console.log(`🔍 Verificando dataset del problema ${problemId}...`);
@@ -1980,6 +1985,13 @@ class Program
         // El servidor NO envía una respuesta única, sino un STREAM continuo
         // de eventos (como un río de datos que va llegando de a poco).
         // ═══════════════════════════════════════════════════════════════════════════
+        // Obtener el time limit del cache (en segundos), convertir a ms
+        let timeLimitSeconds = 5;
+        if (problemsCache[problemId] && problemsCache[problemId].timeLimitSeconds) {
+          timeLimitSeconds = problemsCache[problemId].timeLimitSeconds;
+        }
+        const timeoutMs = Math.max(1000, Math.floor(timeLimitSeconds * 1000));
+
         fetch(`${SANDBOX_URL}/validate-dataset`, {
           method: "POST",
           headers: {
@@ -1989,7 +2001,7 @@ class Program
           body: JSON.stringify({
             code: normalizeCodeForKernel(code),
             problem: problemId,
-            timeoutMs: 5000
+            timeoutMs: timeoutMs
           }),
           signal: validationAbortController.signal  // ✨ Permitir cancelación
         }).then(response => {
@@ -2487,7 +2499,8 @@ class Program
           problemsCache[p.id] = {
             id: p.id,
             titulo: p.titulo,
-            text: p.text
+            text: p.text,
+            timeLimitSeconds: p.timeLimitSeconds || 5
           };
         });
 
@@ -2516,26 +2529,26 @@ class Program
             }
 
             try {
-              // 🔥 SIN PETICIÓN AL SERVIDOR - Usar cache local
+              // BOOKMARK: 🔥 SIN PETICIÓN AL SERVIDOR - Usar cache local
               const problemData = problemsCache[id];
               if (!problemData) {
                 console.error(`Problema ${id} no encontrado en cache`);
                 return;
               }
 
-              // 1) 👇 Cargar datos desde cache (INSTANTÁNEO, sin red)
+              // BOOKMARK: 1) 👇 Cargar datos desde cache (INSTANTÁNEO, sin red)
               // Antes de actualizar la UI, verificar el token:
               // Si el usuario ya cambió de problema, no actualizamos la UI.
               if (myToken !== problemChangeToken) return;
               document.getElementById("txtProblemId").value = problemData.id;
               document.getElementById("txtProblemDesc").value = problemData.text;
 
-              // 2) 👇 Cargar datasets (inputs) de ese problema, pasando el token
+              // BOOKMARK: 2) 👇 Cargar datasets (inputs) de ese problema, pasando el token
               // El token se pasa a loadInputs y a los eventos internos de datasets.
               await loadInputs(id, myToken);
               if (myToken !== problemChangeToken) return;
 
-              // 3) 🔄 Si el sandbox está disponible, sincronizar datasets automáticamente
+              // BOOKMARK: 3) 🔄 Si el sandbox está disponible, sincronizar datasets automáticamente
               if (sandboxAvailable) {
                 try {
                   console.log(`🔄 Sincronizando dataset para problema ${id}...`);
@@ -2590,7 +2603,8 @@ class Program
           problemsCache[p.id] = {
             id: p.id,
             titulo: p.titulo,
-            text: p.text
+            text: p.text,
+            timeLimitSeconds: p.timeLimitSeconds || 5
           };
         });
         

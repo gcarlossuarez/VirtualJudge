@@ -715,6 +715,7 @@ app.MapGet("/contest/questions", async (AppDbContext db, HttpContext ctx) =>
             id = q.QuestionId,
             titulo = q.Review,
             text = descripcion,
+            timeLimitSeconds = q.TimeLimitSeconds,
             lastModified = lastModified // Timestamp para detectar cambios
         };
     }).ToList();
