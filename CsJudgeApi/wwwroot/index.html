@@ -789,8 +789,6 @@ class Program
       <button id="btnValidation" onclick="runOfflineValidation()" disabled title="Verificando sandbox...">📂 Validar con DataSet local</button>
       <button id="btnCancelValidation" onclick="cancelValidation()" style="display: none; background-color: #dc3545; color: white;">🛑 Cancelar Validación</button>
       <button id="btnClearDataset" onclick="clearDataset()" disabled title="Limpiar el dataset del problema actual" style="background-color: #e74c3c; color: white;">🗑️ Limpiar Dataset</button>
-    </div>
-    <div style="margin-top: 8px;">
       <button id="btnDownloadSandbox" onclick="downloadSandbox()" style="background-color: #ff9800;">📥 Descargar Sandbox</button>
       <button id="btnDownloadDotnet" onclick="downloadDotnetSDK()" style="background-color: #512bd4; color: white;" 
               title="⚠️ Solo Windows x64 - No necesario si ya tienes .NET SDK 10 instalado">⬇️ Descargar .NET 10 SDK</button>
@@ -805,12 +803,11 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://regression-jill-waters-nashville.trycloudflare.com";
+    const SERVER_BASE_URL = "https://favorite-achieving-rider-dishes.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
     // Descargar desde Google Drive (no consume ancho de banda del servidor)
-    // NUEVA URL DE DESCARGA DEL SANDBOX (2025-11-24)
     // NUEVA URL DE DESCARGA DEL SANDBOX LOCAL (2025-11-26)
     const SANDBOX_DOWNLOAD_URL = "https://drive.google.com/file/d/1_rFf7Z6gzNtbHY_2mEYmaBJb9NxbWovy/view?usp=sharing";
 
