@@ -29,7 +29,7 @@ Distancia desde 4 a 27: 570
 Distancia desde 4 a 28: 783
 Distancia desde 4 a 29: 639
 Distancia desde 4 a 30: 214
-Distancia desde 4 a 31: 860
+Distancia desde 4 a 31: 1040
 Distancia desde 4 a 32: 703
 Distancia desde 4 a 33: 608
 Distancia desde 4 a 34: 582

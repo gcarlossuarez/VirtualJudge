@@ -20,7 +20,7 @@ Distancia desde 6 a 18: 501
 Distancia desde 6 a 19: 521
 Distancia desde 6 a 20: 376
 Distancia desde 6 a 21: 620
-Distancia desde 6 a 22: 829
+Distancia desde 6 a 22: 850
 Distancia desde 6 a 23: 365
 Distancia desde 6 a 24: 842
 Distancia desde 6 a 25: 282
@@ -35,8 +35,8 @@ Distancia desde 6 a 33: 471
 Distancia desde 6 a 34: 492
 Distancia desde 6 a 35: 144
 Distancia desde 6 a 36: 609
-Distancia desde 6 a 37: 670
-Distancia desde 6 a 38: 514
+Distancia desde 6 a 37: 745
+Distancia desde 6 a 38: 535
 Distancia desde 6 a 39: 660
 Distancia desde 6 a 40: 416
 Distancia desde 6 a 41: 134

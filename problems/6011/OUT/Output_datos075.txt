@@ -10,7 +10,7 @@ Distancia desde 7 a 8: 415
 Distancia desde 7 a 9: 338
 Distancia desde 7 a 10: 103
 Distancia desde 7 a 11: 442
-Distancia desde 7 a 12: 907
+Distancia desde 7 a 12: 964
 Distancia desde 7 a 13: 858
 Distancia desde 7 a 14: 520
 Distancia desde 7 a 15: 437

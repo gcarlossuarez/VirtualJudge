@@ -1,8 +1,8 @@
 Distancia desde 13 a 0: 355
 Distancia desde 13 a 1: 1255
 Distancia desde 13 a 2: 971
-Distancia desde 13 a 3: 1398
-Distancia desde 13 a 4: 914
+Distancia desde 13 a 3: 1494
+Distancia desde 13 a 4: 1118
 Distancia desde 13 a 5: 986
 Distancia desde 13 a 6: 897
 Distancia desde 13 a 7: 856
@@ -46,5 +46,5 @@ Distancia desde 13 a 44: 1308
 Distancia desde 13 a 45: 1300
 Distancia desde 13 a 46: 1403
 Distancia desde 13 a 47: 910
-Distancia desde 13 a 48: 1828
+Distancia desde 13 a 48: 1887
 Distancia desde 13 a 49: 432

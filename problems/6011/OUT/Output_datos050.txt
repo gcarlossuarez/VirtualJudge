@@ -1,4 +1,4 @@
-Distancia desde 37 a 0: 432
+Distancia desde 37 a 0: 465
 Distancia desde 37 a 1: 82
 Distancia desde 37 a 2: 1021
 Distancia desde 37 a 3: 605
@@ -45,6 +45,6 @@ Distancia desde 37 a 43: 403
 Distancia desde 37 a 44: 658
 Distancia desde 37 a 45: 386
 Distancia desde 37 a 46: 650
-Distancia desde 37 a 47: 654
+Distancia desde 37 a 47: 687
 Distancia desde 37 a 48: 505
 Distancia desde 37 a 49: 342

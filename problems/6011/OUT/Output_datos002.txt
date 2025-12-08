@@ -44,7 +44,7 @@ Distancia desde 36 a 42: 471
 Distancia desde 36 a 43: 365
 Distancia desde 36 a 44: 330
 Distancia desde 36 a 45: 584
-Distancia desde 36 a 46: 464
+Distancia desde 36 a 46: 1280
 Distancia desde 36 a 47: 417
 Distancia desde 36 a 48: 775
 Distancia desde 36 a 49: 336

@@ -22,7 +22,7 @@ Distancia desde 1 a 20: 144
 Distancia desde 1 a 21: 376
 Distancia desde 1 a 22: 860
 Distancia desde 1 a 23: 155
-Distancia desde 1 a 24: 308
+Distancia desde 1 a 24: 641
 Distancia desde 1 a 25: 254
 Distancia desde 1 a 26: 215
 Distancia desde 1 a 27: 262

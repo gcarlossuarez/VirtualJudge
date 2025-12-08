@@ -36,7 +36,7 @@ Distancia desde 3 a 34: 689
 Distancia desde 3 a 35: 865
 Distancia desde 3 a 36: 1019
 Distancia desde 3 a 37: 760
-Distancia desde 3 a 38: 886
+Distancia desde 3 a 38: 953
 Distancia desde 3 a 39: 658
 Distancia desde 3 a 40: 565
 Distancia desde 3 a 41: 1126

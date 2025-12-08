@@ -10,7 +10,7 @@ Distancia desde 35 a 8: 339
 Distancia desde 35 a 9: 491
 Distancia desde 35 a 10: 775
 Distancia desde 35 a 11: 313
-Distancia desde 35 a 12: 540
+Distancia desde 35 a 12: 634
 Distancia desde 35 a 13: 206
 Distancia desde 35 a 14: 348
 Distancia desde 35 a 15: 490
@@ -25,7 +25,7 @@ Distancia desde 35 a 23: 171
 Distancia desde 35 a 24: 100
 Distancia desde 35 a 25: 555
 Distancia desde 35 a 26: 320
-Distancia desde 35 a 27: 449
+Distancia desde 35 a 27: 624
 Distancia desde 35 a 28: 659
 Distancia desde 35 a 29: 433
 Distancia desde 35 a 30: 398
@@ -47,4 +47,4 @@ Distancia desde 35 a 45: 889
 Distancia desde 35 a 46: 371
 Distancia desde 35 a 47: 537
 Distancia desde 35 a 48: 350
-Distancia desde 35 a 49: 430
+Distancia desde 35 a 49: 676

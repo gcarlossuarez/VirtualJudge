@@ -18,7 +18,7 @@ Distancia desde 29 a 16: 540
 Distancia desde 29 a 17: 409
 Distancia desde 29 a 18: 535
 Distancia desde 29 a 19: 682
-Distancia desde 29 a 20: 391
+Distancia desde 29 a 20: 623
 Distancia desde 29 a 21: 812
 Distancia desde 29 a 22: 1216
 Distancia desde 29 a 23: 226
@@ -33,9 +33,9 @@ Distancia desde 29 a 31: 327
 Distancia desde 29 a 32: 89
 Distancia desde 29 a 33: 722
 Distancia desde 29 a 34: 588
-Distancia desde 29 a 35: 505
+Distancia desde 29 a 35: 608
 Distancia desde 29 a 36: 334
-Distancia desde 29 a 37: 555
+Distancia desde 29 a 37: 699
 Distancia desde 29 a 38: 645
 Distancia desde 29 a 39: 509
 Distancia desde 29 a 40: 230
@@ -45,6 +45,6 @@ Distancia desde 29 a 43: 371
 Distancia desde 29 a 44: 476
 Distancia desde 29 a 45: 11
 Distancia desde 29 a 46: 457
-Distancia desde 29 a 47: 442
+Distancia desde 29 a 47: 731
 Distancia desde 29 a 48: 471
 Distancia desde 29 a 49: 158

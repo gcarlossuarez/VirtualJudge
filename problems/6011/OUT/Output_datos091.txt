@@ -15,7 +15,7 @@ Distancia desde 32 a 13: 419
 Distancia desde 32 a 14: 878
 Distancia desde 32 a 15: 544
 Distancia desde 32 a 16: 869
-Distancia desde 32 a 17: 786
+Distancia desde 32 a 17: 895
 Distancia desde 32 a 18: 398
 Distancia desde 32 a 19: 813
 Distancia desde 32 a 20: 675

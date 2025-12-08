@@ -20,7 +20,7 @@ Distancia desde 10 a 18: 645
 Distancia desde 10 a 19: 773
 Distancia desde 10 a 20: 872
 Distancia desde 10 a 21: 751
-Distancia desde 10 a 22: 543
+Distancia desde 10 a 22: 888
 Distancia desde 10 a 23: 491
 Distancia desde 10 a 24: 76
 Distancia desde 10 a 25: 885

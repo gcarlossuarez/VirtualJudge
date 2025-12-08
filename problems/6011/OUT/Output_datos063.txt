@@ -11,7 +11,7 @@ Distancia desde 1 a 9: 403
 Distancia desde 1 a 10: 487
 Distancia desde 1 a 11: 361
 Distancia desde 1 a 12: 709
-Distancia desde 1 a 13: 466
+Distancia desde 1 a 13: 609
 Distancia desde 1 a 14: 241
 Distancia desde 1 a 15: 583
 Distancia desde 1 a 16: 157

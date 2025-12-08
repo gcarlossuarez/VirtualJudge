@@ -4,9 +4,9 @@ Distancia desde 24 a 2: 671
 Distancia desde 24 a 3: 990
 Distancia desde 24 a 4: 920
 Distancia desde 24 a 5: 696
-Distancia desde 24 a 6: 1488
+Distancia desde 24 a 6: 1489
 Distancia desde 24 a 7: 561
-Distancia desde 24 a 8: 772
+Distancia desde 24 a 8: 887
 Distancia desde 24 a 9: 784
 Distancia desde 24 a 10: 684
 Distancia desde 24 a 11: 767
@@ -26,9 +26,9 @@ Distancia desde 24 a 24: 0
 Distancia desde 24 a 25: 808
 Distancia desde 24 a 26: 886
 Distancia desde 24 a 27: 877
-Distancia desde 24 a 28: 782
+Distancia desde 24 a 28: 877
 Distancia desde 24 a 29: 774
-Distancia desde 24 a 30: 829
+Distancia desde 24 a 30: 830
 Distancia desde 24 a 31: 841
 Distancia desde 24 a 32: 871
 Distancia desde 24 a 33: 1004
@@ -45,6 +45,6 @@ Distancia desde 24 a 43: 763
 Distancia desde 24 a 44: 904
 Distancia desde 24 a 45: 732
 Distancia desde 24 a 46: 539
-Distancia desde 24 a 47: 868
+Distancia desde 24 a 47: 951
 Distancia desde 24 a 48: 701
 Distancia desde 24 a 49: 765

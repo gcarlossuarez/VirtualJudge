@@ -2,8 +2,8 @@ Distancia desde 25 a 0: 599
 Distancia desde 25 a 1: 218
 Distancia desde 25 a 2: 523
 Distancia desde 25 a 3: 684
-Distancia desde 25 a 4: 558
-Distancia desde 25 a 5: 753
+Distancia desde 25 a 4: 899
+Distancia desde 25 a 5: 838
 Distancia desde 25 a 6: 866
 Distancia desde 25 a 7: 583
 Distancia desde 25 a 8: 127
@@ -32,7 +32,7 @@ Distancia desde 25 a 30: 673
 Distancia desde 25 a 31: 335
 Distancia desde 25 a 32: 577
 Distancia desde 25 a 33: 489
-Distancia desde 25 a 34: 563
+Distancia desde 25 a 34: 584
 Distancia desde 25 a 35: 847
 Distancia desde 25 a 36: 1150
 Distancia desde 25 a 37: 448

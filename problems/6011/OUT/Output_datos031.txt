@@ -39,7 +39,7 @@ Distancia desde 26 a 37: 108
 Distancia desde 26 a 38: 272
 Distancia desde 26 a 39: 498
 Distancia desde 26 a 40: 480
-Distancia desde 26 a 41: 543
+Distancia desde 26 a 41: 738
 Distancia desde 26 a 42: 299
 Distancia desde 26 a 43: 409
 Distancia desde 26 a 44: 45

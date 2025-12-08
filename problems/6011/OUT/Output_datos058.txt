@@ -13,7 +13,7 @@ Distancia desde 20 a 11: 447
 Distancia desde 20 a 12: 249
 Distancia desde 20 a 13: 497
 Distancia desde 20 a 14: 514
-Distancia desde 20 a 15: 608
+Distancia desde 20 a 15: 651
 Distancia desde 20 a 16: 438
 Distancia desde 20 a 17: 746
 Distancia desde 20 a 18: 738
@@ -25,7 +25,7 @@ Distancia desde 20 a 23: 614
 Distancia desde 20 a 24: 655
 Distancia desde 20 a 25: 551
 Distancia desde 20 a 26: 987
-Distancia desde 20 a 27: 590
+Distancia desde 20 a 27: 633
 Distancia desde 20 a 28: 573
 Distancia desde 20 a 29: 464
 Distancia desde 20 a 30: 467

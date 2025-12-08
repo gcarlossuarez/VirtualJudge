@@ -39,12 +39,12 @@ Distancia desde 3 a 37: 1141
 Distancia desde 3 a 38: 828
 Distancia desde 3 a 39: 214
 Distancia desde 3 a 40: 441
-Distancia desde 3 a 41: 640
+Distancia desde 3 a 41: 659
 Distancia desde 3 a 42: 378
 Distancia desde 3 a 43: 533
 Distancia desde 3 a 44: 586
-Distancia desde 3 a 45: 525
+Distancia desde 3 a 45: 544
 Distancia desde 3 a 46: 332
-Distancia desde 3 a 47: 296
+Distancia desde 3 a 47: 415
 Distancia desde 3 a 48: 480
 Distancia desde 3 a 49: 657

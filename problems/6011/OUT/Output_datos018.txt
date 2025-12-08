@@ -1,7 +1,7 @@
 Distancia desde 46 a 0: 760
 Distancia desde 46 a 1: 837
 Distancia desde 46 a 2: 739
-Distancia desde 46 a 3: 922
+Distancia desde 46 a 3: 1303
 Distancia desde 46 a 4: 618
 Distancia desde 46 a 5: 632
 Distancia desde 46 a 6: 316
@@ -11,14 +11,14 @@ Distancia desde 46 a 9: 521
 Distancia desde 46 a 10: 1041
 Distancia desde 46 a 11: 580
 Distancia desde 46 a 12: 660
-Distancia desde 46 a 13: 1044
+Distancia desde 46 a 13: 1150
 Distancia desde 46 a 14: 614
 Distancia desde 46 a 15: 786
 Distancia desde 46 a 16: 586
-Distancia desde 46 a 17: 842
+Distancia desde 46 a 17: 952
 Distancia desde 46 a 18: 465
 Distancia desde 46 a 19: 692
-Distancia desde 46 a 20: 692
+Distancia desde 46 a 20: 928
 Distancia desde 46 a 21: 802
 Distancia desde 46 a 22: 716
 Distancia desde 46 a 23: 793

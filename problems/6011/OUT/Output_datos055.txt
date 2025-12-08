@@ -2,7 +2,7 @@ Distancia desde 11 a 0: 545
 Distancia desde 11 a 1: 536
 Distancia desde 11 a 2: 740
 Distancia desde 11 a 3: 299
-Distancia desde 11 a 4: 361
+Distancia desde 11 a 4: 525
 Distancia desde 11 a 5: 405
 Distancia desde 11 a 6: 201
 Distancia desde 11 a 7: 198
@@ -35,7 +35,7 @@ Distancia desde 11 a 33: 419
 Distancia desde 11 a 34: 771
 Distancia desde 11 a 35: 1136
 Distancia desde 11 a 36: 55
-Distancia desde 11 a 37: 856
+Distancia desde 11 a 37: 1050
 Distancia desde 11 a 38: 637
 Distancia desde 11 a 39: 465
 Distancia desde 11 a 40: 417

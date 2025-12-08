@@ -29,7 +29,7 @@ Distancia desde 2 a 27: 613
 Distancia desde 2 a 28: 803
 Distancia desde 2 a 29: 490
 Distancia desde 2 a 30: 431
-Distancia desde 2 a 31: 916
+Distancia desde 2 a 31: 947
 Distancia desde 2 a 32: 1039
 Distancia desde 2 a 33: 545
 Distancia desde 2 a 34: 336

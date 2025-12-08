@@ -38,7 +38,7 @@ Distancia desde 19 a 36: 639
 Distancia desde 19 a 37: 588
 Distancia desde 19 a 38: 756
 Distancia desde 19 a 39: 606
-Distancia desde 19 a 40: 725
+Distancia desde 19 a 40: 951
 Distancia desde 19 a 41: 613
 Distancia desde 19 a 42: 782
 Distancia desde 19 a 43: 701

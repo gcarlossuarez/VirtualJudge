@@ -6,13 +6,13 @@ Distancia desde 2 a 4: 420
 Distancia desde 2 a 5: 776
 Distancia desde 2 a 6: 503
 Distancia desde 2 a 7: 237
-Distancia desde 2 a 8: 456
+Distancia desde 2 a 8: 572
 Distancia desde 2 a 9: 234
 Distancia desde 2 a 10: 315
 Distancia desde 2 a 11: 402
 Distancia desde 2 a 12: 458
 Distancia desde 2 a 13: 103
-Distancia desde 2 a 14: 265
+Distancia desde 2 a 14: 413
 Distancia desde 2 a 15: 94
 Distancia desde 2 a 16: 490
 Distancia desde 2 a 17: 319
@@ -42,7 +42,7 @@ Distancia desde 2 a 40: 110
 Distancia desde 2 a 41: 109
 Distancia desde 2 a 42: 791
 Distancia desde 2 a 43: 197
-Distancia desde 2 a 44: 356
+Distancia desde 2 a 44: 374
 Distancia desde 2 a 45: 335
 Distancia desde 2 a 46: 315
 Distancia desde 2 a 47: 278

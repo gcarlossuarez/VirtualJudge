@@ -34,13 +34,13 @@ Distancia desde 28 a 32: 594
 Distancia desde 28 a 33: 514
 Distancia desde 28 a 34: 915
 Distancia desde 28 a 35: 530
-Distancia desde 28 a 36: 655
+Distancia desde 28 a 36: 835
 Distancia desde 28 a 37: 389
 Distancia desde 28 a 38: 528
 Distancia desde 28 a 39: 975
 Distancia desde 28 a 40: 748
 Distancia desde 28 a 41: 637
-Distancia desde 28 a 42: 706
+Distancia desde 28 a 42: 784
 Distancia desde 28 a 43: 479
 Distancia desde 28 a 44: 773
 Distancia desde 28 a 45: 662

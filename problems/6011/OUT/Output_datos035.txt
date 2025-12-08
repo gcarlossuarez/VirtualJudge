@@ -17,7 +17,7 @@ Distancia desde 31 a 15: 555
 Distancia desde 31 a 16: 373
 Distancia desde 31 a 17: 452
 Distancia desde 31 a 18: 656
-Distancia desde 31 a 19: 1132
+Distancia desde 31 a 19: 1241
 Distancia desde 31 a 20: 770
 Distancia desde 31 a 21: 522
 Distancia desde 31 a 22: 674
@@ -34,7 +34,7 @@ Distancia desde 31 a 32: 629
 Distancia desde 31 a 33: 838
 Distancia desde 31 a 34: 816
 Distancia desde 31 a 35: 553
-Distancia desde 31 a 36: 470
+Distancia desde 31 a 36: 813
 Distancia desde 31 a 37: 920
 Distancia desde 31 a 38: 868
 Distancia desde 31 a 39: 744

@@ -26,7 +26,7 @@ Distancia desde 33 a 24: 861
 Distancia desde 33 a 25: 213
 Distancia desde 33 a 26: 982
 Distancia desde 33 a 27: 587
-Distancia desde 33 a 28: 215
+Distancia desde 33 a 28: 515
 Distancia desde 33 a 29: 362
 Distancia desde 33 a 30: 371
 Distancia desde 33 a 31: 358

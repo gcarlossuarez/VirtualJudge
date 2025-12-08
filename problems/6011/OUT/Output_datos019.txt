@@ -39,7 +39,7 @@ Distancia desde 16 a 37: 624
 Distancia desde 16 a 38: 397
 Distancia desde 16 a 39: 336
 Distancia desde 16 a 40: 188
-Distancia desde 16 a 41: 525
+Distancia desde 16 a 41: 739
 Distancia desde 16 a 42: 138
 Distancia desde 16 a 43: 294
 Distancia desde 16 a 44: 419

@@ -2,7 +2,7 @@ Distancia desde 18 a 0: 476
 Distancia desde 18 a 1: 638
 Distancia desde 18 a 2: 498
 Distancia desde 18 a 3: 487
-Distancia desde 18 a 4: 493
+Distancia desde 18 a 4: 706
 Distancia desde 18 a 5: 239
 Distancia desde 18 a 6: 655
 Distancia desde 18 a 7: 368

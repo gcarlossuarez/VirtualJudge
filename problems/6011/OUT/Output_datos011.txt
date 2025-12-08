@@ -1,4 +1,4 @@
-Distancia desde 16 a 0: 972
+Distancia desde 16 a 0: 981
 Distancia desde 16 a 1: 746
 Distancia desde 16 a 2: 387
 Distancia desde 16 a 3: 501
@@ -21,7 +21,7 @@ Distancia desde 16 a 19: 665
 Distancia desde 16 a 20: 873
 Distancia desde 16 a 21: 766
 Distancia desde 16 a 22: 402
-Distancia desde 16 a 23: 854
+Distancia desde 16 a 23: 957
 Distancia desde 16 a 24: 495
 Distancia desde 16 a 25: 809
 Distancia desde 16 a 26: 1114
@@ -42,7 +42,7 @@ Distancia desde 16 a 40: 1611
 Distancia desde 16 a 41: 523
 Distancia desde 16 a 42: 410
 Distancia desde 16 a 43: 884
-Distancia desde 16 a 44: 836
+Distancia desde 16 a 44: 854
 Distancia desde 16 a 45: 926
 Distancia desde 16 a 46: 738
 Distancia desde 16 a 47: 834

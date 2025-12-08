@@ -35,12 +35,12 @@ Distancia desde 20 a 33: 808
 Distancia desde 20 a 34: 710
 Distancia desde 20 a 35: 728
 Distancia desde 20 a 36: 588
-Distancia desde 20 a 37: 1039
+Distancia desde 20 a 37: 1269
 Distancia desde 20 a 38: 735
 Distancia desde 20 a 39: 946
 Distancia desde 20 a 40: 698
 Distancia desde 20 a 41: 778
-Distancia desde 20 a 42: 1129
+Distancia desde 20 a 42: 1337
 Distancia desde 20 a 43: 72
 Distancia desde 20 a 44: 886
 Distancia desde 20 a 45: 785

@@ -40,7 +40,7 @@ Distancia desde 10 a 38: 448
 Distancia desde 10 a 39: 376
 Distancia desde 10 a 40: 755
 Distancia desde 10 a 41: 366
-Distancia desde 10 a 42: 586
+Distancia desde 10 a 42: 613
 Distancia desde 10 a 43: 456
 Distancia desde 10 a 44: 569
 Distancia desde 10 a 45: 1055

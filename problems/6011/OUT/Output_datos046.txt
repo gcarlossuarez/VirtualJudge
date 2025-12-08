@@ -32,7 +32,7 @@ Distancia desde 33 a 30: 545
 Distancia desde 33 a 31: 437
 Distancia desde 33 a 32: 200
 Distancia desde 33 a 33: 0
-Distancia desde 33 a 34: 294
+Distancia desde 33 a 34: 471
 Distancia desde 33 a 35: 386
 Distancia desde 33 a 36: 232
 Distancia desde 33 a 37: 351
@@ -43,8 +43,8 @@ Distancia desde 33 a 41: 1198
 Distancia desde 33 a 42: 305
 Distancia desde 33 a 43: 699
 Distancia desde 33 a 44: 324
-Distancia desde 33 a 45: 572
+Distancia desde 33 a 45: 624
 Distancia desde 33 a 46: 430
 Distancia desde 33 a 47: 299
-Distancia desde 33 a 48: 309
+Distancia desde 33 a 48: 341
 Distancia desde 33 a 49: 900

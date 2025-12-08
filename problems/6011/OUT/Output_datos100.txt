@@ -1,6 +1,6 @@
 Distancia desde 23 a 0: 370
 Distancia desde 23 a 1: 443
-Distancia desde 23 a 2: 680
+Distancia desde 23 a 2: 736
 Distancia desde 23 a 3: 730
 Distancia desde 23 a 4: 344
 Distancia desde 23 a 5: 736
@@ -24,12 +24,12 @@ Distancia desde 23 a 22: 192
 Distancia desde 23 a 23: 0
 Distancia desde 23 a 24: 552
 Distancia desde 23 a 25: 212
-Distancia desde 23 a 26: 271
+Distancia desde 23 a 26: 288
 Distancia desde 23 a 27: 413
 Distancia desde 23 a 28: 330
 Distancia desde 23 a 29: 347
 Distancia desde 23 a 30: 101
-Distancia desde 23 a 31: 674
+Distancia desde 23 a 31: 730
 Distancia desde 23 a 32: 471
 Distancia desde 23 a 33: 166
 Distancia desde 23 a 34: 146
@@ -37,7 +37,7 @@ Distancia desde 23 a 35: 456
 Distancia desde 23 a 36: 58
 Distancia desde 23 a 37: 411
 Distancia desde 23 a 38: 581
-Distancia desde 23 a 39: 197
+Distancia desde 23 a 39: 362
 Distancia desde 23 a 40: 122
 Distancia desde 23 a 41: 390
 Distancia desde 23 a 42: 220
@@ -45,6 +45,6 @@ Distancia desde 23 a 43: 270
 Distancia desde 23 a 44: 56
 Distancia desde 23 a 45: 178
 Distancia desde 23 a 46: 374
-Distancia desde 23 a 47: 477
+Distancia desde 23 a 47: 533
 Distancia desde 23 a 48: 107
 Distancia desde 23 a 49: 503

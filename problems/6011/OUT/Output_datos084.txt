@@ -24,7 +24,7 @@ Distancia desde 41 a 22: 120
 Distancia desde 41 a 23: 636
 Distancia desde 41 a 24: 620
 Distancia desde 41 a 25: 633
-Distancia desde 41 a 26: 425
+Distancia desde 41 a 26: 478
 Distancia desde 41 a 27: 891
 Distancia desde 41 a 28: 777
 Distancia desde 41 a 29: 1244
@@ -44,7 +44,7 @@ Distancia desde 41 a 42: 689
 Distancia desde 41 a 43: 478
 Distancia desde 41 a 44: 663
 Distancia desde 41 a 45: 724
-Distancia desde 41 a 46: 606
+Distancia desde 41 a 46: 659
 Distancia desde 41 a 47: 510
 Distancia desde 41 a 48: 504
 Distancia desde 41 a 49: 537

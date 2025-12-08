@@ -1,6 +1,6 @@
 Distancia desde 21 a 0: 504
 Distancia desde 21 a 1: 415
-Distancia desde 21 a 2: 347
+Distancia desde 21 a 2: 592
 Distancia desde 21 a 3: 156
 Distancia desde 21 a 4: 74
 Distancia desde 21 a 5: 454
@@ -30,10 +30,10 @@ Distancia desde 21 a 28: 268
 Distancia desde 21 a 29: 728
 Distancia desde 21 a 30: 437
 Distancia desde 21 a 31: 581
-Distancia desde 21 a 32: 708
+Distancia desde 21 a 32: 723
 Distancia desde 21 a 33: 573
 Distancia desde 21 a 34: 353
-Distancia desde 21 a 35: 436
+Distancia desde 21 a 35: 503
 Distancia desde 21 a 36: 346
 Distancia desde 21 a 37: 467
 Distancia desde 21 a 38: 840

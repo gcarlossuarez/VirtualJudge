@@ -26,13 +26,13 @@ Distancia desde 35 a 24: 377
 Distancia desde 35 a 25: 521
 Distancia desde 35 a 26: 257
 Distancia desde 35 a 27: 700
-Distancia desde 35 a 28: 425
+Distancia desde 35 a 28: 551
 Distancia desde 35 a 29: 270
-Distancia desde 35 a 30: 560
-Distancia desde 35 a 31: 522
+Distancia desde 35 a 30: 641
+Distancia desde 35 a 31: 733
 Distancia desde 35 a 32: 216
-Distancia desde 35 a 33: 591
-Distancia desde 35 a 34: 269
+Distancia desde 35 a 33: 638
+Distancia desde 35 a 34: 395
 Distancia desde 35 a 35: 0
 Distancia desde 35 a 36: 515
 Distancia desde 35 a 37: 19
@@ -41,7 +41,7 @@ Distancia desde 35 a 39: 367
 Distancia desde 35 a 40: 499
 Distancia desde 35 a 41: 480
 Distancia desde 35 a 42: 344
-Distancia desde 35 a 43: 358
+Distancia desde 35 a 43: 405
 Distancia desde 35 a 44: 295
 Distancia desde 35 a 45: 386
 Distancia desde 35 a 46: 558

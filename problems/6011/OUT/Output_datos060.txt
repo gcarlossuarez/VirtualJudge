@@ -32,7 +32,7 @@ Distancia desde 0 a 30: 547
 Distancia desde 0 a 31: 643
 Distancia desde 0 a 32: 631
 Distancia desde 0 a 33: 445
-Distancia desde 0 a 34: 645
+Distancia desde 0 a 34: 681
 Distancia desde 0 a 35: 434
 Distancia desde 0 a 36: 936
 Distancia desde 0 a 37: 464
@@ -44,7 +44,7 @@ Distancia desde 0 a 42: 555
 Distancia desde 0 a 43: 883
 Distancia desde 0 a 44: 502
 Distancia desde 0 a 45: 477
-Distancia desde 0 a 46: 705
+Distancia desde 0 a 46: 741
 Distancia desde 0 a 47: 122
 Distancia desde 0 a 48: 311
 Distancia desde 0 a 49: 541

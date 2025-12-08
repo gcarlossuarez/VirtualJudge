@@ -1,6 +1,6 @@
 Distancia desde 15 a 0: 97
 Distancia desde 15 a 1: 814
-Distancia desde 15 a 2: 814
+Distancia desde 15 a 2: 946
 Distancia desde 15 a 3: 381
 Distancia desde 15 a 4: 362
 Distancia desde 15 a 5: 609
@@ -28,16 +28,16 @@ Distancia desde 15 a 26: 424
 Distancia desde 15 a 27: 600
 Distancia desde 15 a 28: 520
 Distancia desde 15 a 29: 377
-Distancia desde 15 a 30: 370
+Distancia desde 15 a 30: 502
 Distancia desde 15 a 31: 596
 Distancia desde 15 a 32: 443
 Distancia desde 15 a 33: 557
-Distancia desde 15 a 34: 251
+Distancia desde 15 a 34: 383
 Distancia desde 15 a 35: 229
 Distancia desde 15 a 36: 397
 Distancia desde 15 a 37: 500
 Distancia desde 15 a 38: 355
-Distancia desde 15 a 39: 420
+Distancia desde 15 a 39: 454
 Distancia desde 15 a 40: 300
 Distancia desde 15 a 41: 307
 Distancia desde 15 a 42: 268

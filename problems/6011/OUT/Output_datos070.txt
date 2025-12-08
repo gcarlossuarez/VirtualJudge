@@ -8,11 +8,11 @@ Distancia desde 49 a 6: 230
 Distancia desde 49 a 7: 38
 Distancia desde 49 a 8: 278
 Distancia desde 49 a 9: 270
-Distancia desde 49 a 10: 475
+Distancia desde 49 a 10: 587
 Distancia desde 49 a 11: 179
 Distancia desde 49 a 12: 544
 Distancia desde 49 a 13: 276
-Distancia desde 49 a 14: 735
+Distancia desde 49 a 14: 818
 Distancia desde 49 a 15: 67
 Distancia desde 49 a 16: 804
 Distancia desde 49 a 17: 269
@@ -33,7 +33,7 @@ Distancia desde 49 a 31: 364
 Distancia desde 49 a 32: 737
 Distancia desde 49 a 33: 610
 Distancia desde 49 a 34: 388
-Distancia desde 49 a 35: 388
+Distancia desde 49 a 35: 578
 Distancia desde 49 a 36: 533
 Distancia desde 49 a 37: 73
 Distancia desde 49 a 38: 36
