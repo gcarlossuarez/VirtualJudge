@@ -1,0 +1,40 @@
+Presupuesto: 416
+Países: 4
+País 2:
+Ciudades:
+C4;C1;12
+C4;C2;17
+C4;C3;14
+C1;C5;330
+C1;C6;91
+C2;C7;15
+Pedidos:
+C1;C5
+C4;C7
+País 1:
+Ciudades:
+C1;C2;15
+C1;C3;11
+C3;C4;8
+C2;C5;73
+C3;C6;5
+Pedidos:
+C3;C6
+C1;C3
+País 4:
+Ciudades:
+C5;C1;86
+C1;C2;345
+C2;C3;364
+C2;C4;8
+C5;C6;8
+C2;C6;16
+Pedidos:
+C2;C6
+País 3:
+Ciudades:
+C4;C1;15
+C1;C2;405
+C1;C3;10
+Pedidos:
+C1;C2

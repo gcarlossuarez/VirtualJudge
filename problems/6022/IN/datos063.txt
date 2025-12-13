@@ -1,0 +1,134 @@
+Presupuesto: 241
+Países: 16
+País 1:
+Ciudades:
+C3;C1;83
+C1;C2;13
+C1;C4;95
+C3;C5;15
+C4;C6;14
+C2;C7;18
+Pedidos:
+C1;C2
+C1;C4
+País 6:
+Ciudades:
+C1;C2;214
+C1;C3;16
+Pedidos:
+C1;C3
+País 12:
+Ciudades:
+C2;C1;238
+C2;C3;16
+Pedidos:
+C2;C1
+País 2:
+Ciudades:
+C2;C1;16
+C2;C3;10
+C2;C4;19
+C3;C5;19
+C5;C6;8
+C3;C7;15
+Pedidos:
+C3;C6
+C2;C1
+País 8:
+Ciudades:
+C4;C1;8
+C4;C2;214
+C1;C3;225
+C3;C5;10
+Pedidos:
+C4;C1
+País 9:
+Ciudades:
+C1;C2;232
+C2;C3;235
+C1;C4;216
+C1;C5;9
+C2;C6;16
+Pedidos:
+C1;C6
+País 16:
+Ciudades:
+C2;C1;7
+C2;C3;185
+Pedidos:
+C2;C1
+País 13:
+Ciudades:
+C3;C1;6
+C1;C2;73
+C2;C4;12
+C3;C5;9
+C3;C6;231
+Pedidos:
+C3;C5
+País 15:
+Ciudades:
+C2;C1;235
+C2;C3;191
+C2;C4;73
+C2;C5;9
+Pedidos:
+C2;C4
+País 4:
+Ciudades:
+C3;C1;208
+C1;C2;180
+Pedidos:
+C1;C2
+País 10:
+Ciudades:
+C1;C2;13
+C2;C3;217
+C3;C4;184
+C3;C5;5
+C3;C6;7
+C6;C7;9
+Pedidos:
+C3;C7
+C2;C5
+País 7:
+Ciudades:
+C3;C1;8
+C1;C2;9
+C2;C4;12
+C4;C5;13
+C2;C6;15
+C3;C7;19
+Pedidos:
+C2;C4
+País 3:
+Ciudades:
+C3;C1;10
+C3;C2;18
+C3;C4;18
+C4;C5;104
+C5;C6;202
+C5;C2;19
+Pedidos:
+C3;C2
+C5;C6
+País 5:
+Ciudades:
+C1;C2;18
+C1;C3;13
+C1;C4;5
+Pedidos:
+C1;C4
+País 14:
+Ciudades:
+C1;C2;87
+C2;C3;211
+Pedidos:
+C2;C3
+País 11:
+Ciudades:
+C4;C1;6
+C4;C2;13
+C4;C3;115
+Pedidos:
+C4;C2

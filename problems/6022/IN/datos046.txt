@@ -1,0 +1,19 @@
+Presupuesto: 361
+Países: 2
+País 1:
+Ciudades:
+C3;C1;74
+C3;C2;73
+C3;C4;319
+C3;C5;85
+Pedidos:
+C3;C2
+País 2:
+Ciudades:
+C1;C2;17
+C2;C3;105
+C3;C4;15
+C2;C5;333
+C2;C6;356
+Pedidos:
+C2;C4

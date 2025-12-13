@@ -1,0 +1,77 @@
+Presupuesto: 360
+Países: 10
+País 9:
+Ciudades:
+C2;C1;103
+C1;C3;8
+C2;C4;83
+Pedidos:
+C2;C1
+País 6:
+Ciudades:
+C3;C1;16
+C3;C2;7
+C1;C4;334
+Pedidos:
+C3;C2
+País 8:
+Ciudades:
+C1;C2;10
+C2;C3;12
+C2;C4;329
+Pedidos:
+C2;C3
+País 7:
+Ciudades:
+C3;C1;77
+C3;C2;110
+Pedidos:
+C3;C1
+País 5:
+Ciudades:
+C3;C1;314
+C3;C2;80
+Pedidos:
+C3;C2
+País 10:
+Ciudades:
+C1;C2;83
+C1;C3;14
+C2;C4;10
+C1;C4;9
+Pedidos:
+C1;C3
+País 4:
+Ciudades:
+C1;C2;6
+C2;C3;18
+C2;C4;6
+Pedidos:
+C1;C4
+País 2:
+Ciudades:
+C3;C1;8
+C3;C2;15
+C2;C4;16
+Pedidos:
+C2;C1
+País 1:
+Ciudades:
+C2;C1;71
+C2;C3;9
+C2;C4;9
+C2;C5;78
+C3;C6;8
+Pedidos:
+C2;C5
+C2;C3
+País 3:
+Ciudades:
+C2;C1;295
+C2;C3;8
+C2;C4;7
+C3;C5;301
+C5;C6;86
+Pedidos:
+C3;C4
+C5;C1

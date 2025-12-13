@@ -1,0 +1,10 @@
+Países seleccionados:
+1. País 3:
+   Rutas utilizadas: X -> Y -> Z (Costo total: 15)
+   Ganancia: 30
+2. País 1:
+   Rutas utilizadas: A -> C, B -> C -> D (Costo total: 45)
+   Ganancia: 90
+
+Costo total de las rutas: 60
+Ganancia máxima obtenida: 120

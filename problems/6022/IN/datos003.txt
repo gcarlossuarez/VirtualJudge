@@ -1,0 +1,50 @@
+Presupuesto: 60
+Países: 4
+
+País 1:
+Ciudades:
+A;B;10
+B;C;15
+A;C;20
+
+
+C;D;10
+
+
+
+Pedidos:
+A;C
+B;D
+
+País 2:
+Ciudades:
+M;N;8
+N;O;12
+M;O;18
+Pedidos:
+M;O
+
+País 3:
+Ciudades:
+X;Y;5
+Y;Z;10
+X;Z;25
+Pedidos:
+X;Z
+
+
+
+
+
+País 4:
+Ciudades:
+P;Q;30
+Q;R;25
+P;R;50
+
+
+Pedidos:
+
+
+
+P;R

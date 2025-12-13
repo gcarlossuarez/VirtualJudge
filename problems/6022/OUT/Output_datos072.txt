@@ -1,0 +1,16 @@
+Países seleccionados:
+1. País 1:
+   Rutas utilizadas: C1 -> C2 -> C7 (Costo total: 365)
+   Ganancia: 730
+2. País 5:
+   Rutas utilizadas: C3 -> C2 (Costo total: 8)
+   Ganancia: 16
+3. País 6:
+   Rutas utilizadas: C1 -> C3 -> C4 (Costo total: 21)
+   Ganancia: 42
+4. País 2:
+   Rutas utilizadas: C5 -> C1 (Costo total: 5)
+   Ganancia: 10
+
+Costo total de las rutas: 399
+Ganancia máxima obtenida: 798
