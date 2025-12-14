@@ -1314,6 +1314,11 @@ app.MapGet("/problems/{id}/validator", async (int id, AppDbContext db) =>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include=""Microsoft.CodeAnalysis.CSharp"" Version=""4.8.0"" />
+  </ItemGroup>
+
 </Project>";
 
     return Results.Json(new {
