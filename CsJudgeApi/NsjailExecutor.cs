@@ -162,7 +162,6 @@ public static class NsjailExecutor
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
-
 </Project>";
             
             // Crear el archivo Solution.csproj

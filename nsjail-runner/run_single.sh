@@ -58,6 +58,7 @@ fi
 
 # === COPIA DE ARCHIVOS ===
 echo "Copiando los archivos"
+csharp_student_program_path=""
 if [ "$LANGUAGE" = "dotnet" ]; then
    rm -rf "$WORK_DIR/proj"
    cp -r "$TMP_WORK_DIR/template/App" "$WORK_DIR/proj"
@@ -69,7 +70,8 @@ if [ "$LANGUAGE" = "dotnet" ]; then
    fi
 
    if [ ${#CS_FILES[@]} -eq 1 ]; then
-       cp "${CS_FILES[0]}" "$WORK_DIR/proj/Program.cs"
+       csharp_student_program_path="$WORK_DIR/proj/Program.cs" 
+       cp "${CS_FILES[0]}" "$csharp_student_program_path"
    else
        cp "${CS_FILES[@]}" "$WORK_DIR/proj/"
    fi
@@ -179,11 +181,27 @@ if [ -n "$VALIDATOR_SRC" ] && [ -f "$VALIDATOR_SRC" ]; then
   
   rm -rf "$WORK_DIR/proj_validator"
   cp -r "$TMP_WORK_DIR/template/App" "$WORK_DIR/proj_validator"
+  cat > "$WORK_DIR/proj_validator/Solution.csproj" << 'EOF'
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+  </ItemGroup>
+</Project>
+EOF
+
   cp "$VALIDATOR_SRC" "$WORK_DIR/proj_validator/Program.cs"
+  ls "$WORK_DIR/proj_validator"
   
   
   echo "Archivo en directorio work para Validator"
-  ls "$WORK_DIR/proj_validator"
+  #cat "$WORK_DIR/proj_validator/Solution.csproj"
   VALIDATOR_BUILD_LOG="$WORK_DIR/validator_build.log"
   
   # 1. RESTORE (OBLIGATORIO)
@@ -200,7 +218,7 @@ if [ -n "$VALIDATOR_SRC" ] && [ -f "$VALIDATOR_SRC" ]; then
       cat "$VALIDATOR_BUILD_LOG" >&2
     else
       # 3. BUSCAR DLL
-      VALIDATOR_DLL=$(find "$WORK_DIR/proj_validator/bin/Release/net8.0" -name "*.dll" -type f | head -n1)
+      VALIDATOR_DLL=$(find "$WORK_DIR/proj_validator/bin/Release/net8.0" -name "Solution.dll" -type f | head -n1)
       if [ -z "$VALIDATOR_DLL" ]; then
         echo "ERROR: No se encontró DLL del validador" >&2
         find "$WORK_DIR/proj_validator/bin/Release" -type f >&2 || true
@@ -400,7 +418,7 @@ if [ -d "$IN_DIR" ]; then
         # Workaround: Modo invariant (evita ICU crash)
         set +e
 	unset DOTNET_SYSTEM_GLOBALIZATION_INVARIANT 2>/dev/null || true
-        VAL_OUT=$(DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 dotnet "$VALIDATOR_DLL" "$infile" "$expected" "$actual")
+        VAL_OUT=$(DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 dotnet "$VALIDATOR_DLL" "$infile" "$expected" "$actual" "$csharp_student_program_path")
         VAL_RC=$?
         set -e
         if [ $VAL_RC -eq 0 ] && [[ "$VAL_OUT" == OK* ]]; then
