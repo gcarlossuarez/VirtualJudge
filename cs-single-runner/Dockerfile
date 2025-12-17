@@ -30,12 +30,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       openjdk-17-jdk \
  && rm -rf /var/lib/apt/lists/*
 
-
 # === Crear plantilla base restaurada (evita errores NETSDK1004) ===
 RUN dotnet new console -n App -o /home/sandbox/template/App --force \
  && dotnet restore /home/sandbox/template/App \
  && dotnet build /home/sandbox/template/App -c Release --no-restore
-
+#ENV NUGET_PACKAGES=/root/.nuget/packages
+#RUN dotnet new console -n App -o /home/sandbox/template/App --force \
+# && dotnet add /home/sandbox/template/App package Microsoft.CodeAnalysis.CSharp --version 4.8.0 \
+# && dotnet restore /home/sandbox/template/App \
+# && dotnet build /home/sandbox/template/App -c Release --no-restore
 
 
 

@@ -313,10 +313,47 @@ if [ -n "$VALIDATOR_SRC" ] && [ -f "$VALIDATOR_SRC" ]; then
 
    cp "$VALIDATOR_SRC" "$WORK_DIR/proj_validator/Program.cs"
 
+   # find "$WORK_DIR/proj_validator" -type f -name "*.csproj"
+   # find: busca archivos y directorios recursivamente.
+   # "$WORK_DIR/proj_validator": directorio raíz donde va a buscar.
+   # -type f: solo archivos (no directorios).
+   # -name "*.csproj": archivos cuyo nombre termine en .csproj.
+   # 👉 Resultado: lista de todas las rutas de archivos .csproj dentro de "$WORK_DIR/proj_validator".
+   # | head -n1 👉 Toma solo la primera línea de la salida de find. Es decir, el primer archivo .csproj encontrado. 
+   # || true 👉 Si find ... | head -n1 devuelve código de salida distinto de 0 (por ejemplo, si no encuentra nada), el || true fuerza a que la subshell complete con éxito. Esto evita que el script se caiga por set -e u opciones similares.
+   CSPROJ=$(find "$WORK_DIR/proj_validator" -type f -name "*.csproj" | head -n1 || true)
+
+   #if [ -n "$CSPROJ" ]; then
+   #  # Solo si el csproj NO tiene aún Microsoft.CodeAnalysis.CSharp
+   #  if ! grep -q 'Microsoft.CodeAnalysis.CSharp' "$CSPROJ"; then # 👉 Verifica si ya tiene la referencia; si ya la tiene, no toca el archivo.
+   #    echo "Agregando referencia a Microsoft.CodeAnalysis.CSharp en $CSPROJ..."
+
+   #    TMPFILE=$(mktemp)
+
+   #    # Cuando encuentra </Project>, primero imprime el <ItemGroup> ... </ItemGroup>,
+   #    # y después, por la regla { print }, imprime la línea actual (</Project>).
+   #    # Resultado: el bloque <ItemGroup> queda insertado justo antes de </Project>.
+   #    awk '
+   #      /<\/Project>/ {
+   #        print "  <ItemGroup>"
+   #        print "    <PackageReference Include=\"Microsoft.CodeAnalysis.CSharp\" Version=\"4.8.0\" />"
+   #        print "  </ItemGroup>"
+   #      }
+   #      { print }
+   #    ' "$CSPROJ" > "$TMPFILE"
+   #
+   #    mv "$TMPFILE" "$CSPROJ"
+   #  fi
+   #else
+   #  echo "WARN: No se encontró ningún archivo .csproj en $WORK_DIR/proj_validator"
+   #fi
+   cat $CSPROJ
 
    VALIDATOR_BUILD_LOG="$WORK_DIR/validator_build.log"
    ( cd "$WORK_DIR/proj_validator" && dotnet build -c Release --nologo --no-restore ) >"$VALIDATOR_BUILD_LOG" 2>&1 || true
-  
+   cat "$VALIDATOR_BUILD_LOG"
+
+   
    VALIDATOR_DLL=$(find "$WORK_DIR/proj_validator/bin/Release" -type f -name "*.dll" | head -n1 || true)
 
    if [ -z "$VALIDATOR_DLL" ]; then
@@ -362,7 +399,12 @@ if [ -d "$IN_DIR" ]; then
     if [ -n "$VALIDATOR_DLL" ]; then
       echo "Ejecutando validador sobre $actual"
       set +e
-      VAL_OUT=$(dotnet "$VALIDATOR_DLL" "$infile" "$expected" "$actual")
+      if [ "$LANGUAGE" = "dotnet" ]; then
+        echo "Ejectuando validador con opción de verficación de firma"
+      	VAL_OUT=$(dotnet "$VALIDATOR_DLL" "$infile" "$expected" "$actual" "$WORK_DIR/proj/Program.cs")
+      else
+        VAL_OUT=$(dotnet "$VALIDATOR_DLL" "$infile" "$expected" "$actual")
+      fi
       VAL_RC=$?
       set -e
       if [ $VAL_RC -eq 0 ] && [[ "$VAL_OUT" == OK* ]]; then
