@@ -60,13 +60,17 @@ class Program
             for (int j = 0; j < N; j++)
             {
                 if (dist[i, j] == int.MaxValue)
-				{
-                    Console.Write("INF ");
-				}
+				        {
+                    Console.Write("INF");
+				        }
                 else
-				{
-                    Console.Write(dist[i, j] + " ");
-				}
+				        {
+                    Console.Write(dist[i, j]);
+				        }
+                if(j < (N - 1))
+                {
+                    Console.Write(" ");
+                }
             }
             Console.WriteLine();
         }

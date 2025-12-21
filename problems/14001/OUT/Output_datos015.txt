@@ -1,0 +1,6 @@
+A True
+B False
+C False
+D True
+E False
+F False
