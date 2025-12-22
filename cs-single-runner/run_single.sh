@@ -67,6 +67,7 @@ if [[ ( -n "$VALIDATOR_SRC" && -f "$VALIDATOR_SRC" ) || "$LANGUAGE" = "dotnet" ]
    # 🔧 Asegurar que exista la plantilla base
    # =============================
    TEMPLATE_DIR="/home/sandbox/template/App"
+   TEMPLATE_DIR_VALIDATOR="/home/sandbox/template/ValidatorApp"
    FALLBACK_TEMPLATE="/home/sandbox/tmp/template/App"
 
    if [ ! -d "$TEMPLATE_DIR" ]; then
@@ -161,10 +162,10 @@ if [ "$LANGUAGE" = "dotnet" ]; then
    # Archivos C#
    if [ ${#CS_FILES[@]} -eq 1 ]; then
        cp "${CS_FILES[0]}" "$WORK_DIR/proj/Program.cs"
-       echo Copiado="${CS_FILES[0]} como $WORK_DIR/proj/Program.cs"
+       echo "Copiado=${CS_FILES[0]} como $WORK_DIR/proj/Program.cs"
    else
        cp "${CS_FILES[@]}" "$WORK_DIR/proj/"
-       echo Copiado=$CS_FILES 
+       echo "Copiado=$CS_FILES" 
    fi
 
 elif [ "$LANGUAGE" = "g++" ]; then
@@ -202,13 +203,15 @@ BUILD_RC=0
 if [ "$LANGUAGE" = "dotnet" ]; then
     # === Compilar C# ===
     cd "$WORK_DIR/proj"
+    echo "Contenido de $WORK_DIR/proj"
+    ls "$WORK_DIR/proj"
 
     # 🔧 Siempre regenerar obj limpio y copiar project.assets.json válido
     rm -rf "$WORK_DIR/proj/obj"
     mkdir -p "$WORK_DIR/proj/obj"
     if [ -f "$TEMPLATE_DIR/obj/project.assets.json" ]; then
        cp "$TEMPLATE_DIR/obj/project.assets.json" "$WORK_DIR/proj/obj/"
-       echo "✅ Copiado project.assets.json desde $TEMPLATE_DIR a $WORK_DIR/proj/obj/"
+       echo "✅ Copiado project.assets.json desde el directorio $TEMPLATE_DIR al directorio $WORK_DIR/proj/obj/"
     else
        echo "⚠️ No se encontró project.assets.json base en $TEMPLATE_DIR; la compilación puede fallar."
     fi
@@ -233,6 +236,12 @@ else
     echo "❌ Lenguaje no soportado en compilación: $LANGUAGE"
     exit 1
 fi
+
+echo "✅ Proyecto del estudiante compilado"
+echo "Contenido de $TEMPLATE_DIR_VALIDATOR"
+ls $TEMPLATE_DIR_VALIDATOR
+echo "Contenido de BUILD_LOG=$BUILD_LOG"
+cat "$BUILD_LOG"
 
 set -e
 
@@ -291,75 +300,113 @@ STATUS_RUN="ok"
 DETAILS=""
 
 # 🔹 Preparar validador (si existe)
-# NOTA. - El validadro, podria ser siempre en C#. como es nativo del que creo el DataSet, y el problema, no deberia ser un problema el lenguaje del validador
+# NOTA. - El validador, podria ser siempre en C#. como es nativo del que creo el DataSet, y el problema, no deberia ser un problema el lenguaje del validador
+#VALIDATOR_DLL=""
+#if [ -n "$VALIDATOR_SRC" ] && [ -f "$VALIDATOR_SRC" ]; then
+#   echo "Compilando validador desde: $VALIDATOR_SRC (archivo verificado)"
+#   echo "Contenido de $VALIDATOR_SRC"
+#   cat $VALIDATOR_SRC
+#   
+#   echo "Contenido directorios del sandbox"
+#   ls -l /home/sandbox/
+#   ls -l /home/sandbox/template
+#   echo "Contenido de $TEMPLATE_DIR_VALIDATOR"
+#   ls $TEMPLATE_DIR_VALIDATOR
+#  
+#   rm -rf "$WORK_DIR/proj_validator"
+#
+#   # Usar la plantilla que esté activa (TEMPLATE_DIR_VALIDATOR apunta a la base o al fallback)
+#   if [ -d "$TEMPLATE_DIR_VALIDATOR" ]; then
+#     echo "👌 Se encontró plantilla base en $TEMPLATE_DIR_VALIDATOR, no se necesita crear proyecto validador temporal..."
+#     cp -r "$TEMPLATE_DIR_VALIDATOR" "$WORK_DIR/proj_validator"
+#     
+#     # Eliminar el directorio obj y bin de la plantilla antes de copiarla o usarla como base para el validador.
+#     # Así, cuando se compile el proyecto temporal, se generará un nuevo project.assets.json limpio, solo con los paquetes 
+#     # realmente requeridos, par ano tener problemas de acceso a Internet, buscando paquetes no necesitados
+#     #rm -rf "$WORK_DIR/proj_validator/obj" "$WORK_DIR/proj_validator/bin" # Genera problemas con la opci'on "--no-restore"
+#     # del comando dotnet build, por no tener acceso a internet 
+#     rm -rf "$WORK_DIR/proj_validator/bin"
+#   else
+#     echo "⚠️ No se encontró plantilla base en $TEMPLATE_DIR, creando proyecto validador temporal..."
+#     mkdir -p "$WORK_DIR/proj_validator"
+#     dotnet new console -n App -o "$WORK_DIR/proj_validator" --force --no-restore > /dev/null 2>&1
+#     mkdir -p "$WORK_DIR/proj_validator/obj"
+#     if [ -f "$WORK_DIR/proj/obj/project.assets.json" ]; then
+#        cp "$WORK_DIR/proj/obj/project.assets.json" "$WORK_DIR/proj_validator/obj/"
+#     fi
+#   fi
+#
+#   cp "$VALIDATOR_SRC" "$WORK_DIR/proj_validator/Program.cs"
+#
+#   # find "$WORK_DIR/proj_validator" -type f -name "*.csproj"
+#   # find: busca archivos y directorios recursivamente.
+#   # "$WORK_DIR/proj_validator": directorio raíz donde va a buscar.
+#   # -type f: solo archivos (no directorios).
+#   # -name "*.csproj": archivos cuyo nombre termine en .csproj.
+#   # 👉 Resultado: lista de todas las rutas de archivos .csproj dentro de "$WORK_DIR/proj_validator".
+#   # | head -n1 👉 Toma solo la primera línea de la salida de find. Es decir, el primer archivo .csproj encontrado. 
+#   # || true 👉 Si find ... | head -n1 devuelve código de salida distinto de 0 (por ejemplo, si no encuentra nada), el || true fuerza a que la subshell complete con éxito. Esto evita que el script se caiga por set -e u opciones similares.
+#   CSPROJ=$(find "$WORK_DIR/proj_validator" -type f -name "*.csproj" | head -n1 || true)
+#
+#   #if [ -n "$CSPROJ" ]; then
+#   #  # Solo si el csproj NO tiene aún Microsoft.CodeAnalysis.CSharp
+#   #  if ! grep -q 'Microsoft.CodeAnalysis.CSharp' "$CSPROJ"; then # 👉 Verifica si ya tiene la referencia; si ya la tiene, no toca el archivo.
+#   #    echo "Agregando referencia a Microsoft.CodeAnalysis.CSharp en $CSPROJ..."
+#
+#   #    TMPFILE=$(mktemp)
+#
+#   #    # Cuando encuentra </Project>, primero imprime el <ItemGroup> ... </ItemGroup>,
+#   #    # y después, por la regla { print }, imprime la línea actual (</Project>).
+#   #    # Resultado: el bloque <ItemGroup> queda insertado justo antes de </Project>.
+#   #    awk '
+#   #      /<\/Project>/ {
+#   #        print "  <ItemGroup>"
+#   #        print "    <PackageReference Include=\"Microsoft.CodeAnalysis.CSharp\" Version=\"4.8.0\" />"
+#   #        print "  </ItemGroup>"
+#   #      }
+#   #      { print }
+#   #    ' "$CSPROJ" > "$TMPFILE"
+#   #
+#   #    mv "$TMPFILE" "$CSPROJ"
+#   #  fi
+#   #else
+#   #  echo "WARN: No se encontró ningún archivo .csproj en $WORK_DIR/proj_validator"
+#   #fi
+#   cat $CSPROJ
+#
+#   VALIDATOR_BUILD_LOG="$WORK_DIR/validator_build.log"
+#   ( cd "$WORK_DIR/proj_validator" && dotnet build -c Release --nologo --no-restore ) >"$VALIDATOR_BUILD_LOG" 2>&1 || true
+#   cat "$VALIDATOR_BUILD_LOG"
+#   
+#   VALIDATOR_DLL=$(find "$WORK_DIR/proj_validator/bin/Release" -type f -name "*.dll" | head -n1 || true)
+#
+#   if [ -z "$VALIDATOR_DLL" ]; then
+#     echo "ERROR: no se pudo compilar el validador"
+#     exit 5
+#   fi
+#fi
+# --- NUEVO FLUJO: usar DLL ya montado ---
 VALIDATOR_DLL=""
 if [ -n "$VALIDATOR_SRC" ] && [ -f "$VALIDATOR_SRC" ]; then
-   echo "Compilando validador desde: $VALIDATOR_SRC (archivo verificado)"
-  
-   rm -rf "$WORK_DIR/proj_validator"
-
-   # Usar la plantilla que esté activa (TEMPLATE_DIR apunta a la base o al fallback)
-   if [ -d "$TEMPLATE_DIR" ]; then
-     cp -r "$TEMPLATE_DIR" "$WORK_DIR/proj_validator"
-   else
-     echo "⚠️ No se encontró plantilla base en $TEMPLATE_DIR, creando proyecto validador temporal..."
-     mkdir -p "$WORK_DIR/proj_validator"
-     dotnet new console -n App -o "$WORK_DIR/proj_validator" --force --no-restore > /dev/null 2>&1
-     mkdir -p "$WORK_DIR/proj_validator/obj"
-     if [ -f "$WORK_DIR/proj/obj/project.assets.json" ]; then
-        cp "$WORK_DIR/proj/obj/project.assets.json" "$WORK_DIR/proj_validator/obj/"
-     fi
-   fi
-
-   cp "$VALIDATOR_SRC" "$WORK_DIR/proj_validator/Program.cs"
-
-   # find "$WORK_DIR/proj_validator" -type f -name "*.csproj"
-   # find: busca archivos y directorios recursivamente.
-   # "$WORK_DIR/proj_validator": directorio raíz donde va a buscar.
-   # -type f: solo archivos (no directorios).
-   # -name "*.csproj": archivos cuyo nombre termine en .csproj.
-   # 👉 Resultado: lista de todas las rutas de archivos .csproj dentro de "$WORK_DIR/proj_validator".
-   # | head -n1 👉 Toma solo la primera línea de la salida de find. Es decir, el primer archivo .csproj encontrado. 
-   # || true 👉 Si find ... | head -n1 devuelve código de salida distinto de 0 (por ejemplo, si no encuentra nada), el || true fuerza a que la subshell complete con éxito. Esto evita que el script se caiga por set -e u opciones similares.
-   CSPROJ=$(find "$WORK_DIR/proj_validator" -type f -name "*.csproj" | head -n1 || true)
-
-   #if [ -n "$CSPROJ" ]; then
-   #  # Solo si el csproj NO tiene aún Microsoft.CodeAnalysis.CSharp
-   #  if ! grep -q 'Microsoft.CodeAnalysis.CSharp' "$CSPROJ"; then # 👉 Verifica si ya tiene la referencia; si ya la tiene, no toca el archivo.
-   #    echo "Agregando referencia a Microsoft.CodeAnalysis.CSharp en $CSPROJ..."
-
-   #    TMPFILE=$(mktemp)
-
-   #    # Cuando encuentra </Project>, primero imprime el <ItemGroup> ... </ItemGroup>,
-   #    # y después, por la regla { print }, imprime la línea actual (</Project>).
-   #    # Resultado: el bloque <ItemGroup> queda insertado justo antes de </Project>.
-   #    awk '
-   #      /<\/Project>/ {
-   #        print "  <ItemGroup>"
-   #        print "    <PackageReference Include=\"Microsoft.CodeAnalysis.CSharp\" Version=\"4.8.0\" />"
-   #        print "  </ItemGroup>"
-   #      }
-   #      { print }
-   #    ' "$CSPROJ" > "$TMPFILE"
-   #
-   #    mv "$TMPFILE" "$CSPROJ"
-   #  fi
-   #else
-   #  echo "WARN: No se encontró ningún archivo .csproj en $WORK_DIR/proj_validator"
-   #fi
-   cat $CSPROJ
-
-   VALIDATOR_BUILD_LOG="$WORK_DIR/validator_build.log"
-   ( cd "$WORK_DIR/proj_validator" && dotnet build -c Release --nologo --no-restore ) >"$VALIDATOR_BUILD_LOG" 2>&1 || true
-   cat "$VALIDATOR_BUILD_LOG"
-
-   
-   VALIDATOR_DLL=$(find "$WORK_DIR/proj_validator/bin/Release" -type f -name "*.dll" | head -n1 || true)
-
-   if [ -z "$VALIDATOR_DLL" ]; then
-     echo "ERROR: no se pudo compilar el validador"
-     exit 5
-   fi
+  # [ -n "$VALIDATOR_SRC" ] Comprueba si la variable $VALIDATOR_SRCno está vacía (es decir, tiene algún valor asignado).
+  # -n = "non-zero length string" (cadena con longitud mayor que cero).
+  # &&
+  # Operador lógico AND. Solo evalúa la segunda condición si la primera es verdadera.
+  # [ -f "$VALIDATOR_SRC" ] Comprueba si existe un archivo regular (no un directorio, no un enlace, etc.) en la ruta almacenada en $VALIDATOR_SRC.
+  # -f = "file exists and is a regular file".
+  # ; then
+  # Si ambas condiciones son verdaderas (la variable tiene valor y apunta a un archivo real), se ejecuta el bloque siguiente.
+  echo "Usando validador precompilado pasado como argumento: $VALIDATOR_SRC"
+  VALIDATOR_DLL="$VALIDATOR_SRC"
+elif [ -d "/home/sandbox/validator" ]; then
+  # Buscar cualquier DLL si no se pasó como argumento
+  echo "[DEBUG] Contenido de /home/sandbox/validator/:"
+  ls -l /home/sandbox/validator/
+  echo "[DEBUG] VALIDATOR_SRC: $VALIDATOR_SRC"
+  VALIDATOR_DLL=$(find /home/sandbox/validator -maxdepth 1 -type f -name "*.dll" | head -n1 || true)
+  if [ -n "$VALIDATOR_DLL" ]; then
+    echo "Usando validador encontrado en /home/sandbox/validator/: $VALIDATOR_DLL"
+  fi
 fi
 
 # Iterar datasets si existen
