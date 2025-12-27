@@ -1,0 +1,8 @@
+A True
+B True
+C True
+D False
+E True
+F True
+G False
+H True
