@@ -8,7 +8,7 @@ namespace VenganzaFastHands
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("=== LA VENGANZA DE FAST HANDS ===");
+            //Console.WriteLine("=== LA VENGANZA DE FAST HANDS ===");
             //Console.WriteLine("Pega el input línea por línea (origen;destino;días). Línea vacía para terminar:");
             
             var graph = new Dictionary<string, List<(string destino, int dias)>>();
@@ -48,7 +48,7 @@ namespace VenganzaFastHands
             var (diasMinimos, camino) = Dijkstra(graph, "Accidente", "Alta Médica Total");
 
             // Salida
-            Console.WriteLine(new string('=', 50));
+            //Console.WriteLine(new string('=', 50));
             if (camino != null)
             {
                 //Console.WriteLine($"Secuencia óptima:");
@@ -60,7 +60,7 @@ namespace VenganzaFastHands
             {
                 Console.WriteLine("No hay forma de llegar al alta médica.");
             }
-            Console.WriteLine(new string('=', 50));
+            //Console.WriteLine(new string('=', 50));
 
             //Console.WriteLine("\nPresiona cualquier tecla para salir...");
             //Console.ReadKey();

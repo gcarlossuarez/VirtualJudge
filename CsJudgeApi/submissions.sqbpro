@@ -3,6 +3,9 @@
 
 --INSERT INTO &quot;main&quot;.&quot;Questions&quot; (&quot;QuestionId&quot;, &quot;Review&quot;, &quot;Path&quot;, &quot;ContestId&quot;, &quot;FullPathValidatorSourceCode&quot;, &quot;TimeLimitSeconds&quot;) VALUES ('14003', '3) Vlad el Empalador', '/home/virtualbox/VirtualJudge/problems/14003', '14', '/home/virtualbox/VirtualJudge/problems/14003/Validator14003/Validator.cs', '5');
 
+--INSERT INTO &quot;main&quot;.&quot;Questions&quot; (&quot;QuestionId&quot;, &quot;Review&quot;, &quot;Path&quot;, &quot;ContestId&quot;, &quot;FullPathValidatorSourceCode&quot;, &quot;TimeLimitSeconds&quot;) VALUES ('6024', '24) Resolver claves en Caja Fuerte Inteligente 2', '/home/virtualbox/VirtualJudge/problems/6024', '6', '', '5');
+
+-- INSERT INTO &quot;main&quot;.&quot;Questions&quot; (&quot;QuestionId&quot;, &quot;Review&quot;, &quot;Path&quot;, &quot;ContestId&quot;, &quot;FullPathValidatorSourceCode&quot;, &quot;TimeLimitSeconds&quot;) VALUES ('6025', '25) Vlad el Empalador (with sign restriction)', '/home/virtualbox/VirtualJudge/problems/6025', '6', '/home/virtualbox/VirtualJudge/problems/6025/Validator6025/Validator.cs', '15');
 SELECT datetime('now');
 SELECT datetime('now', 'localtime');
 

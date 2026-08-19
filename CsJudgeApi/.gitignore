@@ -1,0 +1,132 @@
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options directory
+.vs/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Local history for Visual Studio Code
+.history/
+.ionide/
+
+# Files built by Visual Studio
+*.obj
+*.exe
+*.exe.config
+*.dll
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Chutzpah Test files
+*_Chutzpah*
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+.nuget/
+
+# dotnet user-secrets/ folder
+.user-secrets/
+
+# dotnet publish folder
+publish/
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+*.sql
+
+# Rider
+.idea/
+*.sln.iml
+riderModule.xml
+_ReSharper*/
+*.DotSettings.user
+
+# Node.js
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE-specific files
+.idea/
+*.swp
+*.swo
+*~
+
+# Build folders
+dist/
+build/
+
+# 🔒 Archivos de especificación técnica (No subir a git)
+AGENTS.md
+AGENT.md
+
+# Backups
+*.bak
+*.backup
+Bkp*.sql
+Bkp*.html
+Bkp*.db
+
+# Archivos temporales
+tmp/
+temp/
+*.tmp
+
+# Runtime files
+submissions.db.Bkp.sql

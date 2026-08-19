@@ -16,6 +16,13 @@ public class Contest
 
     // Relación con preguntas
     public ICollection<Question> Questions { get; set; } = new List<Question>();
+
+    // ✅ AGREGAR:
+    public int SemesterId { get; set; }        // FK a Semester
+    public int Group { get; set; }             // 1 o 2
+
+    // ✅ AGREGAR Navegación:
+    public Semester? Semester { get; set; }
 }
 
 

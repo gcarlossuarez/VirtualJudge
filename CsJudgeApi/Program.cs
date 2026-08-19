@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using CsJudgeApi;
 using CsJudgeApi.Data;
 using CsJudgeApi.Models;
+using CsJudgeApi.Services;
 using Xceed.Words.NET;
 using CsJudgeApi.Models.Enums; // ⚡ DocX. Para instalar, hacer => dotnet add package DocX --version 1.0.0
 
@@ -32,6 +33,12 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source={PathDirectories.DB_PATH}"));
 
+// 🆕 Registrar servicios de importación
+builder.Services.AddScoped<StudentImportService>();
+
+// Registrar controllers
+builder.Services.AddControllers();
+
 builder.WebHost.ConfigureKestrel(o =>
 {
     o.Limits.MaxRequestBodySize = 20 * 1024 * 1024; // 20MB
@@ -49,6 +56,9 @@ app.UseCors("AllowAll");
 // Habilitar archivos estáticos (sirve index.html desde wwwroot/)
 app.UseDefaultFiles();
 app.UseStaticFiles();
+
+// Mapear controllers
+app.MapControllers();
 
 
 // BOOKMARK: Sistema de throttling y variables globales
@@ -664,9 +674,21 @@ static string? TryMatch(string text, string pattern, int group = 0)
 // Todo lo que esté después de app.Run(); no se ejecuta.
 app.MapGet("/students", async (AppDbContext db) =>
 {
-    var estudiantes = await db.Students
-        .OrderBy(s => s.Name)
-        .Select(s => new { name = s.Name, studentId = s.StudentId })
+    // ✨ NUEVO: Filtrar solo estudiantes del semestre activo
+    var currentSemester = await db.Semesters
+        .FirstOrDefaultAsync(s => s.IsActive);
+
+    if (currentSemester == null)
+    {
+        return Results.Json(new { error = "No hay semestre activo" });
+    }
+
+    var estudiantes = await db.StudentSemesters
+        .Where(ss => ss.SemesterId == currentSemester.SemesterId)
+        .Include(ss => ss.Student)
+        .Select(ss => new { name = ss.Student!.Name, studentId = ss.StudentId })
+        .OrderBy(s => s.name)
+        .Distinct()
         .ToListAsync();
 
     return Results.Json(estudiantes);

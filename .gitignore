@@ -6,3 +6,11 @@ __pycache__/
 *.pyc
 *.sqlite
 CsJudgeApi/ngrok.log
+CsJudgeApi/ACCIONES_INMEDIATAS.md
+CsJudgeApi/PLAN_MIGRACION.md
+CsJudgeApi/AGENTS.md
+CsJudgeApi/ARHITECTURE.md
+CsJudgeApi/ARQUITECTURA_FINAL.md
+CsJudgeApi/CAMBIOS_REALIZADOS.md
+CsJudgeApi/ERRORES_CORREGIDOS.md
+CsJudgeApi/LISTA_DOCUMENTOS.md

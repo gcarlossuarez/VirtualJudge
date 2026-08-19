@@ -13,6 +13,9 @@ public class AppDbContext : DbContext
     public DbSet<Configuration> Configurations => Set<Configuration>();
     public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
 
+    public DbSet<Semester> Semesters { get; set; } = null!;
+    public DbSet<StudentSemester> StudentSemesters { get; set; } = null!;
+
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options) { }
@@ -65,6 +68,65 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Description)
                     .HasMaxLength(500);
         });
+
+        // ========== NUEVA CONFIGURACIÓN M:N ==========
+
+        // PK compuesta en StudentSemester
+        modelBuilder.Entity<StudentSemester>()
+            .HasKey(ss => new { ss.StudentId, ss.SemesterId });
+
+        // Relaciones StudentSemester -> Student
+        modelBuilder.Entity<StudentSemester>()
+            .HasOne(ss => ss.Student)
+            .WithMany(s => s.Semesters)
+            .HasForeignKey(ss => ss.StudentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Relaciones StudentSemester -> Semester
+        modelBuilder.Entity<StudentSemester>()
+            .HasOne(ss => ss.Semester)
+            .WithMany(s => s.Students)
+            .HasForeignKey(ss => ss.SemesterId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Índices de búsqueda
+        modelBuilder.Entity<StudentSemester>()
+            .HasIndex(ss => new { ss.SemesterId, ss.Group })
+            .HasDatabaseName("IX_StudentSemester_SemesterGroup");
+
+        // Relación Contest -> Semester
+        modelBuilder.Entity<Contest>()
+            .HasOne(c => c.Semester)
+            .WithMany(s => s.Contests)
+            .HasForeignKey(c => c.SemesterId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Índice en Contest
+        modelBuilder.Entity<Contest>()
+            .HasIndex(c => new { c.SemesterId, c.Group })
+            .HasDatabaseName("IX_Contest_SemesterGroup");
+
+        // ========== SEED DATA: SEMESTERS ==========
+        modelBuilder.Entity<Semester>().HasData(
+            new Semester 
+            { 
+                SemesterId = 1,
+                SemesterCode = 20252,
+                Name = "2-2025",
+                StartDate = new DateTime(2025, 8, 4),
+                EndDate = new DateTime(2025, 12, 20),
+                IsActive = false
+            },
+            new Semester 
+            { 
+                SemesterId = 2,
+                SemesterCode = 20262,
+                Name = "2-2026",
+                StartDate = new DateTime(2026, 8, 3),
+                EndDate = new DateTime(2026, 12, 19),
+                IsActive = true
+            }
+        );
     }
 }
 
