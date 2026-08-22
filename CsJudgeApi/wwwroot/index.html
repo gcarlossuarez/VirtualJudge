@@ -803,7 +803,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://contamination-imported-sense-sept.trycloudflare.com";
+    const SERVER_BASE_URL = "https://thoughts-operate-anything-vitamin.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
@@ -1306,28 +1306,24 @@ class Program
       }, 1000);
     }
 
-    // BOOKMARK: Deshabilitar botones del sandbox (y también Judge0 y Oficial durante validación)
+    // BOOKMARK: Deshabilitar botones del sandbox (SOLO los de sandbox, NO los de Judge0/Official)
     function disableSandboxButtons(message) {
       const btnSandbox = document.getElementById('btnSandbox');
       const btnValidation = document.getElementById('btnValidation');
       const btnClearDataset = document.getElementById('btnClearDataset');
-      const btnJudge0 = document.getElementById('btnJudge0');
-      const btnOfficial = document.getElementById('btnOfficial');
       
       sandboxAvailable = false;
       btnSandbox.disabled = true;
       btnValidation.disabled = true;
       btnClearDataset.disabled = true;
-      btnJudge0.disabled = true;
-      btnOfficial.disabled = true;
       btnSandbox.title = message;
       btnValidation.title = message;
-      btnJudge0.title = message;
-      btnOfficial.title = message;
       btnSandbox.textContent = message;
       btnValidation.textContent = message;
       
-      console.log(`🔒 Todos los botones deshabilitados: ${message}`);
+      console.log(`🔒 Botones de sandbox deshabilitados: ${message}`);
+      // ✅ IMPORTANTE: Los botones Judge0 y Official NO se deshabilitan
+      // porque son independientes del sandbox local
     }
 
     // BOOKMARK: Monitoreo periódico del sandbox cada 5 segundos
