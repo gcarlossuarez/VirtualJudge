@@ -1,0 +1,314 @@
+- C#: Archivos, colecciones y LINQ
+----------------------------------
+
+2. Archivos de texto
+2.1. WriteAllLines
+Escribe múltiples líneas en un archivo de una sola operación. Perfecto para listas o
+colecciones.
+// Ejemplo: Guardar una lista de estudiantes
+string[] estudiantes = { "Ana García", "Carlos López", "María Rodríguez", "Juan Pérez" };
+string ruta = "estudiantes.txt";
+// Escribe todas las líneas en el archivo
+File.WriteAllLines(ruta, estudiantes);
+Console.WriteLine("Archivo creado exitosamente");
+2.2. ReadAllLines
+Lee todas las líneas de un archivo en un array de strings.
+// Ejemplo: Leer la lista de estudiantes guardada
+string ruta = "estudiantes.txt";
+if (File.Exists(ruta))
+{
+string[] estudiantes = File.ReadAllLines(ruta);
+Console.WriteLine($"Se encontraron {estudiantes.Length} estudiantes:");
+foreach (var estudiante in estudiantes)
+{
+Console.WriteLine($" - {estudiante}");
+}
+}
+else
+{
+Console.WriteLine("El archivo no existe");
+}
+2.3. StreamWriter
+Escribe en un archivo línea por línea. Útil cuando no se sabe cuántas líneas se escribirán.
+// Ejemplo: Generar un archivo de log de eventos
+string ruta = "evento_log.txt";
+using (StreamWriter writer = new StreamWriter(ruta))
+{
+writer.WriteLine("=== Log de Eventos ===");
+writer.WriteLine($"Fecha: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+writer.WriteLine("Evento 1: Sistema iniciado");
+writer.WriteLine("Evento 2: Usuario conectado");
+writer.WriteLine("Evento 3: Operación completada");
+writer.WriteLine("Fin del log");
+}
+Console.WriteLine("Log guardado correctamente");
+2.4. StreamReader
+Lee un archivo línea por línea. Ideal para procesar archivos grandes.
+// Ejemplo: Procesar el archivo de log
+string ruta = "evento_log.txt";
+if (File.Exists(ruta))
+{
+using (StreamReader reader = new StreamReader(ruta))
+{
+string linea;
+int numeroLinea = 0;
+while ((linea = reader.ReadLine()) != null)
+{
+numeroLinea++;
+Console.WriteLine($"Línea {numeroLinea}: {linea}");
+}
+}
+}
+else
+{
+Console.WriteLine("El archivo no existe");
+}
+2.5. WriteAllText
+Escribe todo el contenido en un archivo de una sola operación. Reemplaza el archivo si
+existe.
+// Ejemplo: Guardar un informe completo
+string contenido = @"INFORME DE RENDIMIENTO
+=====================
+Estudiante: Juan Pérez
+Materia: Algoritmos
+Calificación: 9.5/10
+Detalles:
+- Talleres: 95%
+- Examen parcial: 92%
+- Proyecto final: 98%
+";
+string ruta = "informe.txt";
+File.WriteAllText(ruta, contenido);
+Console.WriteLine("Informe guardado");
+2.6. ReadAllText
+Lee todo el contenido del archivo en un único string.
+// Ejemplo: Leer y procesar el contenido del informe
+string ruta = "informe.txt";
+if (File.Exists(ruta))
+{
+string contenido = File.ReadAllText(ruta);
+Console.WriteLine("=== CONTENIDO DEL ARCHIVO ===");
+Console.WriteLine(contenido);
+// Procesar: contar líneas
+int numeroLineas = contenido.Split(new[] { Environment.NewLine }, StringSplitOptions.None).Le
+Console.WriteLine($"\nTotal de líneas: {numeroLineas}");
+}
+else
+{
+Console.WriteLine("El archivo no existe");
+}
+3. LINQ - Lenguaje Integrado de Consultas
+Conceptos Básicos
+LINQ (Language Integrated Query) permite consultar y transformar colecciones de datos con
+una sintaxis similar a SQL. Ideal para filtrar, ordenar y proyectar datos.
+Clase auxiliar para ejemplos
+public class Estudiante
+{
+public int Id { get; set; }
+public string Nombre { get; set; }
+public double Calificacion { get; set; }
+public string Carrera { get; set; }
+public int Edad { get; set; }
+public override string ToString()
+{
+return $"{Nombre} ({Carrera}) - {Calificacion:F2}";
+}
+}
+3.1. Ordenación Ascendente (OrderBy)
+Ordena de menor a mayor.
+// Ejemplo: Ordenar estudiantes por calificación (menor a mayor)
+List<Estudiante> estudiantes = new List<Estudiante>
+{
+new Estudiante { Id = 1, Nombre = "Ana", Calificacion = 85.5, Carrera = "Sistemas", Edad = 20
+new Estudiante { Id = 2, Nombre = "Carlos", Calificacion = 92.0, Carrera = "Sistemas", Edad =
+new Estudiante { Id = 3, Nombre = "María", Calificacion = 78.3, Carrera = "Ingeniería", Edad
+new Estudiante { Id = 4, Nombre = "Juan", Calificacion = 88.7, Carrera = "Sistemas", Edad = 2
+};
+// Ordenar por calificación (ascendente)
+var ordenados = estudiantes.OrderBy(e => e.Calificacion).ToList();
+Console.WriteLine("=== Estudiantes ordenados por calificación (menor a mayor) ===");
+foreach (var est in ordenados)
+{
+Console.WriteLine($" {est}");
+}
+// Salida:
+// María (Ingeniería) - 78.30
+// Ana (Sistemas) - 85.50
+// Juan (Sistemas) - 88.70
+// Carlos (Sistemas) - 92.00
+ordenados = estudiantes.OrderBy(e => e.Edad).ThenByDescending(x=> x.Nombre).ToList();
+ordenados.Dump();
+3.2. Ordenación Descendente (OrderByDescending)
+Ordena de mayor a menor.
+// Ejemplo: Ordenar estudiantes por calificación (mayor a menor)
+var ordenadosDesc = estudiantes.OrderByDescending(e => e.Calificacion).ToList();
+Console.WriteLine("=== Estudiantes ordenados por calificación (mayor a menor) ===");
+foreach (var est in ordenadosDesc)
+{
+Console.WriteLine($" {est}");
+}
+// Salida:
+// Carlos (Sistemas) - 92.00
+// Juan (Sistemas) - 88.70
+// Ana (Sistemas) - 85.50
+// María (Ingeniería) - 78.30
+3.3. Ordenación por Múltiples Campos
+Ordena por un campo, y luego por otro en caso de empate.
+// Ejemplo: Ordenar por carrera (ascendente) y luego por calificación (descendente)
+var ordenadosMultiple = estudiantes
+.OrderBy(e => e.Carrera) // Primer criterio: carrera A-Z
+.ThenByDescending(e => e.Calificacion) // Segundo criterio: calificación Z-A
+.ToList();
+Console.WriteLine("=== Estudiantes ordenados por carrera y luego por calificación (desc) ===");
+foreach (var est in ordenadosMultiple)
+{
+Console.WriteLine($" {est}");
+}
+// Salida:
+// María (Ingeniería) - 78.30
+// Carlos (Sistemas) - 92.00
+// Juan (Sistemas) - 88.70
+// Ana (Sistemas) - 85.50
+3.4. Filtrado con Where
+Selecciona solo los elementos que cumplen una condición.
+// Ejemplo: Estudiantes aprobados (calificación >= 80)
+var aprobados = estudiantes.Where(e => e.Calificacion >= 80).ToList();
+Console.WriteLine("=== Estudiantes Aprobados ===");
+foreach (var est in aprobados)
+{
+Console.WriteLine($" {est}");
+}
+// Salida:
+// Ana (Sistemas) - 85.50
+// Carlos (Sistemas) - 92.00
+// Juan (Sistemas) - 88.70
+3.5. Proyección con Select
+Transforma los elementos a una nueva forma.
+// Ejemplo 1: Extraer solo nombres y calificaciones
+var nombres = estudiantes
+.Select(e => new { e.Nombre, e.Calificacion })
+.ToList();
+Console.WriteLine("=== Solo nombres y calificaciones ===");
+foreach (var item in nombres)
+{
+Console.WriteLine($" {item.Nombre}: {item.Calificacion:F2}");
+}
+// Ejemplo 2: Crear una lista de strings con formato
+var resumen = estudiantes
+.OrderByDescending(e => e.Calificacion)
+.Select(e => $"{e.Nombre} - {e.Calificacion:F2}")
+.ToList();
+Console.WriteLine("=== Resumen ordenado ===");
+foreach (var item in resumen)
+{
+Console.WriteLine($" {item}");
+}
+3.6. Agrupación con GroupBy
+Agrupa elementos por un campo común.
+// Ejemplo: Agrupar estudiantes por carrera
+var porCarrera = estudiantes
+.GroupBy(e => e.Carrera)
+.ToList();
+Console.WriteLine("=== Estudiantes agrupados por carrera ===");
+foreach (var grupo in porCarrera)
+{
+Console.WriteLine($"\n{grupo.Key}:");
+foreach (var est in grupo)
+{
+Console.WriteLine($" - {est.Nombre} ({est.Calificacion:F2})");
+}
+}
+// Salida:
+// Sistemas:
+// - Ana (85.50)
+// - Carlos (92.00)
+// - Juan (88.70)
+// Ingeniería:
+// - María (78.30)
+3.7. Operaciones Combinadas (LINQ Complejo)
+Combinando múltiples operaciones.
+// Ejemplo: Estudiantes de Sistemas aprobados, ordenados por edad y mostrar nombre+edad
+var resultado = estudiantes
+.Where(e => e.Carrera == "Sistemas") // Filtrar por carrera
+.Where(e => e.Calificacion >= 80) // Filtrar aprobados
+.OrderBy(e => e.Edad) // Ordenar por edad
+.Select(e => new { e.Nombre, e.Edad, e.Calificacion })
+.ToList();
+Console.WriteLine("=== Estudiantes de Sistemas aprobados (ordenados por edad) ===");
+foreach (var est in resultado)
+{
+Console.WriteLine($" {est.Nombre} ({est.Edad} años) - {est.Calificacion:F2}");
+}
+// Salida:
+// Ana (20 años) - 85.50
+// Juan (20 años) - 88.70
+// Carlos (22 años) - 92.00
+3.8. Cálculos con LINQ
+Operaciones de agregación (suma, promedio, máximo, etc).
+// Ejemplo: Estadísticas de calificaciones
+var promedio = estudiantes.Average(e => e.Calificacion);
+var maxima = estudiantes.Max(e => e.Calificacion);
+var minima = estudiantes.Min(e => e.Calificacion);
+var total = estudiantes.Count();
+var aprobados = estudiantes.Count(e => e.Calificacion >= 80);
+Console.WriteLine("=== Estadísticas de Calificaciones ===");
+Console.WriteLine($"Promedio: {promedio:F2}");
+Console.WriteLine($"Máxima: {maxima:F2}");
+Console.WriteLine($"Mínima: {minima:F2}");
+Console.WriteLine($"Total de estudiantes: {total}");
+Console.WriteLine($"Aprobados: {aprobados}");
+Console.WriteLine($"Tasa de aprobación: {(aprobados * 100.0 / total):F1}%");
+// Salida:
+// Promedio: 86.13
+// Máxima: 92.00
+// Mínima: 78.30
+// Total de estudiantes: 4
+// Aprobados: 3
+// Tasa de aprobación: 75.0%
+3.9. Métodos útiles adicionales
+// FirstOrDefault: Obtener el primero o null si no existe
+var mejorEstudiante = estudiantes.OrderByDescending(e => e.Calificacion).FirstOrDefault();
+Console.WriteLine($"Mejor estudiante: {mejorEstudiante.Nombre}");
+// Any: Verificar si existe al menos uno que cumpla la condición
+bool hayMenores = estudiantes.Any(e => e.Edad < 20);
+Console.WriteLine($"¿Hay menores de 20? {hayMenores}");
+// All: Verificar si todos cumplen la condición
+bool todosAprobados = estudiantes.All(e => e.Calificacion >= 60);
+Console.WriteLine($"¿Todos aprobados? {todosAprobados}");
+// Distinct: Eliminar duplicados
+var carreras = estudiantes.Select(e => e.Carrera).Distinct().ToList();
+Console.WriteLine($"Carreras: {string.Join(", ", carreras)}");
+// Take: Obtener los primeros N elementos
+var top3 = estudiantes.OrderByDescending(e => e.Calificacion).Take(3).ToList();
+Console.WriteLine("Top 3 mejores estudiantes:");
+foreach (var est in top3)
+Console.WriteLine($" {est}");
+// Skip: Saltar los primeros N elementos
+var otros = estudiantes.OrderByDescending(e => e.Calificacion).Skip(1).ToList();
+Console.WriteLine("Estudiantes excepto el primero:");
+foreach (var est in otros)
+Console.WriteLine($" {est}");
+3.10. Ordenación Personalizada con IComparer
+Para ordenaciones más complejas sin LINQ.
+// Definir comparador personalizado
+class EstudianteComparador : IComparer<Estudiante>
+{
+public int Compare(Estudiante a, Estudiante b)
+{
+// Comparar por calificación descendente
+int resultadoCalif = b.Calificacion.CompareTo(a.Calificacion);
+if (resultadoCalif != 0)
+return resultadoCalif;
+// Si son iguales, comparar por nombre
+return a.Nombre.CompareTo(b.Nombre);
+}
+}
+// Usar el comparador
+List<Estudiante> estudiantes2 = new List<Estudiante>(estudiantes);
+estudiantes2.Sort(new EstudianteComparador());
+Console.WriteLine("=== Ordenación personalizada con IComparer ===");
+foreach (var est in estudiantes2)
+{
+Console.WriteLine($" {est}");
+}
+
