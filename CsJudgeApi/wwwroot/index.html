@@ -2694,13 +2694,26 @@ class Program
               currentAllowCopyPaste = (problemData.allowCopyPaste === true);
               updateCopyPasteStatus();  // Solo actualiza estado, los listeners están siempre activos
               
-              // ✨ NUEVO: Resetear código a default al cambiar de problema
-              // Esto previene SIEMPRE que hereden código pegado del problema anterior
-              console.log(`🔄 Reseteando código a default al cambiar de problema...`);
-              const cfg = getSelectedLang();
-              cmEditor.setValue(cfg.template);
-              if (monacoEditor) {
-                monacoEditor.setValue(cfg.template);
+              // ✨ NUEVO: Si el código está vacío o lleno de espacios, llenar con default
+              const currentCode = cmEditor.getValue().trim();
+              if (!currentCode) {
+                console.log(`🔄 Código vacío, usando template por defecto...`);
+                const cfg = getSelectedLang();
+                cmEditor.setValue(cfg.template);
+                if (monacoEditor) {
+                  monacoEditor.setValue(cfg.template);
+                }
+              }
+              
+              // ✨ NUEVO: Si copy/paste está BLOQUEADO, resetear código a default
+              // Esto previene que hereden código pegado cuando entran a un problema restrictivo
+              if (!currentAllowCopyPaste) {
+                console.log(`🔄 Reseteando código a default (copy/paste bloqueado)...`);
+                const cfg = getSelectedLang();
+                cmEditor.setValue(cfg.template);
+                if (monacoEditor) {
+                  monacoEditor.setValue(cfg.template);
+                }
               }
 
               // BOOKMARK: 2) 👇 Cargar datasets (inputs) de ese problema, pasando el token
