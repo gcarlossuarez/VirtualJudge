@@ -115,6 +115,9 @@ build/
 # 🔒 Archivos de especificación técnica (No subir a git)
 AGENTS.md
 AGENT.md
+SPEC_*.md
+*_SPEC.md
+IMPLEMENTATION_*.md
 
 # Backups
 *.bak

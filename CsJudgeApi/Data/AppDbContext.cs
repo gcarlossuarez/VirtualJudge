@@ -8,6 +8,7 @@ public class AppDbContext : DbContext
     public DbSet<Contest> Contests { get; set; } = null!;
     public DbSet<ContestStudent> ContestStudents { get; set; } = null!;
     public DbSet<Question> Questions { get; set; } = null!;
+    public DbSet<ContestQuestion> ContestQuestions { get; set; } = null!;
     public DbSet<Submission> Submissions => Set<Submission>();
     // 🔹 Otras tablas ya existentes
     public DbSet<Configuration> Configurations => Set<Configuration>();
@@ -38,11 +39,29 @@ public class AppDbContext : DbContext
             .WithMany(c => c.Students)
             .HasForeignKey(ce => ce.ContestId);
 
-        // Relación Contest <-> Pregunta
-        modelBuilder.Entity<Question>()
-            .HasOne(p => p.Contest)
+        // ========== RELACIÓN M:N CONTESTQUESTION ==========
+        // PK compuesta en ContestQuestion
+        modelBuilder.Entity<ContestQuestion>()
+            .HasKey(cq => new { cq.ContestId, cq.QuestionId });
+
+        // Relación ContestQuestion -> Contest
+        modelBuilder.Entity<ContestQuestion>()
+            .HasOne(cq => cq.Contest)
             .WithMany(c => c.Questions)
-            .HasForeignKey(p => p.ContestId);
+            .HasForeignKey(cq => cq.ContestId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Relación ContestQuestion -> Question
+        modelBuilder.Entity<ContestQuestion>()
+            .HasOne(cq => cq.Question)
+            .WithMany(q => q.Contests)
+            .HasForeignKey(cq => cq.QuestionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Índice para búsquedas rápidas
+        modelBuilder.Entity<ContestQuestion>()
+            .HasIndex(cq => new { cq.ContestId, cq.Order })
+            .HasDatabaseName("IX_ContestQuestion_ContestOrder");
 
         // PK compuesta en ContestLanguage
         modelBuilder.Entity<ContestLanguage>()

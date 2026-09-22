@@ -14,14 +14,14 @@ public class Contest
     // Relación con estudiantes
     public ICollection<ContestStudent> Students { get; set; } = new List<ContestStudent>();
 
-    // Relación con preguntas
-    public ICollection<Question> Questions { get; set; } = new List<Question>();
+    // Relación M:N con preguntas a través de ContestQuestion
+    // Permite reutilizar preguntas en múltiples contests y semestres
+    public ICollection<ContestQuestion> Questions { get; set; } = new List<ContestQuestion>();
 
-    // ✅ AGREGAR:
     public int SemesterId { get; set; }        // FK a Semester
     public int Group { get; set; }             // 1 o 2
 
-    // ✅ AGREGAR Navegación:
+    // Navegación
     public Semester? Semester { get; set; }
 }
 

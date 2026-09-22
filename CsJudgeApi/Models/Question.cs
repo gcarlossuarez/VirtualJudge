@@ -13,7 +13,10 @@ public class Question
 
     public int? TimeLimitSeconds { get; set; }
     
-    public int ContestId { get; set; }
-    public Contest Contest { get; set; } = null!;
+    /// <summary>
+    /// Relación M:N con Contests a través de ContestQuestion.
+    /// Una pregunta puede ser reutilizada en múltiples contests y semestres.
+    /// </summary>
+    public ICollection<ContestQuestion> Contests { get; set; } = new List<ContestQuestion>();
 }
 

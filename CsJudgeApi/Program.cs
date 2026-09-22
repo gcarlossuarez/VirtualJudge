@@ -298,7 +298,9 @@ app.MapPost("/compile-run", async (HttpRequest req, AppDbContext db) =>
 
     // ✅ Validar que el problema exista en ese contest
     var question = await db.Questions
-        .FirstOrDefaultAsync(q => q.ContestId == currentContest.ContestId && q.QuestionId == problemId);
+        .Include(q => q.Contests)
+        .FirstOrDefaultAsync(q => q.QuestionId == problemId && 
+                                  q.Contests.Any(cq => cq.ContestId == currentContest.ContestId));
 
     if (question == null)
         return Results.BadRequest($"El problema {problemId} no pertenece al contest {currentContest.ContestId}");
@@ -703,9 +705,11 @@ app.MapGet("/contest/questions", async (AppDbContext db, HttpContext ctx) =>
     if (contest == null)
         return Results.BadRequest("No hay contest activo");
 
-    var questions = await db.Questions
-        .Where(q => q.ContestId == contest.ContestId)
-        .OrderBy(q => q.QuestionId)
+    var questions = await db.ContestQuestions
+        .Where(cq => cq.ContestId == contest.ContestId)
+        .Include(cq => cq.Question)
+        .OrderBy(cq => cq.Order)
+        .Select(cq => cq.Question)
         .ToListAsync();
 
     // Cargar descripciones completas para cada problema
@@ -751,7 +755,7 @@ app.MapGet("/contest/questions", async (AppDbContext db, HttpContext ctx) =>
             ContestId = contest.ContestId,
             Metadata = JsonSerializer.Serialize(new 
             { 
-                questionCount = questions.Count
+                questionCount = questions.Count()
             }),
             IpAddress = GetClientIp(ctx.Request),
             UserAgent = ctx.Request.Headers.UserAgent.ToString()
@@ -989,7 +993,8 @@ app.MapGet("/api/dashboard", async (AppDbContext db) =>
         from su in db.Submissions
         join st in db.Students on su.StudentId equals st.StudentId
         join q in db.Questions on su.ProblemId equals q.QuestionId.ToString()
-        join c in db.Contests on q.ContestId equals c.ContestId
+        join cq in db.ContestQuestions on q.QuestionId equals cq.QuestionId
+        join c in db.Contests on cq.ContestId equals c.ContestId
         where c.ContestId == currentContest.ContestId && st.StudentId != 123
         orderby su.CreatedAt descending
         select new
@@ -1017,7 +1022,8 @@ app.MapGet("/api/contest-status", async (AppDbContext db) =>
         from su in db.Submissions
         join st in db.Students on su.StudentId equals st.StudentId
         join q in db.Questions on su.ProblemId equals q.QuestionId.ToString()
-        where q.ContestId == currentContest.ContestId
+        join cq in db.ContestQuestions on q.QuestionId equals cq.QuestionId
+        where cq.ContestId == currentContest.ContestId
         orderby su.CreatedAt descending
         select new
         {
