@@ -701,6 +701,7 @@ app.MapGet("/contest/questions", async (AppDbContext db, HttpContext ctx) =>
 {
     // Validar que haya un contest activo
     var contest = currentContest;
+    Console.WriteLine($"✨ [DEBUG] Current contest: {contest?.ContestId}");
 
     if (contest == null)
         return Results.BadRequest("No hay contest activo");
@@ -708,10 +709,11 @@ app.MapGet("/contest/questions", async (AppDbContext db, HttpContext ctx) =>
     var questions = await db.ContestQuestions
         .Where(cq => cq.ContestId == contest.ContestId)
         .Include(cq => cq.Question)
+        .Where(cq => cq.Question != null)
         .OrderBy(cq => cq.Order)
-        .Select(cq => cq.Question)
+        .Select(cq => cq.Question!)
         .ToListAsync();
-
+    Console.WriteLine($"✨ [DEBUG] Questions count: {questions.Count}");
     // Cargar descripciones completas para cada problema
     var preguntas = questions.Select(q =>
     {
@@ -745,6 +747,7 @@ app.MapGet("/contest/questions", async (AppDbContext db, HttpContext ctx) =>
             lastModified = lastModified // Timestamp para detectar cambios
         };
     }).ToList();
+    Console.WriteLine($"✨ [DEBUG] Preguntas count: {preguntas.Count}");
 
     // 📊 Log de actividad - Contest cargado (async, sin bloquear respuesta)
     try

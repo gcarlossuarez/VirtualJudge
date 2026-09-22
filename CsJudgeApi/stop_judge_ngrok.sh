@@ -25,5 +25,9 @@ else
   echo "✅ No hay ngrok corriendo"
 fi
 
+echo "🛑 Deteniendo CsJudgeApi / procesos dotnet..."
+sudo pkill -f CsJudgeApi.dll
+sudo pkill dotnet
+
 echo "=== ✅ Juez apagado ==="
 

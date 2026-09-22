@@ -5,6 +5,9 @@
 namespace CsJudgeApi.Migrations
 {
     /// <inheritdoc />
+    /// <summary>
+    /// Migración para agregar la relación muchos a muchos entre Contest y Question mediante ContestQuestion.
+    /// </summary>
     public partial class AddContestQuestionRelationship : Migration
     {
         /// <inheritdoc />
@@ -59,6 +62,9 @@ namespace CsJudgeApi.Migrations
         }
 
         /// <inheritdoc />
+        /// <summary>
+        /// Revertir los cambios realizados en la migración Up.
+        /// </summary>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
