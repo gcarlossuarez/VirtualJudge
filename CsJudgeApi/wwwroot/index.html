@@ -390,7 +390,7 @@
   </p>
 
   <label id="lblProblemId">Id del Problema:</label>
-  <input type="text" id="txtProblemId" style="width: 40px;" required minlength="1" readonly>
+  <input type="text" id="txtProblemId" style="width: 100px;" required minlength="1" readonly>
   <span>
     <label for="selectProblem">Seleccione el problema:</label>
     <select id="selectProblem">
@@ -498,7 +498,140 @@ class Program
     };
 
     let monacoEditor = null;
+    
+    // ========== BLOQUEO DE COPY/PASTE/DRAG-DROP ==========
+    // Control centralizado para permitir o bloquear copy/paste/drag-drop
+    let currentAllowCopyPaste = true;  // Por defecto permitido
+    let copyPasteListenersInitialized = false;  // Evitar agregar listeners múltiples veces
+    
+    /*
+    ┌─────────────────────────────────────┐
+    │   ESTUDIANTE INTENTA COPIAR CÓDIGO  │
+    └──────────────┬──────────────────────┘
+                   │
+                   ▼
+             ¿allowCopyPaste?
+             /              \
+            /                \
+          true              false ← BLOQUEADO
+           │                   │
+           ▼                   ▼
+        ✅ Permite        ❌ Bloquea
+        (normal)        (muestra mensaje)
+    */
 
+    function initializeCopyPasteControl() {
+      if (copyPasteListenersInitialized) return;
+      copyPasteListenersInitialized = true;
+      
+      const problemId = () => document.getElementById('txtProblemId').value || "Desconocido";
+      
+      // ============ LISTENERS EN CODEMIRROR ============
+      const cmWrapper = cmEditor.getWrapperElement();
+      
+      // Listener para copy - Verifica currentAllowCopyPaste EN TIEMPO REAL
+      cmWrapper.addEventListener('copy', (e) => {
+        if (!currentAllowCopyPaste) {
+          e.preventDefault();
+          showMessage("❌ Copy está deshabilitado por el profesor", "err");
+        }
+      });
+      
+      // Listener para cut - Verifica currentAllowCopyPaste EN TIEMPO REAL
+      cmWrapper.addEventListener('cut', (e) => {
+        if (!currentAllowCopyPaste) {
+          e.preventDefault();
+          showMessage("❌ Cut está deshabilitado por el profesor", "err");
+        }
+      });
+      
+      // Listener para paste en CodeMirror
+      cmEditor.on('paste', (instance, event) => {
+        if (!currentAllowCopyPaste) {
+          event.preventDefault();
+          showMessage("❌ Paste está deshabilitado por el profesor", "err");
+        }
+      });
+      
+      // Listener para drag-drop en CodeMirror
+      cmWrapper.addEventListener('dragover', (e) => {
+        if (!currentAllowCopyPaste) {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'none';
+        }
+      });
+      
+      cmWrapper.addEventListener('drop', (e) => {
+        if (!currentAllowCopyPaste) {
+          e.preventDefault();
+          showMessage("❌ Drag & Drop está deshabilitado por el profesor", "err");
+        }
+      });
+      
+      // ============ LISTENERS EN MONACO ============
+      if (monacoEditor) {
+        const monacoContainer = document.getElementById('monaco-container');
+        
+        // Listener para copy
+        monacoContainer.addEventListener('copy', (e) => {
+          if (!currentAllowCopyPaste) {
+            e.preventDefault();
+            showMessage("❌ Copy está deshabilitado por el profesor", "err");
+          }
+        });
+        
+        // Listener para cut
+        monacoContainer.addEventListener('cut', (e) => {
+          if (!currentAllowCopyPaste) {
+            e.preventDefault();
+            showMessage("❌ Cut está deshabilitado por el profesor", "err");
+          }
+        });
+        
+        // Bloquear Ctrl+V en Monaco (paste)
+        monacoEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, () => {
+          if (!currentAllowCopyPaste) {
+            showMessage("❌ Paste está deshabilitado por el profesor", "err");
+            return false;
+          }
+          return true;  // Permitir si está habilitado
+        });
+        
+        // Listener para paste en DOM como respaldo
+        monacoContainer.addEventListener('paste', (e) => {
+          if (!currentAllowCopyPaste) {
+            e.preventDefault();
+            showMessage("❌ Paste está deshabilitado por el profesor", "err");
+          }
+        });
+        
+        // Listener para drag-drop
+        monacoContainer.addEventListener('dragover', (e) => {
+          if (!currentAllowCopyPaste) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'none';
+          }
+        });
+        
+        monacoContainer.addEventListener('drop', (e) => {
+          if (!currentAllowCopyPaste) {
+            e.preventDefault();
+            showMessage("❌ Drag & Drop está deshabilitado por el profesor", "err");
+          }
+        });
+      }
+      
+      console.log(`✅ Control de Copy/Paste inicializado`);
+    }
+
+    function updateCopyPasteStatus() {
+      const problemId = document.getElementById('txtProblemId').value || "Desconocido";
+      if (currentAllowCopyPaste) {
+        console.log(`✅ Copy/Paste PERMITIDO en el problema ${problemId}`);
+      } else {
+        console.log(`🚫 Copy/Paste BLOQUEADO en el problema ${problemId}`);
+      }
+    }
 
     function getSelectedLang() {
       const val = document.getElementById("selectLanguage").value;
@@ -586,6 +719,9 @@ class Program
         automaticLayout: true
       });
       console.log("✅ Monaco cargado correctamente");
+      
+      // ✨ NUEVO: Inicializar control de copy/paste (se hace UNA SOLA VEZ después de ambos editores)
+      initializeCopyPasteControl();
     });
 
     // === Cambio de lenguaje (compatible con CodeMirror y Monaco) ===
@@ -803,7 +939,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://26ac-190-104-20-155.ngrok-free.app";
+    const SERVER_BASE_URL = "https://e906-190-104-20-155.ngrok-free.app";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
@@ -2506,7 +2642,8 @@ class Program
             id: p.id,
             titulo: p.titulo,
             text: p.text,
-            timeLimitSeconds: p.timeLimitSeconds || 5
+            timeLimitSeconds: p.timeLimitSeconds || 5,
+            allowCopyPaste: (p.allowCopyPaste === true)  // Evitar bug: false || true = true
           };
         });
 
@@ -2548,6 +2685,23 @@ class Program
               if (myToken !== problemChangeToken) return;
               document.getElementById("txtProblemId").value = problemData.id;
               document.getElementById("txtProblemDesc").value = problemData.text;
+              
+              // ✨ NUEVO: Limpiar stdin (entrada) al cambiar de problema
+              document.getElementById("stdin").value = "";
+              
+              // ✨ NUEVO: Actualizar permiso de copy/paste y aplicar restricciones
+              // Nota: NO usar || true porque false || true = true (bug en JS)
+              currentAllowCopyPaste = (problemData.allowCopyPaste === true);
+              updateCopyPasteStatus();  // Solo actualiza estado, los listeners están siempre activos
+              
+              // ✨ NUEVO: Resetear código a default al cambiar de problema
+              // Esto previene SIEMPRE que hereden código pegado del problema anterior
+              console.log(`🔄 Reseteando código a default al cambiar de problema...`);
+              const cfg = getSelectedLang();
+              cmEditor.setValue(cfg.template);
+              if (monacoEditor) {
+                monacoEditor.setValue(cfg.template);
+              }
 
               // BOOKMARK: 2) 👇 Cargar datasets (inputs) de ese problema, pasando el token
               // El token se pasa a loadInputs y a los eventos internos de datasets.
@@ -2610,7 +2764,8 @@ class Program
             id: p.id,
             titulo: p.titulo,
             text: p.text,
-            timeLimitSeconds: p.timeLimitSeconds || 5
+            timeLimitSeconds: p.timeLimitSeconds || 5,
+            allowCopyPaste: (p.allowCopyPaste === true)  // ✅ ARREGLO: Incluir flag de copy/paste
           };
         });
         

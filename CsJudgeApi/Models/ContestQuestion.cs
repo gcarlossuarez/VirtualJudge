@@ -16,6 +16,12 @@ public class ContestQuestion
     /// </summary>
     public int Order { get; set; }
     
+    /// <summary>
+    /// Indica si está permitido copiar, cortar, pegar y arrastrar código en esta pregunta.
+    /// Por defecto: true (permitido)
+    /// </summary>
+    public bool AllowCopyPaste { get; set; } = true;
+    
     // Navegación
     public Contest? Contest { get; set; }
     public Question? Question { get; set; }

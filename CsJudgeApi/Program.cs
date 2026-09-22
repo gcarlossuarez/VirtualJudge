@@ -706,17 +706,18 @@ app.MapGet("/contest/questions", async (AppDbContext db, HttpContext ctx) =>
     if (contest == null)
         return Results.BadRequest("No hay contest activo");
 
-    var questions = await db.ContestQuestions
+    var contestQuestions = await db.ContestQuestions
         .Where(cq => cq.ContestId == contest.ContestId)
         .Include(cq => cq.Question)
         .Where(cq => cq.Question != null)
         .OrderBy(cq => cq.Order)
-        .Select(cq => cq.Question!)
-        .ToListAsync();
-    Console.WriteLine($"✨ [DEBUG] Questions count: {questions.Count}");
+        .ToListAsync();  // ✨ Sin Select() para mantener datos de ContestQuestion
+    Console.WriteLine($"✨ [DEBUG] Questions count: {contestQuestions.Count}");
+    
     // Cargar descripciones completas para cada problema
-    var preguntas = questions.Select(q =>
+    var preguntas = contestQuestions.Select(cq =>
     {
+        var q = cq.Question!;
         string descripcion = "";
         long lastModified = 0; // Unix timestamp (milisegundos)
         try
@@ -744,7 +745,8 @@ app.MapGet("/contest/questions", async (AppDbContext db, HttpContext ctx) =>
             titulo = q.Review,
             text = descripcion,
             timeLimitSeconds = q.TimeLimitSeconds,
-            lastModified = lastModified // Timestamp para detectar cambios
+            lastModified = lastModified, // Timestamp para detectar cambios
+            allowCopyPaste = cq.AllowCopyPaste  // ✨ NUEVO: Permite copiar/pegar
         };
     }).ToList();
     Console.WriteLine($"✨ [DEBUG] Preguntas count: {preguntas.Count}");
@@ -758,7 +760,7 @@ app.MapGet("/contest/questions", async (AppDbContext db, HttpContext ctx) =>
             ContestId = contest.ContestId,
             Metadata = JsonSerializer.Serialize(new 
             { 
-                questionCount = questions.Count()
+                questionCount = preguntas.Count
             }),
             IpAddress = GetClientIp(ctx.Request),
             UserAgent = ctx.Request.Headers.UserAgent.ToString()
