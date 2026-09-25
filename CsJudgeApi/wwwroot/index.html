@@ -281,8 +281,9 @@
   -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
 
-  <!-- Monaco -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+  <!-- MONACO DESHABILITADO - DESCOMENTAR PARA HABILITAR -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script> -->
+  <!-- MONACO DESHABILITADO - DESCOMENTAR PARA HABILITAR
   <script>
     /* Esperar a que el loader de Monaco esté disponible; ya que, el require de Monaco aún no está definido en ese punto
    cuando se carga el script (porque loader.min.js se ejecuta de forma asíncrona).*/ 
@@ -293,6 +294,7 @@
       });
     });
   </script>
+  -->
 
   </head>
   
@@ -382,7 +384,9 @@
 
   <div>
     <div id="tab-cm" class="tab active" onclick="switchEditor('cm')">Editor rápido (CodeMirror)</div>
+    <!-- MONACO DESHABILITADO - DESCOMENTAR PARA HABILITAR
     <div id="tab-monaco" class="tab" onclick="switchEditor('monaco')">Editor avanzado (Monaco)</div>
+    -->
   </div>
 
   <p id="monaco-warning" style="color:red; display:none;">
@@ -690,8 +694,8 @@ class Program
       }
     }
 
-    // === Inicialización de Monaco ===
-    require.config({ 
+    // === MONACO DESHABILITADO - DESCOMENTAR PARA HABILITAR ===
+    /* require.config({ 
       paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } 
     });
 
@@ -722,7 +726,8 @@ class Program
       
       // ✨ NUEVO: Inicializar control de copy/paste (se hace UNA SOLA VEZ después de ambos editores)
       initializeCopyPasteControl();
-    });
+    }); */
+    initializeCopyPasteControl(); // Llamar directamente sin Monaco
 
     // === Cambio de lenguaje (compatible con CodeMirror y Monaco) ===
     document.getElementById("selectLanguage").addEventListener("change", () => {
@@ -939,7 +944,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://e906-190-104-20-155.ngrok-free.app";
+    const SERVER_BASE_URL = "https://4784-192-223-105-46.ngrok-free.app";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
