@@ -13,6 +13,8 @@ curl -X POST http://localhost:5000/api/admin/restore-validator-paths \
   -w "\n"
 ```
 
+
+
 **Respuesta esperada:**
 ```json
 {
@@ -23,6 +25,28 @@ curl -X POST http://localhost:5000/api/admin/restore-validator-paths \
   "message": "Restauración completada exitosamente"
 }
 ```
+
+
+#### Análisis del Comando cURL
+
+El comando ejecutado realiza una solicitud HTTP utilizando la herramienta de línea de comandos **cURL** con el objetivo de interactuar con una interfaz de programación de aplicaciones (API) local. Específicamente, invoca un proceso administrativo diseñado para la restauración de rutas de validación (`restore-validator-paths`).
+
+##### Desglose de Parámetros
+
+*   **`curl`**: Invoca la herramienta de transferencia de datos basada en protocolos de red.
+*   **`-X POST`**: Especifica el uso del método HTTP POST. Esto indica al servidor que la solicitud tiene como fin enviar datos o desencadenar una acción que altera el estado del sistema.
+*   **`http://localhost:5000/api/admin/restore-validator-paths`**: Corresponde a la dirección URL de destino (*endpoint*). Señala que el servicio se encuentra alojado en la máquina local (`localhost`), escucha a través del puerto `5000` y expone una ruta de nivel administrativo.
+*   **`-H "Content-Type: application/json"`**: Define un encabezado (*header*) HTTP. Informa al servidor que la estructura de los datos contenidos en el cuerpo de la petición sigue el formato estandarizado JSON.
+*   **`-d '{}'`**: Representa el cuerpo de la petición (*payload*). En este caso, se transmite un objeto JSON vacío, lo cual sugiere que el *endpoint* requiere una acción de tipo POST pero no necesita variables adicionales para su ejecución básica.
+*   **`-w "\n"`**: Utiliza la opción *write-out* para formatear la salida en la consola. Añade un salto de línea al finalizar la recepción de la respuesta, optimizando la legibilidad en el entorno de la terminal.
+
+##### Mecanismo de Funcionamiento
+
+El flujo operativo se divide en los siguientes pasos:
+1. El cliente establece una conexión local con el servidor en el puerto especificado.
+2. Se transmite la petición POST junto con el encabezado de contenido y el objeto vacío.
+3. El servidor recibe la instrucción en la ruta administrativa y ejecuta la lógica interna de restauración.
+4. El servidor retorna un código de estado junto con la respuesta correspondiente, la cual es mostrada en la terminal de forma ordenada gracias al salto de línea final.
 
 ---
 
