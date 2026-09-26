@@ -10,15 +10,18 @@ namespace CsJudgeApi.Controllers;
 public class AdminController : ControllerBase
 {
     private readonly StudentImportService _studentImportService;
+    private readonly ValidatorPathRestoreService _validatorRestoreService;
     private readonly AppDbContext _context;
     private readonly ILogger<AdminController> _logger;
 
     public AdminController(
         StudentImportService studentImportService,
+        ValidatorPathRestoreService validatorRestoreService,
         AppDbContext context,
         ILogger<AdminController> logger)
     {
         _studentImportService = studentImportService;
+        _validatorRestoreService = validatorRestoreService;
         _context = context;
         _logger = logger;
     }
@@ -168,5 +171,44 @@ public class AdminController : ControllerBase
             .ToListAsync();
 
         return Ok(statistics);
+    }
+
+    /// <summary>
+    /// Restaura rutas de validadores desde un backup de la BD
+    /// Verifica que los archivos existan en el filesystem
+    /// POST /api/admin/restore-validator-paths
+    /// Body: { "backupPath": "submissions.db.bkp.2026-08-17" }
+    /// Si backupPath es null, usa por defecto: "submissions.db.bkp.2026-08-17"
+    /// </summary>
+    [HttpPost("restore-validator-paths")]
+    public async Task<IActionResult> RestoreValidatorPaths(
+        [FromBody] RestoreRequest request)
+    {
+        try
+        {
+            _logger.LogInformation($"Iniciando restauración de validadores desde backup: {request.BackupPath ?? "submissions.db.bkp.2026-08-17"}");
+
+            var result = await _validatorRestoreService.RestoreValidatorPathsFromBackup(
+                request.BackupPath ?? "submissions.db.bkp.2026-08-17");
+
+            return Ok(new 
+            { 
+                success = result.Success,
+                restored = result.RestoredCount,
+                failed = result.FailedCount,
+                savedChanges = result.SavedChanges,
+                message = result.ErrorMessage ?? "Restauración completada exitosamente"
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error en restauración de validadores");
+            return StatusCode(500, new
+            {
+                success = false,
+                error = ex.Message,
+                message = "Error al restaurar validadores"
+            });
+        }
     }
 }

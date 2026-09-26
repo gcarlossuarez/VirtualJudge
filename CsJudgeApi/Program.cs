@@ -33,8 +33,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source={PathDirectories.DB_PATH}"));
 
-// 🆕 Registrar servicios de importación
+// 🆕 Registrar servicios de importación y restauración
 builder.Services.AddScoped<StudentImportService>();
+builder.Services.AddScoped<ValidatorPathRestoreService>();
 
 // Registrar controllers
 builder.Services.AddControllers();
