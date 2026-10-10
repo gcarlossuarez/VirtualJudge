@@ -922,6 +922,28 @@ class Program
   <button id="btnJudge0" type="button" onclick="runJudge0()">Ejecutar (En Juez de<br>Prueba)</button>
   <button id="btnOfficial" type="button" onclick="runOfficial()">Enviar (En Juez Oficial,<br> <strong>es calificable para el contest</strong>)</button>
 
+  <!-- ✨ NUEVO: Grupo de Respaldo de Código -->
+  <div class="backup-group" style="margin-top: 15px; padding: 15px; border: 2px solid #4caf50; border-radius: 8px; background-color: #f1f8f4; box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);">
+    <div style="font-weight: bold; color: #2e7d32; margin-bottom: 12px; font-size: 15px;">💾 RESPALDO DE CÓDIGO - Protege tu Trabajo</div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+      <button id="btnDownloadCode" onclick="downloadCode()" 
+              style="background-color: #4caf50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;">
+        💾 Descargar Código (.cs)
+      </button>
+      <button id="btnRestoreCode" onclick="restoreFromLocalStorage()" 
+              style="background-color: #2196f3; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;" title="Restaura desde el backup automático del navegador">
+        🔄 Restaurar Última Versión
+      </button>
+      <button id="btnHistoryCode" onclick="showBackupHistory()" 
+              style="background-color: #ff9800; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;" title="Ver todas las versiones guardadas (máximo 5)">
+        📜 Ver Historial (Máx 5)
+      </button>
+      <span style="color: #666; font-size: 13px; flex-grow: 1;">
+        ℹ️ Guarda solo si cambió | Máx 5 versiones | Descarga = Seguro en tu PC
+      </span>
+    </div>
+  </div>
+
   <!-- Grupo de Sandbox Local -->
   <div class="sandbox-group">
     <div class="sandbox-group-title">🖥️ SANDBOX LOCAL (Solo Windows x64)</div>
@@ -944,7 +966,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://c001-192-223-105-46.ngrok-free.app";
+    const SERVER_BASE_URL = "https://nasa-excited-defines-invalid.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
@@ -2845,6 +2867,309 @@ class Program
 
     // Cargar al inicio
     loadProblems();
+  </script>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // BOOKMARK: Sistema de Respaldo de Código (Descarga + Auto-guardado localStorage)
+    // ═══════════════════════════════════════════════════════════════════════════════
+    
+    // 🔹 FUNCIÓN 1: Descargar el código como archivo .cs al disco
+    function downloadCode() {
+      const code = getCurrentCode();
+      const problemId = document.getElementById('txtProblemId').value || "problema";
+      const studentId = document.getElementById('txtStudentId').value || "estudiante";
+      const timestamp = new Date().toISOString().split('T')[0];  // YYYY-MM-DD
+      
+      // Obtener extensión del archivo según el lenguaje
+      const lang = getSelectedLang();
+      const extension = lang.filename.split('.')[1];  // cs o cpp
+      
+      // Nombre del archivo: problema_estudiante_2026-10-09.cs
+      const filename = `${problemId}_${studentId}_${timestamp}.${extension}`;
+      
+      // Crear blob (archivo en memoria)
+      const blob = new Blob([code], { type: "text/plain;charset=utf-8" });
+      
+      // Crear enlace de descarga
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      
+      // Agregar al DOM (necesario en algunos navegadores)
+      document.body.appendChild(link);
+      
+      // Descargar
+      link.click();
+      
+      // Limpiar
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      // Notificación
+      showMessage(`✅ Código descargado como: ${filename}`, "ok");
+      console.log(`💾 Código descargado: ${filename} (${code.length} caracteres)`);
+    }
+    
+    // 🔹 VARIABLE DE CONTROL: Última versión guardada
+    let lastSavedCode = {};  // { problemId: codeContent }
+    
+    // 🔹 FUNCIÓN 2: Guardar versión en historial (máximo 5 versiones)
+    function saveBackupVersion(code, problemId) {
+      try {
+        const historyKey = `backup_history_${problemId}`;
+        let history = [];
+        
+        // Obtener historial existente
+        const historyJson = localStorage.getItem(historyKey);
+        if (historyJson) {
+          history = JSON.parse(historyJson);
+        }
+        
+        // Agregar nueva versión
+        const newBackup = {
+          code: code,
+          timestamp: new Date().toISOString(),
+          length: code.length
+        };
+        
+        history.push(newBackup);
+        
+        // Mantener máximo 5 versiones (eliminar la más antigua)
+        if (history.length > 5) {
+          history.shift();  // Eliminar la primera (más antigua)
+        }
+        
+        // Guardar historial actualizado
+        localStorage.setItem(historyKey, JSON.stringify(history));
+        
+        // También guardar como versión actual (para compatibilidad con código anterior)
+        const backup = {
+          code: code,
+          timestamp: newBackup.timestamp,
+          problemId: problemId,
+          language: document.getElementById('selectLanguage').value,
+          studentId: document.getElementById('txtStudentId').value
+        };
+        localStorage.setItem(`backup_${problemId}`, JSON.stringify(backup));
+        localStorage.setItem(`backup_${problemId}_timestamp`, newBackup.timestamp);
+        
+        console.log(`💾 V${history.length}: Auto-guardado para ${problemId} (${code.length} car, ${history.length}/5 versiones)`);
+        return true;
+      } catch (err) {
+        if (err.name === 'QuotaExceededError') {
+          console.warn('⚠️ localStorage lleno - descarga el código manualmente');
+        } else {
+          console.error('❌ Error al guardar versión:', err);
+        }
+        return false;
+      }
+    }
+    
+    // 🔹 FUNCIÓN 2b: Auto-guardar SOLO si cambió (cada 30 segundos)
+    function autoSaveToLocalStorage() {
+      const code = getCurrentCode();
+      const problemId = document.getElementById('txtProblemId').value;
+      
+      if (!problemId) return;  // No guardar si no hay problema seleccionado
+      
+      // Verificar si el código cambió desde la última vez
+      const lastCode = lastSavedCode[problemId];
+      
+      if (lastCode === code) {
+        // Código no cambió, no guardar
+        return;
+      }
+      
+      // Código cambió, guardar nueva versión
+      lastSavedCode[problemId] = code;
+      saveBackupVersion(code, problemId);
+    }
+    
+    // 🔹 FUNCIÓN 3: Restaurar código desde localStorage (con historial)
+    function restoreFromLocalStorage() {
+      const problemId = document.getElementById('txtProblemId').value;
+      
+      if (!problemId) {
+        alert('⚠️ Selecciona un problema primero');
+        return;
+      }
+      
+      try {
+        const historyKey = `backup_history_${problemId}`;
+        const historyJson = localStorage.getItem(historyKey);
+        
+        if (!historyJson) {
+          alert(`⚠️ No hay respaldo guardado para el problema ${problemId}\n\nTip: El auto-guardado guarda versiones mientras trabajas (máx 5 versiones).`);
+          return;
+        }
+        
+        const history = JSON.parse(historyJson);
+        
+        if (history.length === 0) {
+          alert(`⚠️ Historial vacío para el problema ${problemId}`);
+          return;
+        }
+        
+        // Si solo hay 1 versión, restaurar directamente
+        if (history.length === 1) {
+          const backup = history[0];
+          const backupDate = new Date(backup.timestamp).toLocaleString('es-MX');
+          
+          const confirm_restore = confirm(
+            `✅ RESTAURAR CÓDIGO (1 versión guardada)\n\n` +
+            `Respaldo de: ${backupDate}\n` +
+            `Caracteres: ${backup.code.length}\n\n` +
+            `¿Reemplazar el código actual con este respaldo?`
+          );
+          
+          if (!confirm_restore) return;
+          
+          cmEditor.setValue(backup.code);
+          if (monacoEditor) monacoEditor.setValue(backup.code);
+          lastSavedCode[problemId] = backup.code;
+          
+          showMessage(`✅ Código restaurado desde ${backupDate}\n(${backup.code.length} caracteres)`, "ok");
+          return;
+        }
+        
+        // Múltiples versiones: mostrar menú de selección
+        let menu = `🔄 HISTORIAL DE VERSIONES (${history.length} versiones guardadas)\n\nSelecciona cuál restaurar:\n\n`;
+        history.forEach((backup, index) => {
+          const backupDate = new Date(backup.timestamp).toLocaleString('es-MX');
+          const isLatest = index === history.length - 1 ? ' ← ÚLTIMA' : '';
+          menu += `${index + 1}. ${backupDate} (${backup.code.length} caracteres)${isLatest}\n`;
+        });
+        menu += `\n0. Cancelar`;
+        
+        const choice = prompt(menu);
+        if (!choice || choice === '0' || choice === '') return;
+        
+        const selectedIndex = parseInt(choice) - 1;
+        if (selectedIndex < 0 || selectedIndex >= history.length) {
+          alert('❌ Selección inválida');
+          return;
+        }
+        
+        const selectedBackup = history[selectedIndex];
+        const selectedDate = new Date(selectedBackup.timestamp).toLocaleString('es-MX');
+        
+        // Confirmar restauración de versión seleccionada
+        const confirm_restore = confirm(
+          `✅ RESTAURAR VERSIÓN ${selectedIndex + 1}\n\n` +
+          `Fecha: ${selectedDate}\n` +
+          `Caracteres: ${selectedBackup.code.length}\n\n` +
+          `¿Reemplazar el código actual?`
+        );
+        
+        if (!confirm_restore) return;
+        
+        // Restaurar
+        cmEditor.setValue(selectedBackup.code);
+        if (monacoEditor) monacoEditor.setValue(selectedBackup.code);
+        lastSavedCode[problemId] = selectedBackup.code;
+        
+        showMessage(
+          `✅ Código restaurado (V${selectedIndex + 1})\n` +
+          `${selectedDate}\n` +
+          `(${selectedBackup.code.length} caracteres)`,
+          "ok"
+        );
+        
+        console.log(`🔄 Código restaurado desde V${selectedIndex + 1}: ${selectedDate}`);
+        
+      } catch (err) {
+        console.error('❌ Error al restaurar:', err);
+        alert(`❌ Error al restaurar el código:\n\n${err.message}`);
+      }
+    }
+    
+    // 🔹 FUNCIÓN 3b: Ver historial completo de versiones
+    function showBackupHistory() {
+      const problemId = document.getElementById('txtProblemId').value;
+      
+      if (!problemId) {
+        alert('⚠️ Selecciona un problema primero');
+        return;
+      }
+      
+      try {
+        const historyKey = `backup_history_${problemId}`;
+        const historyJson = localStorage.getItem(historyKey);
+        
+        if (!historyJson) {
+          alert(`No hay historial para el problema ${problemId}`);
+          return;
+        }
+        
+        const history = JSON.parse(historyJson);
+        let info = `📋 HISTORIAL - Problema ${problemId}\n`;
+        info += `Total de versiones guardadas: ${history.length}/5\n\n`;
+        
+        history.forEach((backup, index) => {
+          const backupDate = new Date(backup.timestamp).toLocaleString('es-MX');
+          info += `V${index + 1}: ${backupDate}\n     Tamaño: ${backup.code.length} caracteres\n\n`;
+        });
+        
+        alert(info);
+      } catch (err) {
+        console.error('❌ Error al mostrar historial:', err);
+      }
+    }
+    
+    // 🔹 FUNCIÓN 4: Mostrar toast de notificación
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      
+      const toast = document.createElement('div');
+      toast.className = `toast show`;
+      toast.textContent = message;
+      
+      // Colores según tipo
+      const colors = {
+        success: '#4caf50',
+        error: '#f44336',
+        warn: '#ff9800',
+        info: '#2196f3'
+      };
+      
+      toast.style.background = colors[type] || colors.info;
+      container.appendChild(toast);
+      
+      // Auto-remover después de 3 segundos
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => container.removeChild(toast), 500);
+      }, 3000);
+    }
+    
+    // 🔹 INICIALIZAR: Auto-guardado cada 30 segundos (solo si cambió)
+    setInterval(() => {
+      if (studentRegistered) {  // Solo si el estudiante está registrado
+        autoSaveToLocalStorage();
+      }
+    }, 30000);  // 30 segundos
+    
+    // 🔹 INICIALIZAR: Agregar listener a cambios de código (debounce + guardado)
+    cmEditor.on('change', (instance) => {
+      // Auto-guardar al cambiar el código (con debounce de 5 segundos)
+      clearTimeout(cmEditor.autoSaveTimeout);
+      cmEditor.autoSaveTimeout = setTimeout(() => {
+        autoSaveToLocalStorage();
+      }, 5000);  // 5 segundos después del último cambio
+    });
+    
+    // 🔹 INICIALIZAR: Cargar última versión guardada cuando se selecciona un problema
+    document.getElementById('selectProblem').addEventListener('change', function() {
+      const problemId = this.value;
+      if (problemId) {
+        lastSavedCode[problemId] = getCurrentCode();
+      }
+    });
+    
+    console.log('✅ Sistema de respaldo de código inicializado');
   </script>
 
   <script>

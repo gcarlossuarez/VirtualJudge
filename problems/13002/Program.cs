@@ -1,8 +1,9 @@
-// La dosis correcta de Nick
+// Los esteroides de Nick
 // Problema de la Mochila 0/1
 
 using System;
 
+// Knapsack Problem
 class Program
 {
     static void Main()
