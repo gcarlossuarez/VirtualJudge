@@ -1,0 +1,22 @@
+7
+1 2
+D
+H G
+8 2
+Y Z E B Y F X D
+F D
+7 3
+X X A B C B H
+X C H
+1 4
+Y
+B H A X
+9 4
+A D A B F Z X E E
+F Y Z Y
+3 9
+B Y A
+Z B G Y A A C Y Z
+3 7
+X X F
+F Y G Y X G F

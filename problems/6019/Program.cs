@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 
 // Fábrica de Conversión Óptima
+// Dijsktra
 class Program
 {
     static void Main()
@@ -54,9 +55,13 @@ class Program
         while (abiertos.Count > 0)
         {
             var (dist, nodo) = abiertos.Min;
-            abiertos.Remove(abiertos.Min); // quitamos el de menor distancia
+            abiertos.Remove(abiertos.Min); // Se quita el de menor distancia
 
-            // Si ya procesamos este nodo con una distancia mejor, ignoramos
+            // Si ya se procesó este nodo con una distancia mejor, se ignora
+			// Si un nodo fue insertado varias veces con diferentes distancias:
+			// Ejemplo:
+			// (20,5)
+			// (10,5)
             if (dist > costo[nodo]) continue;
 
             //if (nodo == N) break; // ya llegamos al final con la mejor distancia posible
@@ -66,9 +71,9 @@ class Program
                 long nuevoCosto = dist + c;
                 if (nuevoCosto < costo[siguiente])
                 {
-                    // Importante: si ya estaba en el conjunto con peor distancia, lo eliminamos
+                    // Importante: si ya estaba en el conjunto con peor distancia, se lo elimina
                     // (aunque no siempre es necesario porque el comparador es por distancia+nodo)
-                    // Pero para seguridad y claridad, lo quitamos si existe
+                    // Pero para seguridad y claridad, se lo quita si existe
 					
 					// No es obligatorio y en muchos casos hasta ralentiza un poco. 
 					// Esa versión simple es la más usada y recomendada.
@@ -79,7 +84,7 @@ class Program
 					abiertos.Remove((costo[siguiente], siguiente)); // quita la versión vieja si existe
 					costo[siguiente] = nuevoCosto;
 					abiertos.Add((nuevoCosto, siguiente));
-                    // Nota: no necesitamos eliminar la versión antigua porque tiene mayor distancia
+                    // Nota: no se necesita eliminar la versión antigua porque tiene mayor distancia
                     // → nunca será seleccionada antes que la nueva
                 }
             }

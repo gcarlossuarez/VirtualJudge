@@ -1,0 +1,7 @@
+2
+4 7
+C C D H
+C B Y A X Z Y
+8 8
+B D A Y G A F H
+G X E F Z H A D

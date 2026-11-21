@@ -1,0 +1,10 @@
+3
+5 8
+H Y H X H
+G G Y E H A Y H
+7 1
+F G H H Y B Y
+A
+6 5
+Y C D E Y H
+F E A B Z

@@ -1,0 +1,6 @@
+4 10
+Cofre del tesoro 1 6 12
+Cofre 2 4 10
+Cofre utilizado 3 5 8
+Mi cofre utilizado 4 3 5
+
