@@ -409,7 +409,7 @@
   <span>
     <label for="selectInput">Seleccione dataset:</label>
     <select id="selectInput">
-      <option value="">-- Seleccione un dataset --</option>
+      <option value="">Seleccione Dataset--</option>
     </select>
   </span>
   <br><br>
@@ -966,7 +966,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://bill-acrylic-karaoke-picked.trycloudflare.com";
+    const SERVER_BASE_URL = "https://extends-thanksgiving-diverse-crafts.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
@@ -2716,6 +2716,11 @@ class Program
               // ✨ NUEVO: Limpiar stdin (entrada) al cambiar de problema
               document.getElementById("stdin").value = "";
               
+              // ✨ NUEVO: Resetear selector de dataset a opción por defecto
+              const selectInput = document.getElementById("selectInput");
+              selectInput.value = "";
+              selectInput.innerHTML = "<option value=''>Seleccione Dataset--</option>";
+              
               // ✨ NUEVO: Actualizar permiso de copy/paste y aplicar restricciones
               // Nota: NO usar || true porque false || true = true (bug en JS)
               currentAllowCopyPaste = (problemData.allowCopyPaste === true);
@@ -3286,13 +3291,24 @@ class Program
         throw new Error(`SANDBOX_HTTP_ERROR_${response.status}`);
       }
       
-      let archivos;
+      let data;
       try {
         // ✓ Parsear respuesta como JSON
-        archivos = await response.json();
+        data = await response.json();
       } catch (parseErr) {
         // ✗ No es JSON válido
         throw new Error('SANDBOX_INVALID_JSON_RESPONSE');
+      }
+      
+      // ✓ Extraer array de inputs del objeto { installed, inputs[], expected[] }
+      let archivos = data;
+      if (typeof data === 'object' && data !== null && Array.isArray(data.inputs)) {
+        archivos = data.inputs;
+        console.log(`📋 Sandbox retorna objeto con estructura { installed, inputs, expected }. Extrayendo inputs...`);
+      } else if (!Array.isArray(data)) {
+        console.warn(`⚠️ Formato inesperado del sandbox:`, data);
+        // Si no es array y no tiene la propiedad inputs, intentar tratarlo como array vacío
+        archivos = [];
       }
       
       return archivos; // ✓ Retornar lista de datasets del sandbox
@@ -3416,7 +3432,7 @@ class Program
     // ═════════════════════════════════════════════════════════════════════════════════
     async function loadInputs(problemId, token) {
       const select = document.getElementById("selectInput");
-      select.innerHTML = "<option value=''>⏳ Cargando datasets...</option>";
+      //select.innerHTML = "<option value=''>⏳ Cargando datasets...</option>";
       
       // ✓ Generar token para esta carga (para cancelar si cambio de problema)
       const myToken = typeof token === 'undefined' ? problemChangeToken : token;
@@ -3467,7 +3483,16 @@ class Program
         // ═════════════════════════════════════════════════════════════════════════════
         // LLENAR DROPDOWN CON DATASETS
         // ═════════════════════════════════════════════════════════════════════════════
-        select.innerHTML = `<option value=''>-- Seleccione un dataset ${source} --</option>`;
+        //select.innerHTML = `<option value=''>-- Seleccione un dataset ${source} --</option>`;
+        
+        // ✓ Validar que archivos es un array válido
+        if (!Array.isArray(archivos)) {
+          console.error(`❌ Respuesta no es un array. Recibido: ${typeof archivos}`, archivos);
+          throw new Error(
+            `Formato inválido de respuesta. Se esperaba un array, recibido: ${typeof archivos}. ` +
+            `Contenido: ${JSON.stringify(archivos).substring(0, 100)}`
+          );
+        }
         
         if (archivos.length === 0) {
           select.innerHTML = "<option value=''>⚠️ No hay datasets disponibles</option>";
@@ -3495,8 +3520,10 @@ class Program
           if (myToken !== problemChangeToken) return;
           
           select.disabled = true;
-          const originalHTML = select.innerHTML;
-          select.innerHTML = `<option value=''>⏳ Cargando "${archivo}"...</option>`;
+          
+          // 📋 Mostrar mensaje de carga sin sobrescribir el nombre del archivo seleccionado
+          const originalSelectedText = select.options[select.selectedIndex].text;
+          select.options[select.selectedIndex].text = `⏳ Cargando dataset...`;
           
           try {
             let contenido = '';
@@ -3533,7 +3560,7 @@ class Program
             // ✓ Verificar token nuevamente
             if (myToken !== problemChangeToken) {
               select.disabled = false;
-              select.innerHTML = originalHTML;
+              select.options[select.selectedIndex].text = originalSelectedText;
               return;
             }
             
@@ -3543,19 +3570,19 @@ class Program
             
             // ✓ Restaurar select a estado normal
             select.disabled = false;
-            select.innerHTML = originalHTML;
+            select.options[select.selectedIndex].text = originalSelectedText;
             
           } catch (err) {
             // ✗ ERROR - Restaurar select y mostrar alerta
             if (myToken !== problemChangeToken) {
               select.disabled = false;
-              select.innerHTML = originalHTML;
+              select.options[select.selectedIndex].text = originalSelectedText;
               return;
             }
             
             console.error("❌ Error cargando contenido del dataset:", err);
             select.disabled = false;
-            select.innerHTML = originalHTML;
+            select.options[select.selectedIndex].text = originalSelectedText;
             
             // 💡 Mostrar alerta con sugerencias
             alert(

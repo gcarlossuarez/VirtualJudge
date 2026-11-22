@@ -1,5 +1,6 @@
 using System;
 
+// Asociación Cruceña de Pitilleros abre nueva sede!!!
 class Program
 {
     const int INF = 1000000;
@@ -26,7 +27,7 @@ class Program
 			son dos funciones diferentes.
 			Pueden aparecer ciclos de “ganancia infinita”: si 
 			𝐺𝑎𝑛𝑎𝑛𝑐𝑖𝑎 − 𝐶𝑜𝑠𝑡𝑜 > 0
-			Ganancia−Costo>0 en un ciclo, entonces el “costo efectivo” es negativo y puedes dar vueltas y vueltas, disminuyendo 
+			Ganancia−Costo>0 en un ciclo, entonces el “costo efectivo” es negativo y puede dar vueltas y vueltas, disminuyendo 
 			indefinidamente el “costo” → Floyd–Warshall está pensado para grafos sin ciclos negativos (o para detectarlos, pero 
 			no para “maximizar ganancia infinita”).
 			int[,] gananciasNetasAux = new int[n, n];
@@ -48,7 +49,7 @@ class Program
 					}
 				}
 			}
-			int[,] gananciasNetas = CalcularFloydWarshaLlMalAplicado(gananciasNetasAux, n);
+			int[,] gananciasNetas = CalcularFloydWarshallMalAplicado(gananciasNetasAux, n);
 			
 			Podemos afirmar que:
 			•  Ganancia[i][j] es la ganancia asociada al destino final, fijada en la matriz de Ganancias.
@@ -90,7 +91,7 @@ class Program
         return matriz;
     }
     
-	static int[,] CalcularFloydWarshaLlMalAplicado(int[,] costos, int n)
+	static int[,] CalcularFloydWarshallMalAplicado(int[,] costos, int n)
 	{
 		return CalcularCostosMinimos(costos,  n);
 	}
