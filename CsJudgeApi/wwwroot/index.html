@@ -966,7 +966,7 @@ class Program
     // BOOKMARK: Configuración de URLs del servidor y sandbox
     // Constantes de configuración
     // Esta URL será reemplazada por el script start_judge.sh con la URL de ngrok
-    const SERVER_BASE_URL = "https://0d58-190-104-20-154.ngrok-free.app";
+    const SERVER_BASE_URL = "https://bill-acrylic-karaoke-picked.trycloudflare.com";
     const SANDBOX_BASE = "http://localhost:1100";
     const SANDBOX_URL = SANDBOX_BASE; // Alias para compatibilidad
     
@@ -3176,96 +3176,504 @@ class Program
     // ═══════════════════════════════════════════════════════════════════════════════
     // BOOKMARK: Carga de inputs (datasets) para el problema seleccionado
     // ═══════════════════════════════════════════════════════════════════════════════
+    // 
+    // DIAGRAMA DE FALLBACK:
+    // 
+    //     Usuario selecciona problema
+    //              │
+    //              ▼
+    //     ┌─────────────────────────────┐
+    //     │ loadInputsFromServer()      │
+    //     │ GET /problems/X/inputs      │
+    //     └──────────┬──────────────────┘
+    //                │
+    //         ✓ OK?  │  ✗ Falla
+    //                │
+    //         ┌──────┴──────┐
+    //         ▼             ▼
+    //      ÉXITO       loadInputsFromSandbox()
+    //      Retorna     GET http://localhost:1100/datasets/X
+    //      arrays         │
+    //                  ✓ OK?  │  ✗ Falla
+    //                      │
+    //                  ┌───┴────┐
+    //                  ▼        ▼
+    //               ÉXITO      ERROR
+    //               Retorna    "No disponible"
+    //               arrays
+    // ═══════════════════════════════════════════════════════════════════════════════
+    
+    // ─────────────────────────────────────────────────────────────────────────────
+    // FUNCIÓN: loadInputsFromServer()
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Propósito: Intentar cargar lista de datasets desde el servidor principal
+    // 
+    // Flujo:
+    //   1. Hacer fetch a /problems/{problemId}/inputs
+    //   2. Validar que respuesta sea exitosa (status 200-299)
+    //   3. Validar que sea JSON válido
+    //   4. Retornar array de nombres de archivos
+    // 
+    // Errores posibles:
+    //   - SERVER_UNAVAILABLE_HTML  : Servidor respondió con HTML (error Cloudflare)
+    //   - HTTP_ERROR_NNN           : Error HTTP (404, 500, etc)
+    //   - INVALID_JSON_RESPONSE    : No se pudo parsear como JSON
+    //   - Failed to fetch (network): Sin conexión de red
+    // ─────────────────────────────────────────────────────────────────────────────
+    async function loadInputsFromServer(problemId) {
+      const response = await fetch(`/problems/${problemId}/inputs`);
+      
+      if (!response.ok) {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('text/html')) {
+          // ✗ Servidor respondió con HTML (error page, Cloudflare, etc)
+          throw new Error('SERVER_UNAVAILABLE_HTML');
+        }
+        // ✗ Error HTTP: 404, 500, 503, etc
+        throw new Error(`HTTP_ERROR_${response.status}`);
+      }
+      
+      let archivos;
+      try {
+        // ✓ Parsear respuesta como JSON
+        archivos = await response.json();
+      } catch (parseErr) {
+        // ✗ No es JSON válido
+        throw new Error('INVALID_JSON_RESPONSE');
+      }
+      
+      return archivos; // ✓ Retornar lista de datasets
+    }
+    
+    // ─────────────────────────────────────────────────────────────────────────────
+    // FUNCIÓN: loadInputsFromSandbox()
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Propósito: Fallback - Cargar lista de datasets desde sandbox local
+    // 
+    // Requisitos:
+    //   - Sandbox debe estar ejecutándose en http://localhost:1100
+    //   - Variable global 'sandboxAvailable' debe ser true
+    //   - Debe haberse descargado el problema en el sandbox
+    // 
+    // Flujo:
+    //   1. Verificar que sandboxAvailable === true
+    //   2. Hacer fetch a localhost:1100/datasets/{problemId}
+    //   3. Validar respuesta con timeout de 2 segundos
+    //   4. Retornar array de nombres de archivos
+    // 
+    // Ventaja: Funciona INCLUSO SIN INTERNET
+    // 
+    // Errores posibles:
+    //   - SANDBOX_NOT_AVAILABLE    : sandboxAvailable === false
+    //   - SANDBOX_HTTP_ERROR_NNN   : Error HTTP del sandbox
+    //   - SANDBOX_INVALID_JSON     : Respuesta no es JSON
+    //   - Timeout                  : Sandbox no responde en 2 segundos
+    // ─────────────────────────────────────────────────────────────────────────────
+    async function loadInputsFromSandbox(problemId) {
+      // ✓ Verificar que sandbox está disponible
+      if (!sandboxAvailable) {
+        throw new Error('SANDBOX_NOT_AVAILABLE');
+      }
+      
+      // ✓ Hacer fetch con timeout
+      const response = await fetch(`${SANDBOX_BASE}/datasets/${encodeURIComponent(problemId)}`, {
+        method: 'GET',
+        timeout: 2000  // ← 2 segundos de timeout
+      });
+      
+      if (!response.ok) {
+        // ✗ Error HTTP del sandbox
+        throw new Error(`SANDBOX_HTTP_ERROR_${response.status}`);
+      }
+      
+      let archivos;
+      try {
+        // ✓ Parsear respuesta como JSON
+        archivos = await response.json();
+      } catch (parseErr) {
+        // ✗ No es JSON válido
+        throw new Error('SANDBOX_INVALID_JSON_RESPONSE');
+      }
+      
+      return archivos; // ✓ Retornar lista de datasets del sandbox
+    }
+    
+    // ─────────────────────────────────────────────────────────────────────────────
+    // FUNCIÓN: loadDatasetFromServer()
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Propósito: Cargar contenido de un dataset específico desde servidor
+    // 
+    // Parámetros:
+    //   - problemId: ID del problema (ej: "problem-123")
+    //   - archivo: Nombre del archivo (ej: "input1.txt")
+    // 
+    // Flujo:
+    //   1. Hacer fetch a /problems/{problemId}/input/{archivo}
+    //   2. Validar respuesta
+    //   3. Retornar contenido como texto
+    // 
+    // Retorna: String (contenido del archivo)
+    // ─────────────────────────────────────────────────────────────────────────────
+    async function loadDatasetFromServer(problemId, archivo) {
+      const r = await fetch(`/problems/${problemId}/input/${archivo}`);
+      if (!r.ok) {
+        // ✗ No se pudo cargar del servidor
+        throw new Error(`SERVER_LOAD_FAILED_${r.status}`);
+      }
+      // ✓ Retornar contenido como texto
+      return await r.text();
+    }
+    
+    // ─────────────────────────────────────────────────────────────────────────────
+    // FUNCIÓN: loadDatasetFromSandbox()
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Propósito: Fallback - Cargar contenido de un dataset desde sandbox local
+    // 
+    // Parámetros:
+    //   - problemId: ID del problema (ej: "problem-123")
+    //   - archivo: Nombre del archivo (ej: "input1.txt")
+    // 
+    // Flujo:
+    //   1. Verificar que sandboxAvailable === true
+    //   2. Hacer fetch a localhost:1100/datasets/{problemId}/{archivo}
+    //   3. Validar respuesta con timeout
+    //   4. Retornar contenido como texto
+    // 
+    // Ventaja: Funciona SIN INTERNET (si sandbox ya tiene el archivo descargado)
+    // 
+    // Retorna: String (contenido del archivo del sandbox)
+    // ─────────────────────────────────────────────────────────────────────────────
+    async function loadDatasetFromSandbox(problemId, archivo) {
+      // ✓ Verificar que sandbox está disponible
+      if (!sandboxAvailable) {
+        throw new Error('SANDBOX_NOT_AVAILABLE');
+      }
+      
+      // ✓ Hacer fetch con timeout al sandbox local
+      const r = await fetch(
+        `${SANDBOX_BASE}/datasets/${encodeURIComponent(problemId)}/inputs/${encodeURIComponent(archivo)}`,
+        { timeout: 2000 }  // ← 2 segundos de timeout
+      );
+      
+      if (!r.ok) {
+        // ✗ No se pudo cargar del sandbox
+        throw new Error(`SANDBOX_LOAD_FAILED_${r.status}`);
+      }
+      
+      // ✓ Retornar contenido como texto
+      return await r.text();
+    }
+    
+    // ═════════════════════════════════════════════════════════════════════════════════
+    // FUNCIÓN PRINCIPAL: loadInputs(problemId, token)
+    // ═════════════════════════════════════════════════════════════════════════════════
+    // 
+    // Propósito: Cargar lista de datasets para un problema con fallback automático
+    // 
+    // Parámetros:
+    //   - problemId: ID del problema (ej: "problem-123")
+    //   - token: Token para cancelación (opcional, usa problemChangeToken por defecto)
+    // 
+    // FLUJO DE EJECUCIÓN CON DIAGRAMA:
+    // 
+    //   loadInputs(problemId, token)
+    //   │
+    //   ├─→ 1️⃣ INTENTO SERVIDOR
+    //   │   │
+    //   │   ├─→ loadInputsFromServer(problemId)
+    //   │   │   │
+    //   │   │   └─→ ✓ Éxito?
+    //   │   │       └─→ Retorna array de datasets
+    //   │   │
+    //   │   └─→ ✓ Éxito?
+    //   │       └─→ source = "📡 (servidor)"
+    //   │           Cargar en select
+    //   │           ✓ TERMINAR
+    //   │
+    //   └─→ ❌ Falla?
+    //       │
+    //       └─→ 2️⃣ INTENTO SANDBOX
+    //           │
+    //           ├─→ loadInputsFromSandbox(problemId)
+    //           │   │
+    //           │   └─→ ✓ Éxito?
+    //           │       └─→ Retorna array de datasets
+    //           │
+    //           └─→ ✓ Éxito?
+    //               └─→ source = "🖥️ (sandbox local)"
+    //                   Cargar en select
+    //                   ✓ TERMINAR
+    //           
+    //           └─→ ❌ Falla?
+    //               └─→ ❌ ERROR FINAL
+    //                   "No se pudo cargar datasets..."
+    // 
+    // MANEJO DE TOKEN:
+    //   - Se usa 'myToken' para cancelar si el usuario cambió de problema
+    //   - Verificar: if (myToken !== problemChangeToken) return
+    //   - Evita race conditions entre cambios rápidos de problemas
+    // 
+    // ═════════════════════════════════════════════════════════════════════════════════
     async function loadInputs(problemId, token) {
       const select = document.getElementById("selectInput");
-      select.innerHTML = "<option value=''>-- Seleccione un dataset --</option>";
-      // -----------------------------------------------------------------
-      // Usar el token actual si no se pasa (compatibilidad)
-      // Así, si el usuario cambia de problema mientras se cargan los datasets,
-      // cualquier respuesta atrasada será ignorada.
-      // -----------------------------------------------------------------
+      select.innerHTML = "<option value=''>⏳ Cargando datasets...</option>";
+      
+      // ✓ Generar token para esta carga (para cancelar si cambio de problema)
       const myToken = typeof token === 'undefined' ? problemChangeToken : token;
-
+      let archivos = [];
+      let source = '';
+      
       try {
-        const response = await fetch(`/problems/${problemId}/inputs`);
+        // ═════════════════════════════════════════════════════════════════════════════
+        // ESTRATEGIA DE FALLBACK: Servidor → Sandbox
+        // ═════════════════════════════════════════════════════════════════════════════
         
-        if (!response.ok) {
-          // Detectar si es un error de Cloudflare o del servidor
-          const contentType = response.headers.get('content-type');
-          
-          if (contentType && contentType.includes('text/html')) {
-            // Es HTML (página de error de Cloudflare), no JSON
-            console.warn(`⚠️ Servidor no disponible al cargar inputs del problema ${problemId} (HTML recibido)`);
-            select.innerHTML = "<option value=''>⚠️ Servidor no disponible</option>";
-            return;
-          }
-          
-          // Otro tipo de error
-          const errorText = await response.text();
-          console.error(`❌ Error cargando inputs (${response.status}):`, errorText);
-          select.innerHTML = "<option value=''>❌ Error al cargar datasets</option>";
-          return;
-        }
-        
-        // Intentar parsear JSON
-        let archivos;
         try {
-          archivos = await response.json();
-        } catch (parseErr) {
-          console.error("❌ Respuesta no es JSON válido:", parseErr);
-          select.innerHTML = "<option value=''>⚠️ Respuesta inválida del servidor</option>";
+          // ✓ PASO 1: Intentar cargar del SERVIDOR
+          archivos = await loadInputsFromServer(problemId);
+          source = '📡 (servidor)';
+          console.log(`✅ Datasets cargados del servidor: ${archivos.length} archivos`);
+          
+        } catch (serverErr) {
+          // ✗ SERVIDOR FALLÓ - Intentar fallback
+          console.warn(`⚠️ No se pudo cargar del servidor: ${serverErr.message}`);
+          console.log(`📦 Intentando cargar del sandbox local...`);
+          
+          try {
+            // ✓ PASO 2: Intentar cargar del SANDBOX
+            archivos = await loadInputsFromSandbox(problemId);
+            source = '🖥️ (sandbox local)';
+            console.log(`✅ Datasets cargados del sandbox: ${archivos.length} archivos`);
+            
+          } catch (sandboxErr) {
+            // ✗ SANDBOX TAMBIÉN FALLÓ - Error final
+            console.error(`❌ Sandbox también falló: ${sandboxErr.message}`);
+            throw new Error(
+              `No se pudo cargar datasets ni del servidor ni del sandbox:\n` +
+              `- Servidor: ${serverErr.message}\n` +
+              `- Sandbox: ${sandboxErr.message}`
+            );
+          }
+        }
+        
+        // ═════════════════════════════════════════════════════════════════════════════
+        // VERIFICAR VALIDEZ DEL TOKEN (si cambió de problema, cancelar)
+        // ═════════════════════════════════════════════════════════════════════════════
+        if (myToken !== problemChangeToken) {
+          console.log('⚠️ Token cancelado - Usuario cambió de problema');
           return;
         }
         
-        // Cargar archivos en el select
+        // ═════════════════════════════════════════════════════════════════════════════
+        // LLENAR DROPDOWN CON DATASETS
+        // ═════════════════════════════════════════════════════════════════════════════
+        select.innerHTML = `<option value=''>-- Seleccione un dataset ${source} --</option>`;
+        
+        if (archivos.length === 0) {
+          select.innerHTML = "<option value=''>⚠️ No hay datasets disponibles</option>";
+          return;
+        }
+        
+        // ✓ Agregar cada dataset como opción en el dropdown
         archivos.forEach(a => {
           const opt = document.createElement("option");
           opt.value = a;
           opt.textContent = a;
           select.appendChild(opt);
         });
-
-        // evento: cuando selecciona un dataset
+        
+        // ═════════════════════════════════════════════════════════════════════════════
+        // EVENTO: Cuando el usuario selecciona un dataset
+        // ═════════════════════════════════════════════════════════════════════════════
         select.addEventListener("change", async () => {
           const archivo = select.value;
+          
+          // ✓ Ignorar si no seleccionó nada
           if (!archivo) return;
-
-          // -----------------------------------------------------------------
-          // Verificar token antes de cargar el dataset:
-          // Si el usuario ya cambió de problema, no se actualiza el input.
-          // -----------------------------------------------------------------
+          
+          // ✓ Cancelar si el usuario cambió de problema mientras se cargaba
           if (myToken !== problemChangeToken) return;
-
+          
+          select.disabled = true;
+          const originalHTML = select.innerHTML;
+          select.innerHTML = `<option value=''>⏳ Cargando "${archivo}"...</option>`;
+          
           try {
-            const r = await fetch(`/problems/${problemId}/input/${archivo}`);
-            if (myToken !== problemChangeToken) return;
-            if (!r.ok) {
-              console.warn(`⚠️ No se pudo cargar el archivo ${archivo}`);
-              alert(`⚠️ No se pudo cargar el archivo ${archivo}\n\nEl servidor puede estar temporalmente no disponible. Si el sandbox local está habilitado, se intentará cargar de él.`);
+            let contenido = '';
+            let loadedFrom = '';
+            
+            try {
+              // ✓ PASO 1: Intentar cargar del SERVIDOR
+              contenido = await loadDatasetFromServer(problemId, archivo);
+              loadedFrom = '📡 servidor';
+              console.log(`✅ Dataset "${archivo}" cargado del servidor`);
+              
+            } catch (serverErr) {
+              // ✗ SERVIDOR FALLÓ - Intentar fallback
+              console.warn(`⚠️ No se pudo cargar del servidor: ${serverErr.message}`);
+              console.log(`📦 Intentando cargar del sandbox...`);
+              
+              try {
+                // ✓ PASO 2: Intentar cargar del SANDBOX
+                contenido = await loadDatasetFromSandbox(problemId, archivo);
+                loadedFrom = '🖥️ sandbox';
+                console.log(`✅ Dataset "${archivo}" cargado del sandbox local`);
+                
+              } catch (sandboxErr) {
+                // ✗ SANDBOX TAMBIÉN FALLÓ - Error final
+                console.error(`❌ Falló cargar del sandbox: ${sandboxErr.message}`);
+                throw new Error(
+                  `No se pudo cargar el dataset "${archivo}":\n` +
+                  `- Servidor: ${serverErr.message}\n` +
+                  `- Sandbox: ${sandboxErr.message}`
+                );
+              }
+            }
+            
+            // ✓ Verificar token nuevamente
+            if (myToken !== problemChangeToken) {
+              select.disabled = false;
+              select.innerHTML = originalHTML;
               return;
             }
-            const contenido = await r.text();
-            if (myToken !== problemChangeToken) return;
+            
+            // ✓ ÉXITO - Insertar contenido en textarea
             document.getElementById("stdin").value = contenido;
+            console.log(`📥 Input cargado (${loadedFrom}): ${contenido.length} caracteres`);
+            
+            // ✓ Restaurar select a estado normal
+            select.disabled = false;
+            select.innerHTML = originalHTML;
+            
           } catch (err) {
-            if (myToken !== problemChangeToken) return;
-            console.error("Error cargando contenido del dataset:", err);
-            alert(`⚠️ Error al cargar el dataset\n\n${err.message}`);
+            // ✗ ERROR - Restaurar select y mostrar alerta
+            if (myToken !== problemChangeToken) {
+              select.disabled = false;
+              select.innerHTML = originalHTML;
+              return;
+            }
+            
+            console.error("❌ Error cargando contenido del dataset:", err);
+            select.disabled = false;
+            select.innerHTML = originalHTML;
+            
+            // 💡 Mostrar alerta con sugerencias
+            alert(
+              `⚠️ Error al cargar dataset "${archivo}"\n\n` +
+              `${err.message}\n\n` +
+              `Verifica que el sandbox esté ejecutándose si no hay conexión al servidor.`
+            );
           }
         });
-
-      } catch (err) {
-        console.error("❌ Error en loadInputs:", err);
         
-        // Verificar si es error de red
-        if (err.message.includes('Failed to fetch') || err.name === 'TypeError') {
-          console.warn("⚠️ No se puede conectar con el servidor");
-          select.innerHTML = "<option value=''>⚠️ Sin conexión al servidor</option>";
-        } else {
-          select.innerHTML = "<option value=''>❌ Error desconocido</option>";
+      } catch (err) {
+        // ✗ ERROR AL CARGAR LISTA DE DATASETS
+        console.error("❌ Error en loadInputs:", err);
+        select.innerHTML = `<option value=''>❌ ${err.message.substring(0, 50)}</option>`;
+        
+        // 💡 Sugerencia de ayuda
+        if (err.message.includes('SANDBOX')) {
+          console.log(
+            '💡 El sandbox local puede ayudarte cuando no hay internet. ' +
+            'Descárgalo e instálalo.'
+          );
         }
       }
     }
+    
+    // ═════════════════════════════════════════════════════════════════════════════════
+    // DIAGRAMA ASCII RESUMIDO - Visualización del Sistema de Fallback
+    // ═════════════════════════════════════════════════════════════════════════════════
+    //
+    // ┌─────────────────────────────────────────────────────────────────────────────┐
+    // │                   SISTEMA DE FALLBACK PARA DATASETS                          │
+    // └─────────────────────────────────────────────────────────────────────────────┘
+    //
+    // 🎯 OBJETIVO: Permitir que los estudiantes trabajen INCLUSO SIN INTERNET
+    //              si el Sandbox Local ya tiene descargados los datos
+    //
+    // ┌──────────────────────────────────┐
+    // │  Usuario selecciona Problema     │
+    // └──────────────┬───────────────────┘
+    //                │
+    //                ▼
+    //   ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    //   ┃ ESTRATEGIA DE FALLBACK       ┃
+    //   ┃ Servidor → Sandbox → Error   ┃
+    //   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+    //                │
+    //      ┌─────────┴─────────┐
+    //      ▼                   ▼
+    //   📡 SERVIDOR         (Si falla)
+    //   │ GET /problems/X/inputs
+    //   │ GET /problems/X/input/{archivo}
+    //   │
+    //   └─→ ✅ Éxito?
+    //       └─→ Usar datos del servidor
+    //           Mostrar: 📡 (servidor)
+    //
+    //   └─→ ❌ Falla?
+    //       │
+    //       └─→ 🖥️ SANDBOX LOCAL
+    //           │ GET http://localhost:1100/datasets/X
+    //           │ GET http://localhost:1100/datasets/X/{archivo}
+    //           │
+    //           └─→ ✅ Éxito?
+    //               └─→ Usar datos del sandbox
+    //                   Mostrar: 🖥️ (sandbox local)
+    //                   FUNCIONA SIN INTERNET ✨
+    //
+    //           └─→ ❌ Falla?
+    //               └─→ ❌ ERROR FINAL
+    //                   "No se pudo cargar..."
+    //                   💡 "Verifica que el sandbox esté ejecutándose"
+    //
+    // ╔════════════════════════════════════════════════════════════════════════════╗
+    // ║ TOKENS DE CANCELACIÓN (Evita Race Conditions)                             ║
+    // ╠════════════════════════════════════════════════════════════════════════════╣
+    // ║                                                                            ║
+    // ║ Problema: Usuario cambia rápidamente de problema                          ║
+    // ║           → loadInputs() aún está cargando dataset anterior               ║
+    // ║           → Resulta confuso si termina mostrando datos del anterior       ║
+    // ║                                                                            ║
+    // ║ Solución: Token (problemChangeToken) se incrementa cada cambio             ║
+    // ║           → Si myToken ≠ problemChangeToken → Cancelar operación           ║
+    // ║           → Los datos del problema anterior se descartan                   ║
+    // ║           → Solo se muestran los del problema actual                       ║
+    // ║                                                                            ║
+    // ╚════════════════════════════════════════════════════════════════════════════╝
+    //
+    // 📊 LOGS EN LA CONSOLA (F12)
+    // 
+    // Escenario 1: Internet disponible ✅
+    // ─────────────────────────────────
+    // ✅ Datasets cargados del servidor: 3 archivos
+    // ✓ PASO 1: Intentar cargar del SERVIDOR
+    // ✅ Dataset "input1.txt" cargado del servidor
+    // 📡 servidor
+    // 📥 Input cargado (📡 servidor): 150 caracteres
+    //
+    // Escenario 2: Internet se corta ❌ → Sandbox disponible ✅
+    // ──────────────────────────────────────────────────────
+    // ⚠️ No se pudo cargar del servidor: Failed to fetch
+    // 📦 Intentando cargar del sandbox local...
+    // ✅ Datasets cargados del sandbox: 3 archivos
+    // 📦 Intentando cargar del sandbox...
+    // ✅ Dataset "input1.txt" cargado del sandbox local
+    // 🖥️ sandbox
+    // 📥 Input cargado (🖥️ sandbox): 150 caracteres
+    //
+    // Escenario 3: Sin internet Y sin sandbox ❌❌
+    // ─────────────────────────────────────────
+    // ⚠️ No se pudo cargar del servidor: Failed to fetch
+    // 📦 Intentando cargar del sandbox local...
+    // ❌ Sandbox también falló: SANDBOX_NOT_AVAILABLE
+    // ❌ Error en loadInputs: No se pudo cargar datasets...
+    // ❌ {"message": "❌ No se pudo cargar datasets ni del servidor..."}
+    // 💡 El sandbox local puede ayudarte cuando no hay internet...
+    //
+    // ═════════════════════════════════════════════════════════════════════════════════
+    
     </script>
     
     <script>
